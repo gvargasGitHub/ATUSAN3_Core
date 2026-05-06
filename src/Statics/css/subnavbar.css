@@ -1,0 +1,76 @@
+/* The navigation menu */
+.ats-subnavbar {
+  overflow: hidden;
+}
+
+/* Navigation links */
+.ats-subnavbar a.item {
+  float: left;
+  text-align: center;
+  text-decoration: none;
+}
+
+/* The subnavigation menu */
+.ats-subnavbar .subnav {
+  float: left;
+  overflow: hidden;
+}
+
+/* Subnav button */
+.ats-subnavbar .subnav .subnavbtn {
+  border: none;
+  outline: none;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.ats-subnavbar i.caret {
+  cursor: pointer;
+  user-select: none;
+  margin-left: 3px;
+}
+
+.ats-subnavbar i.caret::before {
+  content: "\25BA";
+  display: inline-block;
+  margin-right: 6px;
+}
+
+
+/* Add a red background color to navigation links on hover */
+/* .subnavbar a:hover,
+.subnav:hover .subnavbtn {
+  background-color: red;
+} */
+
+/* Style the subnav content - positioned absolute */
+.ats-subnavbar .subnav-content {
+  display: none;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+/* Style the subnav links */
+.ats-subnavbar .subnav-content a.item {
+  float: left;
+  text-decoration: none;
+}
+
+/* Add a grey background color on hover */
+/* .subnav-content a:hover {
+  background-color: #eee;
+  color: black;
+} */
+
+/* When you move the mouse over the subnav container, open the subnav content */
+.ats-subnavbar .subnav:hover .subnav-content {
+  display: block;
+}
+
+
+.ats-subnavbar .subnav:hover i.caret::before {
+  transform: rotate(90deg);
+}

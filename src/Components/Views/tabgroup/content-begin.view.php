@@ -1,0 +1,1 @@
+<div id="<?= $this->parent->name ?>-<?= $this->name ?>" class="content <?= $this->parent->name ?>">

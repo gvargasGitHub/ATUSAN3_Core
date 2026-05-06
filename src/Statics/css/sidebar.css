@@ -1,0 +1,109 @@
+/* .ats-sidebar, */
+.ats-sidebar>ul {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.ats-sidebar>ul>li {
+  cursor: pointer;
+}
+
+.ats-sidebar>ul>li.item>i.icon {
+  margin-right: 3px;
+}
+
+.ats-sidebar i.caret {
+  cursor: pointer;
+  user-select: none;
+  margin-left: 3px;
+}
+
+.ats-sidebar i.caret::before {
+  content: "\25BA";
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.ats-sidebar>ul>li.dropdown.show>i.caret::before {
+  transform: rotate(90deg);
+}
+
+.ats-sidebar>ul>li.dropdown>div.content {
+  display: none;
+  opacity: 0.9;
+}
+
+.ats-sidebar>ul>li.dropdown.show>div.content {
+  display: block;
+  transition: 0.5s;
+}
+
+/*-------------------------------------
+  BAR RESPONSIVE
+-------------------------------------*/
+.ats-sidebar>div.bars {
+  display: none;
+  float: right;
+  cursor: pointer;
+}
+
+.ats-sidebar>div.bars>div.bar {
+  width: 20px;
+  height: 3px;
+  margin: 2px;
+  transition: 0.4s;
+}
+
+.ats-sidebar>div.bars div.bar {
+  background-color: gray;
+}
+
+.ats-sidebar>div.bars.transform div.bar1 {
+  -webkit-transform: rotate(-45deg) translate(-2px, 5px);
+  transform: rotate(-45deg) translate(-2px, 5px);
+}
+
+.ats-sidebar>div.bars.transform div.bar2 {
+  opacity: 0;
+}
+
+.ats-sidebar>div.bars.transform div.bar3 {
+  -webkit-transform: rotate(45deg) translate(-2px, -5px);
+  transform: rotate(45deg) translate(-2px, -5px);
+}
+
+@media screen and (max-width: 768px) {
+  .ats-sidebar>ul>li {
+    display: none;
+  }
+
+  .ats-sidebar>div.bars {
+    display: block;
+
+  }
+
+  .ats-sidebar.responsive {
+    position: relative;
+  }
+
+  .ats-sidebar.responsive>ul,
+  .ats-sidebar.responsive>ul>li {
+    display: block;
+    width: 100%;
+    float: left;
+    text-align: left;
+  }
+
+  .ats-sidebar.responsive>ul>li.dropdown>div.content {
+    position: relative;
+    box-shadow: none;
+  }
+
+  /* Esta regla posiciona el bloque "bars" */
+  .ats-sidebar>div.bars {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}

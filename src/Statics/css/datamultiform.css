@@ -1,0 +1,22 @@
+.ats-dataform .stepform {
+  display: none;
+}
+
+.ats-dataform .stepmarks {
+  text-align: center;
+  margin-top: 8px;
+}
+
+.ats-dataform .stepmarks .stepmark {
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  border: none;
+  border-radius: 50%;
+  display: inline-block;
+  opacity: 0.5;
+}
+
+.ats-dataform .stepmarks .stepmark.active {
+  opacity: 1;
+}

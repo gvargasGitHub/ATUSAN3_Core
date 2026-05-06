@@ -1,0 +1,53 @@
+.ats-loader-overlay {
+  display: none;
+}
+
+.ats-loader-overlay {
+  position: fixed;
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.ats-loader-indicator {
+  width: 100px;
+  height: 100px;
+  margin: -50px 0 0 -50px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+
+  border: 10px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 10px solid #666;
+
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,168 @@
+.ats-dataform {
+  position: relative;
+  clear: both;
+  padding: 0;
+  /* padding-right: 2px; */
+  /* evita la activacion de la scroll bar */
+  /* padding-bottom: 2px; */
+  /* evita la activación de la scroll bar */
+  margin: 5px;
+  /* overflow: auto; */
+}
+
+.ats-dataform * {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.ats-dataform .header,
+.ats-dataform .footer {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.ats-dataform .form-control {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  width: 100%;
+}
+
+/* ------------------------------------
+  INPUT AUTOCOMPLETE
+  Componentes:
+    Div.autocomplete
+    Input.text
+    Div.autocomplete-list
+    https://www.w3schools.com/howto/howto_js_autocomplete.asp
+------------------------------------ */
+.ats-dataform div.autocomplete {
+  position: relative;
+}
+
+.ats-dataform div.autocomplete div.autocomplete-list {
+  position: fixed;
+  z-index: 1;
+
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+}
+
+.ats-dataform div.autocomplete-list div.item {
+  padding: 4px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+}
+
+.ats-dataform div.autocomplete-list div.item:hover {
+  background-color: #e9e9e9;
+}
+
+.ats-dataform div.autocomplete-list div.item.active {
+  background-color: red !important;
+  color: #ffffff;
+}
+
+/* ------------------------------------
+  INPUT FILE
+  Componentes:
+    Input.file
+    Label.form-control
+    Label.file-foot
+------------------------------------ */
+.ats-dataform .file {
+  width: 0.1px;
+  height: 0.1px;
+
+  --moz-opacity: 0;
+  filter: opacity(0);
+  opacity: 0;
+
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.ats-dataform .file+label {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.ats-dataform .file:focus+label,
+.ats-dataform .file.has-focus+label,
+.ats-dataform .file+label:hover {
+  outline: 1px dotted #000;
+  outline: -webkit-focus-ring-color auto 5px;
+  /* Chrome, Opera, Safari */
+}
+
+.ats-dataform .file+label i.fa {
+  margin: 0 5px;
+}
+
+.ats-dataform .file-foot {
+  font-size: smaller;
+  color: red;
+}
+
+/* ------------------------------------
+  INPUT RADIO
+------------------------------------ */
+.ats-dataform .radiobox.block {
+  display: block;
+}
+
+.ats-dataform .radiobox.inline {
+  display: inline-block;
+}
+
+/* ------------------------------------
+  INPUT SWITCH
+  Componentes:
+    Label.switch
+    Input.checkbox
+    Span.slider
+------------------------------------ */
+.ats-dataform .switch {
+  position: relative;
+  display: inline-block;
+}
+
+.ats-dataform .switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ats-dataform .switch span.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.ats-dataform .switch span.slider:before {
+  position: absolute;
+  content: "";
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+
+  border-radius: 50%;
+}
+
+.ats-dataform .switch input:checked+.slider::before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}

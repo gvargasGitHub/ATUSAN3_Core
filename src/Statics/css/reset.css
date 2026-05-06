@@ -1,0 +1,306 @@
+ /*
+ * Framework StyleSheet Library v2.0.0
+ *
+ * Fecha: 2019-11-14
+*/
+
+ /* v1.0 | 2008-02-12 */
+ /*
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  RESET: Neutraliza todos los estilos que aplican por defecto
+  los navegadores y que afecta el aspecto visual de las páginas.
+  
+  Diseñador: Eric Meyer
+  Fuente:http://librosweb.es/libro/css_avanzado/capitulo_2.html
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+*/
+ html,
+ body,
+ div,
+ span,
+ applet,
+ object,
+ iframe,
+ h1,
+ h2,
+ h3,
+ h4,
+ h5,
+ h6,
+ p,
+ blockquote,
+ pre,
+ a,
+ abbr,
+ acronym,
+ address,
+ big,
+ cite,
+ code,
+ del,
+ dfn,
+ em,
+ font,
+ img,
+ ins,
+ kbd,
+ q,
+ s,
+ samp,
+ small,
+ strike,
+ strong,
+ sub,
+ sup,
+ tt,
+ var,
+ b,
+ u,
+ i,
+ center,
+ dl,
+ dt,
+ dd,
+ ol,
+ ul,
+ li,
+ fieldset,
+ form,
+ label,
+ legend,
+ table,
+ caption,
+ tbody,
+ tfoot,
+ thead,
+ tr,
+ th,
+ td {
+   margin: 0;
+   padding: 0;
+   border: 0;
+   outline: 0;
+   vertical-align: baseline;
+   background: transparent;
+ }
+
+ /* Medidas relativas.
+REM: Unidad relativa que refieren al elemento raiz (Root Element) tipicamente 
+el elemento HTML.
+Los navegadores establecen el tamaño de 16px a la fuente como predeterminado.
+Al establecer a 62.5% convierte a 10px haciendo que los valores asignables a
+las fuentes puedan ser 1.2rem, 1.4rem, 1.8rem etc.
+Beneficio:
+ - Escalabilidad de la fuente en base al tamaño del dispositivo.
+ - Facilita al desarrollador la asignación del tamaño de fuente sin preocuparse
+   por la apariencia o ajuste.
+Desventaja:
+ - Puede aumentar la carga de trabajo al navegador.
+*/
+ html {
+   font-size: 62.5%;
+ }
+
+ /* body {
+ 	line-height: 1;
+ } */
+
+ ol,
+ ul {
+   list-style: none;
+ }
+
+ blockquote,
+ q {
+   quotes: none;
+ }
+
+ blockquote:before,
+ blockquote:after,
+ q:before,
+ q:after {
+   content: '';
+   content: none;
+ }
+
+ /* No olvides definir estilos para focus */
+ :focus {
+   outline: 0;
+ }
+
+ /* No olvides resaltar de alguna manera el texto insertado/borrado */
+ ins {
+   text-decoration: none;
+ }
+
+ del {
+   text-decoration: line-through;
+ }
+
+ /* En el código HTML es necesario añadir cellspacing="0" */
+ table {
+   border-collapse: collapse;
+   border-spacing: 0;
+ }
+
+ table th {
+   font-weight: 100;
+ }
+
+ /*
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  Estilos GENERALES
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+*/
+ * {
+   -webkit-box-sizing: border-box;
+   -moz-box-sizing: border-box;
+   box-sizing: border-box;
+ }
+
+ *:before,
+ *:after {
+   -webkit-box-sizing: border-box;
+   -moz-box-sizing: border-box;
+   box-sizing: border-box;
+ }
+
+ /* tamaño del documento al total de la pantalla 
+ * del dispositivo */
+ @media only screen and (max-width:767px) {
+
+   html,
+   body {
+     height: 100%;
+     padding: 0;
+     margin: 0;
+   }
+ }
+
+ body {
+   /* posicion relative para body porque dentro del el
+	 * habrá elementos con posicion absoluta */
+   position: relative;
+   margin: 0;
+   padding: 0;
+   background-color: #ffffff;
+   line-height: 1.5;
+   font-weight: 100;
+ }
+
+ small {
+   font-size: x-small;
+ }
+
+ a {
+   text-decoration: none;
+ }
+
+ a:link,
+ a:visited,
+ a:hover,
+ a:active {
+   color: #696969;
+ }
+
+ h1,
+ h2,
+ h3,
+ h4,
+ h5,
+ h6,
+ .h1,
+ .h2,
+ .h3,
+ .h4,
+ .h5,
+ .h6 {
+   font-family: inherit;
+   font-weight: 500;
+   line-height: 1.1;
+   color: inherit;
+ }
+
+ h1,
+ .h1,
+ h2,
+ .h2,
+ h3,
+ .h3 {
+   margin-top: 20px;
+   margin-bottom: 10px;
+ }
+
+ h4,
+ .h4,
+ h5,
+ .h5,
+ h6,
+ .h6 {
+   margin-top: 10px;
+   margin-bottom: 10px;
+ }
+
+ h1,
+ .h1 {
+   /* font-size: 36px; */
+   font-size: 3.6rem;
+ }
+
+ h2,
+ .h2 {
+   /* font-size: 30px; */
+   font-size: 3.0rem;
+ }
+
+ h3,
+ .h3 {
+   /* font-size: 24px; */
+   font-size: 2.4rem;
+ }
+
+ h4,
+ .h4 {
+   /* font-size: 18px; */
+   font-size: 1.8rem;
+ }
+
+ h5,
+ .h5 {
+   /* font-size: 14px; */
+   font-size: 1.4rem;
+ }
+
+ h6,
+ .h6 {
+   /* font-size: 12px; */
+   font-size: 1.2rem;
+ }
+
+ p {
+   margin: 0 0 10px;
+ }
+
+ strong {
+   font-weight: 700;
+ }
+
+ /*  
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  HTML5 Support by older browsers
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+*/
+ header,
+ content,
+ section,
+ footer,
+ aside,
+ nav,
+ main,
+ article,
+ figure,
+ module {
+   display: block;
+   margin: 0;
+   padding: 0;
+ }

@@ -1,0 +1,174 @@
+/*  
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  Button Group
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+*/
+.ats-btn-group-row,
+.ats-btn-group-column,
+.ats-btn-group-bar {
+  position: relative;
+  margin: 5px;
+}
+
+.ats-btn-group-row:after,
+.ats-btn-group-bar:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+/* buttons behavior */
+.ats-btn:focus,
+.ats-btn:active:focus {
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+
+.ats-btn:hover,
+.ats-btn:focus {
+  color: #333;
+  text-decoration: none;
+}
+
+.ats-btn:active {
+  background-image: none;
+  outline: 0;
+  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+}
+
+.ats-btn:disabled {
+  color: #ccc;
+}
+
+/* Apariencia de bordes alineacion izquierda */
+.ats-btn-align-left .ats-btn,
+.ats-btn-group-column .ats-btn,
+.ats-btn-group-bar .ats-btn {
+  float: left;
+}
+
+.ats-btn-align-left .ats-btn,
+.ats-btn-group-bar .ats-btn {
+  margin-left: -1px;
+}
+
+/* botones intermedios:
+ * elimina las esquinas redondeadas
+ */
+/*.ats-btn-group-row > .ats-btn:not(:first-child):not(:last-child),*/
+.ats-btn-align-left>.ats-btn:not(:first-child):not(:last-child),
+.ats-btn-group-bar>.ats-btn:not(:first-child):not(:last-child) {
+  border-radius: 0;
+}
+
+/* botones al inicio
+ * elimina las esquinas redondeadas de la derecha
+ */
+.ats-btn-align-left>.ats-btn:first-child:not(:last-child),
+.ats-btn-group-bar>.ats-btn:first-child:not(:last-child) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* botones al final
+ * elimina las esquinas redondeadas de la izquierda
+ */
+.ats-btn-align-left>.ats-btn:last-child:not(:first-child),
+.ats-btn-group-bar>.ats-btn:last-child:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* Alineación a la derecha */
+.ats-btn-align-right .ats-btn {
+  float: right;
+}
+
+.ats-btn-align-right .ats-btn {
+  margin-right: -1px;
+}
+
+/* botones intermedios:
+ * elimina las esquinas redondeadas
+ */
+.ats-btn-align-right>.ats-btn:not(:first-child):not(:last-child) {
+  border-radius: 0;
+}
+
+/* botones al inicio
+ * elimina las esquinas redondeadas de la derecha
+ */
+.ats-btn-align-right>.ats-btn:first-child:not(:last-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* botones al final
+ * elimina las esquinas redondeadas de la izquierda
+ */
+.ats-btn-align-right>.ats-btn:last-child:not(:first-child) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* column */
+.ats-btn-group-column>.ats-btn {
+  display: block;
+  float: none;
+  width: 100%;
+  max-width: 100%;
+}
+
+.ats-btn-group-column>.ats-btn+.ats-btn {
+  margin-top: -1px;
+  margin-left: 0;
+}
+
+.ats-btn-group-column>.ats-btn:not(:first-child):not(:last-child) {
+  border-radius: 0;
+}
+
+.ats-btn-group-column>.ats-btn:first-child:not(:last-child) {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.ats-btn-group-column>.ats-btn:last-child:not(:first-child) {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.ats-btn {
+  position: relative;
+  cursor: pointer;
+  font-size: inherit;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  border: 1px solid #adadad;
+  border-radius: 4px;
+
+  background: #e6e6e6;
+
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-top-colors: none;
+}
+
+.ats-btn i {
+  margin-right: 5px;
+}

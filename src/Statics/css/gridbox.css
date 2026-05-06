@@ -1,0 +1,77 @@
+.ats-row {
+  display: table;
+  width: 100%;
+}
+
+.ats-row::after {
+  content: "";
+  clear: both;
+}
+
+/* Característica Responsive para móviles */
+[class^="ats-col-"] {
+  display: block;
+  width: 100%;
+  overflow: auto;
+}
+
+/*
+	para pantallas mayores a 768px re-dimensiona las columnas
+	según su tamaño específico.
+*/
+@media only screen and (min-width: 768px) {
+  [class^="ats-col-"] {
+    position: relative;
+    display: table-cell;
+    overflow: visible;
+  }
+
+  /* For desktop: */
+  .ats-col-1 {
+    width: 8.33%;
+  }
+
+  .ats-col-2 {
+    width: 16.66%;
+  }
+
+  .ats-col-3 {
+    width: 25%;
+  }
+
+  .ats-col-4 {
+    width: 33.33%;
+  }
+
+  .ats-col-5 {
+    width: 41.66%;
+  }
+
+  .ats-col-6 {
+    width: 50%;
+  }
+
+  .ats-col-7 {
+    width: 58.33%;
+  }
+
+  .ats-col-8 {
+    width: 66.66%;
+  }
+
+  .ats-col-9 {
+    width: 75%;
+  }
+
+  .ats-col-10 {
+    width: 83.33%;
+  }
+
+  .ats-col-11 {
+    width: 91.66%;
+  }
+
+  .ats-col-12 {
+    width: 100%;
+  }
+}

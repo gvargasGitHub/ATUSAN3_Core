@@ -1,0 +1,133 @@
+.ats-datagrid {
+  position: relative;
+  clear: both;
+  padding-right: 2px;
+  /* evita la activacion de la scroll bar */
+  padding-bottom: 2px;
+  /* evita la activación de la scroll bar */
+  margin: 5px;
+  overflow: auto;
+  border: 1px solid aqua;
+}
+
+.ats-datagrid * {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.ats-datagrid div.body {
+  overflow: auto;
+}
+
+.ats-datagrid div.body>table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.ats-datagrid div.body>table>thead>tr>th,
+.ats-datagrid div.body>table>tbody>tr>td,
+.ats-datagrid div.body>table>tfoot>tr>td {
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* ------------------------------------
+  INPUTS
+------------------------------------ */
+.ats-datagrid input,
+.ats-datagrid select {
+  border: none;
+  background-color: transparent;
+}
+
+/* ------------------------------------
+  ACTION
+------------------------------------ */
+.ats-datagrid .action {
+  cursor: pointer;
+  margin: 0 2px;
+}
+
+/* ------------------------------------
+  ICON STATES
+------------------------------------ */
+.ats-datagrid div.body td.data span.state-text {
+  margin-left: 3px;
+  font: inherit;
+}
+
+/* ------------------------------------
+  MENU OPTIONS
+------------------------------------ */
+.ats-datagrid div.body td.menu-options div.content {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  opacity: 0.9;
+
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+}
+
+.ats-datagrid div.body td.menu-options div.content.show {
+  display: block;
+  transition: 0.5s;
+}
+
+.ats-datagrid div.body td.menu-options div.content a.option {
+  display: block;
+}
+
+/* .ats-datagrid div.body td.menu-options div.content a.option i {
+  margin-right: 3px;
+} */
+
+/* ------------------------------------
+  INPUT SWITCH
+  Componentes:
+    Label.switch
+    Input.checkbox
+    Span.slider
+------------------------------------ */
+.ats-datagrid .switch {
+  position: relative;
+  display: inline-block;
+}
+
+.ats-datagrid .switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ats-datagrid .switch span.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.ats-datagrid .switch span.slider:before {
+  position: absolute;
+  content: "";
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+
+  border-radius: 50%;
+}
+
+.ats-datagrid .switch input:checked+.slider::before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}

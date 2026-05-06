@@ -1,0 +1,70 @@
+#!/usr/bin/env php
+<?php
+
+require_once dirname(__DIR__) . '/bootstrap.php';
+
+use AtusanCLI\Application;
+
+$app = new Application();
+$app->run($argv);
+
+/*
+Esa línea se llama shebang y tiene este propósito:
+
+#!/usr/bin/env php
+
+Indica el intérprete
+Le dice al sistema operativo que ejecute el archivo con PHP cuando se ejecute como script.
+
+Portabilidad
+
+/usr/bin/env php busca la ubicación de php en el PATH del usuario.
+
+Esto es más flexible que poner la ruta fija /usr/bin/php.
+
+Útil en Linux/macOS
+Permite ejecutar tu CLI directamente:
+
+./atusan-cli make:controller UserController
+
+sin tener que escribir:
+
+php atusan-cli make:controller UserController
+
+En Windows, esta línea no tiene efecto, porque Windows no interpreta shebang; allí siempre se ejecuta con php o un .bat.
+
+--------------------------------------------
+Para Linux/Mac:
+--------------------------------------------
+Dar permisos de ejecución:
+chmod +x atusan-cli
+
+Ejecutar:
+./atusan-cli
+--------------------------------------------
+Para Windows:
+--------------------------------------------
+1. Ejecutarlo con PHP directamente
+* Abre PowerShell o CMD:
+php C:\ruta\a\atusan-cli make:controller UserController
+Esto funciona aunque el archivo no tenga “permisos de ejecución”.
+
+2. Crear un archivo .bat que actúe como ejecutable
+Crea un archivo atusan.bat en la misma carpeta:
+@echo off
+php "%~dp0\atusan-cli" %*
+%~dp0 apunta a la carpeta del .bat
+%* pasa todos los argumentos
+
+Ahora puedes ejecutar desde CMD:
+atusan.bat make:controller UserController
+
+Opcional: agrega la carpeta del .bat a la variable PATH de Windows para usarlo desde cualquier lugar.
+
+3. Asociar archivos .php con PHP CLI
+Si quieres solo escribir:
+atusan-cli make:controller UserController
+Asegúrate de que php.exe esté en el PATH
+
+Agrega la extensión .php como ejecutable para el comando CLI (menos común en Windows, la opción .bat es más estable)
+*/

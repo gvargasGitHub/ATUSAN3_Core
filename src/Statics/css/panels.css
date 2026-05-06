@@ -1,0 +1,25 @@
+/*
+ * mf-panel
+ * https://www.w3schools.com/howto/howto_css_equal_height.asp
+ */
+.ats-panel {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+
+.ats-panel .panel {
+  display: table-cell;
+  vertical-align: top;
+  /* evita que los contenidos de los demas paneles se muevan */
+  overflow: hidden;
+}
+
+.ats-panel .panel.left,
+.ats-panel .panel.right {
+  overflow: scroll;
+}
+
+.ats-panel .panel.content {
+  background-color: transparent;
+}

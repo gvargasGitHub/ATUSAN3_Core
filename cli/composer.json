@@ -1,0 +1,10 @@
+{
+  "name": "gvargas/atusan-cli",
+  "type": "library",
+  "bin": [
+    "bin/atusan"
+  ],
+  "require": {
+    "gvargas/atusan-core": "^1.0"
+  }
+}

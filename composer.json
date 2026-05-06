@@ -1,0 +1,23 @@
+{
+    "name": "gvargas/atusan-core",
+    "description": "ATUSAN PHP Framework",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Atusan\\": "src/"
+        }
+    },
+    "bin": [
+        "cli/bin/atusan-cli"
+    ],
+    "extra": {
+        "atusan": {
+            "public": "public/"
+        }
+    },
+    "require": {
+        "php": ">=8.0"
+    },
+    "minimum-stability": "stable"
+}

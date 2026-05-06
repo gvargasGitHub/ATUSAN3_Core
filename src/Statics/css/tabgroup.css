@@ -1,0 +1,69 @@
+.ats-tabgroup .buttons {
+  overflow: hidden;
+}
+
+.ats-tabgroup .buttons button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.ats-tabgroup .buttons button .badge {
+  margin-left: 10px;
+  padding: 5px 10px;
+  border-radius: 50%;
+}
+
+.ats-tabgroup .buttons button i.close {
+  display: none;
+}
+
+.ats-tabgroup .buttons button i.close::before {
+  content: "\D7";
+}
+
+.ats-tabgroup .buttons button.closeable i.close {
+  display: block;
+  float: right;
+  margin-right: 3px;
+  /* padding: 0 8px; */
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ats-tabgroup .contents .content {
+  display: none;
+}
+
+.ats-tabgroup .contents .content.show {
+  display: block;
+}
+
+.ats-tabgroup .contents .content {
+  -webkit-animation: fadeEffect 1s;
+  animation: fadeEffect 1s;
+  /* Fading effect takes 1 second */
+}
+
+@-webkit-keyframes fadeEffect {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeEffect {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

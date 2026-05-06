@@ -1,0 +1,39 @@
+# ===============================================================
+#   ARCHIVOS QUE DEBEN SER IGNORADOS (SEGURIDAD Y LIMPIEZA)
+# ===============================================================
+
+# Archivos sensibles
+.env
+*.key
+
+# Bitacora de versiones & mejoras
+version.xml
+
+# Logs
+*.log
+/logs/
+/system/logs/
+php_errors.log
+
+# Cache
+/cache/
+/system/cache/
+
+# Archivos temporales
+*.tmp
+*.bak
+*.swp
+*.old
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# Comprimidos locales
+*.zip
+*.rar
+*.7z

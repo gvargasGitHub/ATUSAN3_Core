@@ -1,0 +1,148 @@
+nav {
+  z-index: 1;
+}
+
+.ats-navbar {
+  display: table;
+  width: 100%;
+}
+
+.ats-navbar::after {
+  content: "";
+  clear: both;
+}
+
+.ats-navbar .title {
+  float: left;
+  cursor: default;
+}
+
+.ats-navbar>ul {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.ats-navbar>ul>li {
+  display: inline;
+  cursor: pointer;
+}
+
+.ats-navbar>ul>li.item>i.icon {
+  margin-right: 3px;
+}
+
+.ats-navbar>ul.left,
+.ats-navbar>ul.left>li {
+  float: left;
+}
+
+.ats-navbar>ul.right,
+.ats-navbar>ul.right>li {
+  float: right;
+}
+
+.ats-navbar i.caret {
+  cursor: pointer;
+  user-select: none;
+  margin-left: 3px;
+}
+
+.ats-navbar i.caret::before {
+  content: "\25BA";
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.ats-navbar>ul>li.dropdown.show>i.caret::before {
+  transform: rotate(90deg);
+}
+
+.ats-navbar>ul>li.dropdown>div.content {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  opacity: 0.9;
+}
+
+.ats-navbar>ul.right>li.dropdown>div.content *:not(li) {
+  right: 0;
+}
+
+.ats-navbar>ul>li.dropdown.show>div.content {
+  display: block;
+  transition: 0.5s;
+}
+
+/*-------------------------------------
+  BAR RESPONSIVE
+-------------------------------------*/
+.ats-navbar>div.bars {
+  display: none;
+  float: right;
+  cursor: pointer;
+}
+
+.ats-navbar>div.bars>div.bar {
+  width: 20px;
+  height: 3px;
+  margin: 2px;
+  transition: 0.4s;
+}
+
+.ats-navbar>div.bars div.bar {
+  background-color: gray;
+}
+
+.ats-navbar>div.bars.transform div.bar1 {
+  -webkit-transform: rotate(-45deg) translate(-2px, 5px);
+  transform: rotate(-45deg) translate(-2px, 5px);
+}
+
+.ats-navbar>div.bars.transform div.bar2 {
+  opacity: 0;
+}
+
+.ats-navbar>div.bars.transform div.bar3 {
+  -webkit-transform: rotate(45deg) translate(-2px, -5px);
+  transform: rotate(45deg) translate(-2px, -5px);
+}
+
+@media screen and (max-width: 768px) {
+
+  .ats-navbar>ul>li {
+    display: none;
+  }
+
+  .ats-navbar>div.bars {
+    display: block;
+  }
+
+  .ats-navbar.responsive {
+    position: relative;
+  }
+
+  .ats-navbar.responsive>ul,
+  .ats-navbar.responsive>ul>li {
+    display: block;
+    width: 100%;
+    float: left;
+    text-align: left;
+  }
+
+  .ats-navbar.responsive>ul>li.dropdown>div.content {
+    position: relative;
+    box-shadow: none;
+  }
+
+  /* Esta regla es necesaria porque el bloque "bars"
+  se el último elemento anidado del bloque "ats-navbar".
+  Se comenta porque ahora el bloque "bars" es el primer
+  elemento anidado y, por lo tanto, ya no es neceario
+  posicionarlo */
+  /* .ats-navbar.responsive>div.bars {
+    position: absolute;
+    top: 0;
+    right: 0;
+  } */
+}

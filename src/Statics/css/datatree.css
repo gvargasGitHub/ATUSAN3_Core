@@ -1,0 +1,77 @@
+.ats-datatree {
+  position: relative;
+  clear: both;
+  padding-right: 10px;
+  /* evita la activacion de la scroll bar */
+  padding-bottom: 2px;
+  /* evita la activación de la scroll bar */
+  margin: 5px;
+  overflow: auto;
+}
+
+.ats-datatree * {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.ats-datatree div.body ul,
+.ats-datatree div.body li,
+.ats-datatree div.body tr,
+.ats-datatree div.body td {
+  margin: 0;
+  padding: 0;
+}
+
+.ats-datatree div.body ul li {
+  cursor: default;
+}
+
+.ats-datatree div.body table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.ats-datatree div.body td[type="data"] {
+  white-space: pre-line;
+  vertical-align: middle;
+}
+
+.ats-datatree div.body td.caret {
+  cursor: pointer;
+  user-select: none;
+}
+
+.ats-datatree div.body td.caret,
+.ats-datatree div.body td.nocaret,
+.ats-datatree div.body td[type="check"] {
+  width: 20px;
+}
+
+.ats-datatree div.body td.caret::before {
+  content: "\25BA";
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.ats-datatree div.body td.caret.down::before {
+  transform: rotate(90deg);
+}
+
+.ats-datatree div.body td[type="actions"] {
+  text-align: right;
+}
+
+.ats-datatree div.body td[type="actions"] .action {
+  display: inline-block;
+  margin-right: 4px;
+  cursor: pointer;
+}
+
+.ats-datatree div.body ul.content {
+  display: none;
+}
+
+.ats-datatree div.body ul.content.show {
+  display: block;
+}
