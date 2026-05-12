@@ -7,7 +7,7 @@ use Exception;
 
 class Template
 {
-  public static $app;
+  // public static $app;
   public static $module;
 
   /**
@@ -60,7 +60,7 @@ class Template
    */
   static public function extend($layout)
   {
-    $viewfile = static::locateFile(APP_DIRECTORY, $layout);
+    $viewfile = FileSystem::locateFile(APP_DIRECTORY, $layout);
 
     if ($viewfile === false)
       throw new Exception("El sistema no puede encontrar {$layout}");

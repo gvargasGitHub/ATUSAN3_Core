@@ -157,4 +157,54 @@ class FileSystem
       }
     }
   }
+
+  /**
+   * Busca recursivamente hacia arriba hasta encontrar
+   * la carpeta raíz del proyecto.
+   *
+   * Criterios de validación:
+   * - existencia de /app
+   * - existencia de /public
+   *
+   * Retorna:
+   * - string Ruta raíz encontrada
+   * - false  Si no encuentra la raíz
+   */
+  static function findRoot(string $startPath)
+  {
+      $current = realpath($startPath);
+
+      if ($current === false) {
+          return false;
+      }
+
+      // Si recibe archivo, tomar su directorio
+      if (is_file($current)) {
+          $current = dirname($current);
+      }
+
+      while (true) {
+
+          $appDir    = $current . DIRECTORY_SEPARATOR . 'app';
+          $publicDir = $current . DIRECTORY_SEPARATOR . 'public';
+
+          $isRoot =
+              is_dir($appDir) &&
+              is_dir($publicDir);
+
+          if ($isRoot) {
+              return $current;
+          }
+
+          // Subir un nivel
+          $parent = dirname($current);
+
+          // Llegó al nivel máximo
+          if ($parent === $current) {
+              return false;
+          }
+
+          $current = $parent;
+      }
+  }
 }
