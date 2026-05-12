@@ -25,7 +25,7 @@ class Bootstrap
 
     // Constantes de directorios
     define('DS', DIRECTORY_SEPARATOR);
-    define('APP_ROOT', dirname($_SERVER['DOCUMENT_ROOT'], 1));
+    define('APP_ROOT', FileSystem::findRoot(__DIR__));
     define('APP_CORE', dirname(__DIR__, 2));
 
     /*
@@ -51,7 +51,6 @@ class Bootstrap
 
     // Registro de manejo de errores
     Errors::register();
-
     /*
     |--------------------------------------------------------------------------
     | Integración de App
