@@ -16,7 +16,11 @@ class XMLLoader
     // Propiedad unica de la clase para proveer mensaje de error
     self::$errstr = '';
 
-    // Valida primeramente si el archivo existe
+    // Verifica la extension
+    $info = pathinfo($filename);
+    if (!isset($info['extension'])) $filename .= '.xml';
+
+    // Valida si el archivo existe
     if (!XMLValidator::exists($filename)) {
       self::$errstr = basename($filename) . ' no existe';
       return false;

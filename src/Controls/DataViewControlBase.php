@@ -8,17 +8,15 @@ use Atusan\XML\XMLExtended;
 
 abstract class DataViewControlBase extends Control
 {
-
-  /**
-   * @var
-   * String $type
-   */
   protected string $type;
 
   protected array $data;
 
   protected int $row;
 
+  /**
+   * 
+   */
   function __construct(Module $owner, XMLExtended $xml)
   {
     parent::__construct($owner, $xml);

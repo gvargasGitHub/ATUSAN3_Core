@@ -11,7 +11,7 @@ trait TraitComponentNest
   use TraitComponent;
 
   /**
-   * @var Array $source
+   * @var array $source
    * Cada clase "Component" puede definir 1 o más fuentes de
    * declaraciones de "Componentes". Este arreglo es la
    * colección de fuentes.
@@ -19,7 +19,7 @@ trait TraitComponentNest
   protected ComponentSourcesIterator $sources;
 
   /**
-   * @var Array components
+   * @var ComponentsIterator components
    * Diccionario de "Componentes" integrados a la clase. La clase
    * presente es el "propietario (owner)" de los "Componentes"
    * integrados a este diccionario.
@@ -27,7 +27,7 @@ trait TraitComponentNest
   protected ComponentsIterator $components;
 
   /**
-   * @var Int $noNameCounter
+   * @var int $noNameCounter
    */
   protected int $noNameCounter = 0;
 
@@ -36,7 +36,7 @@ trait TraitComponentNest
    * Permite que los "Components" sean accesibles como propiedades
    * públicas del objeto.
    */
-  function __get($name)
+  function __get(string $name)
   {
     return $this->components->getByName($name) ?? null;
   }
@@ -56,7 +56,7 @@ trait TraitComponentNest
    * declaración de los nombres de espacios y procesa la
    * integración.
    */
-  protected function buildXML($xml): XMLExtended
+  protected function buildXML(XMLExtended $xml): XMLExtended
   {
     $nss = [];
     foreach ($this->namespaces as $ns => $url) {

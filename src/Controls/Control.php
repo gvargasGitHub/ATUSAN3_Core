@@ -3,13 +3,12 @@
 namespace Atusan\Controls;
 
 use Atusan\Components\Component;
-use Atusan\Components\ComponentInterface;
 
 abstract class Control extends Component
 {
-  protected ComponentInterface $parent;
+  protected Component $parent;
 
-  public function setParent(ComponentInterface $parent)
+  public function setParent(Component $parent)
   {
     $this->parent = $parent;
   }

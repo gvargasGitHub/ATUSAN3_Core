@@ -6,6 +6,9 @@ use Atusan\Types\MenuOptionType;
 
 class DataGridControl extends DataViewControlBase
 {
+  /**
+   * Write
+   */
   public function write(): void
   {
     match ($this->type) {
@@ -21,7 +24,8 @@ class DataGridControl extends DataViewControlBase
       'Check' => $this->InputCheck(),
       'Switch' => $this->InputSwitch(),
       'Select' => $this->InputSelect(),
-      'Menu' => $this->menuOptions()
+      'Menu' => $this->MenuOptions(),
+      'Case' => $this->Case()
     };
   }
 
@@ -122,7 +126,7 @@ class DataGridControl extends DataViewControlBase
   <?php
   }
 
-  protected function menuOptions()
+  protected function MenuOptions()
   {
   ?>
     <td id="<?= $this->getId() ?>" type="menu" class="menu-options"
@@ -131,24 +135,17 @@ class DataGridControl extends DataViewControlBase
       <i id="<?= $this->getId() ?>-menu" type="menu" class="fa fa-ellipsis-v"></i>
       <div class="content menu-options-content">
         <?php
-        foreach ($this->xml->Options->children() as $opt) {
-          $motype = $this->menuOptionType($opt);
+        foreach ($this->xml->children() as $opt) {
+          $motype = new MenuOptionType($this->parent->name, $this->row, $opt);
         ?>
           <a class="option" style="display: block;" onclick="(event) => event.preventDefault()" <?= $motype->buildPairs() ?>>
-            <i class="<?= $opt->getAttribute('icon') ?>" style="margin-right: 3px"></i><?= $opt->getAttribute('text') ?></a>
+            <i class="<?= $motype->icon ?>" style="margin-right: 3px"></i><?= $motype->text ?></a>
         <?php
         }
         ?>
       </div>
     </td>
   <?php
-  }
-
-  public function menuOptionType($xml)
-  {
-    $name = ($xml->hasAttribute('name')) ? $xml->getAttribute('name') : "item{$this->index}";
-
-    return new MenuOptionType($this->parent->name, $name, $this->row);
   }
 
   /**
@@ -223,5 +220,37 @@ class DataGridControl extends DataViewControlBase
       </label>
     </td>
 <?php
+  }
+
+  /**
+   * Case
+   * @attribute string name   : El nombre del campo origen.
+   * @attribute string resolve: El nombre del método responsable de retornar
+   *  el tipo de control que será construido.
+   * 
+   * Los hijos de este elemento son declaraciones de controles. Cada declaración
+   * debe incluir el atributo "match" el cual debe contener el valor que coincida
+   * con el retorno del método definido en "resolve";
+   */
+  protected function Case()
+  {
+    if (($resolve = $this->xml->getAttribute('resolve')) == null) trigger_error($this->name . ' requiere el atributo "resolve."', E_USER_ERROR);
+    
+    if (!method_exists($this->parent->getOwner(), $resolve)) trigger_error("$resolve no existe en {$this->parent->getOwner()->name}", E_USER_ERROR);
+    
+    $value = $this->parent->getOwner()->$resolve($this->getData());
+
+    foreach($this->xml->children() as $case) {
+      if ($case->getAttribute('match') == $value) {
+        $case->setAttribute('name', $this->name);
+
+        $caseControl = static::fromXML($this->parent->getOwner(), $case);
+        $caseControl->setParent($this->parent);
+        $caseControl->setRow($this->row);
+        $caseControl->setData($this->getData());
+        
+        return $caseControl->write();
+      }
+    }
   }
 }

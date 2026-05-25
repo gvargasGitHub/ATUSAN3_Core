@@ -7,7 +7,7 @@
     <div class="body">
       <?php
       if (!empty($this->view))
-        include $this->locateViewFile($this->view);
+        include $this->locateResource($this->view);
       else {
         foreach ($this->components as $component) $component->write();
       }

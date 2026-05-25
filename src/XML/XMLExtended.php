@@ -9,18 +9,18 @@ class XMLExtended extends SimpleXMLElement
   /**
    * Get Attribute
    */
-  public function getAttribute(string $name, string $namespace = null, bool $prefix = false): string
+  public function getAttribute(string $name, string | null $namespace = null, bool $prefix = false): string | null
   {
-    return (string) $this->attributes($namespace, $prefix)->$name;
+    return ($this->hasAttribute($name, $namespace, $prefix)) ?
+       (string) $this->attributes($namespace, $prefix)->$name
+       : null;
   }
 
   /**
    * Set Attribute
    */
-  public function setAttribute(string $name, mixed $value, string $namespace = null)
+  public function setAttribute(string $name, mixed $value, string | null $namespace = null)
   {
-    $ns = ($namespace) ?: null;
-
     if ($this->hasAttribute($name, $namespace, 1))
       $this->attributes($namespace, 1)->$name = $value;
     else
@@ -30,7 +30,7 @@ class XMLExtended extends SimpleXMLElement
   /**
    * Get Element Child
    */
-  public function getChild(int $index): XMLExtended
+  public function getChild(int $index): XMLExtended | false
   {
     $child = false;
     $i = 0;
@@ -93,7 +93,7 @@ class XMLExtended extends SimpleXMLElement
     return implode(' ', $output);
   }
 
-  public function buildPairs($separator, $keyval, $valwrap, $ns = ''): string
+  public function buildPairs(string $separator, string $keyval, string $valwrap, $ns = ''): string
   {
     $output = [];
 
@@ -101,13 +101,5 @@ class XMLExtended extends SimpleXMLElement
       $output[] = "{$k}{$keyval}{$valwrap}{$v}{$valwrap}";
 
     return implode($separator, $output);
-  }
-
-  /**
-   * 
-   */
-  public function writex()
-  {
-    echo str_replace('<?xml version="1.0"?>', '', $this->asXml());
   }
 }

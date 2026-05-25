@@ -25,7 +25,7 @@ class SubnavbarControl extends Control
     match (strtolower($this->type)) {
       'item' => $this->Item(),
       'content' => $this->Content(),
-      'separator' => $this->Separator(),
+      // 'separator' => $this->Separator(),
       'view' => $this->View()
     };
   }
@@ -63,7 +63,7 @@ class SubnavbarControl extends Control
     <div class="subnav ddClickEv">
       <button class="subnavbtn"><i class="icon <?= $miType->icon ?>"></i><?= $miType->text ?> <i class="caret"></i></button>
       <div class="subnav-content">
-        <?php include $this->parent->locateViewFile($miType->view) ?>
+        <?php include $this->parent->locateResource($miType->view) ?>
       </div>
     </div>
 <?php

@@ -12,11 +12,11 @@ abstract class Module extends Controller
 {
   use TraitComponentNest;
 
-  protected $directory;
+  protected string $directory;
 
-  protected $template;
+  protected string $template;
 
-  protected $title;
+  protected string $title;
 
   function __construct()
   {

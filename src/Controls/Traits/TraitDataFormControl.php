@@ -2,6 +2,10 @@
 
 namespace Atusan\Controls\Traits;
 
+// use Atusan\Components\Traits\TraitComponent;
+// use Atusan\Components\Traits\TraitComponentNest;
+// use Atusan\Controls\DataFormControl;
+
 trait TraitDataFormControl
 {
   protected function Csrf()
@@ -172,5 +176,37 @@ trait TraitDataFormControl
       <Span class="slider"></Span>
     </label><br />
 <?php
+  }
+
+  /**
+   * Case
+   * @attribute string name   : El nombre del campo origen.
+   * @attribute string resolve: El nombre del método responsable de retornar
+   *  el tipo de control que será construido.
+   * 
+   * Los hijos de este elemento son declaraciones de controles. Cada declaración
+   * debe incluir el atributo "match" el cual debe contener el valor que coincida
+   * con el retorno del método definido en "resolve";
+   */
+  protected function Case()
+  {
+    if (($resolve = $this->xml->getAttribute('resolve')) == null) trigger_error($this->name . ' requiere el atributo "resolve."', E_USER_ERROR);
+    
+    if (!method_exists($this->parent->getOwner(), $resolve)) trigger_error("$resolve no existe en {$this->parent->getOwner()->name}", E_USER_ERROR);
+    
+    $value = $this->parent->getOwner()->$resolve($this->getData());
+
+    foreach($this->xml->children() as $case) {
+      if ($case->getAttribute('match') == $value) {
+        $case->setAttribute('name', $this->name);
+
+        // $caseControl = DataFormControl::fromXML($this->parent->getOwner(), $case);
+        // $caseControl->setParent($this->parent);
+        // $caseControl->setData($this->getData());
+        
+        // return $caseControl->write();
+        echo "<strong>{$this->name}</strong>";
+      }
+    }
   }
 }

@@ -36,7 +36,7 @@ class NavbarControl extends Control
 
 ?>
     <li class="item itemClickEv" <?= $miType->pairs() ?>><i class="icon <?= $miType->icon ?>"></i><?= $miType->text ?>
-      <?php if (!empty($miType->view)) include $this->parent->locateViewFile($miType->view) ?>
+      <?php if (!empty($miType->view)) include $this->parent->locateResource($miType->view) ?>
     </li>
   <?php
   }
@@ -68,7 +68,7 @@ class NavbarControl extends Control
     <li class="item dropdown ddClickEv">
       <?= $miType->text ?><i class="caret"></i>
       <div class="content">
-        <?php include $this->parent->locateViewFile($miType->view) ?>
+        <?php include $this->parent->locateResource($miType->view) ?>
       </div>
     </li>
 <?php

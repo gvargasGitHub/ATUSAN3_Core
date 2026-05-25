@@ -11,7 +11,7 @@ if (count($this->data) == 0) $this->data[0] = [];
 
   // Escribe la vista
   if (!empty($this->view))
-    include $this->locateViewFile($this->view);
+    include $this->locateResource($this->view);
   else
     foreach ($this->components as $component) $component->write();
   ?>
