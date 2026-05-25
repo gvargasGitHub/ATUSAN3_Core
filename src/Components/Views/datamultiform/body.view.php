@@ -8,7 +8,7 @@ if (empty($this->route)) $this->route = $_SERVER['REQUEST_URI']; ?>
       $component->setData($this->data[0]);
 
   if (!empty($this->view))
-    include $this->locateViewFile($this->view);
+    include $this->locateResource($this->view);
   else {
     $this->writeSection('TopForm');
     $this->writeSection('StepForm');

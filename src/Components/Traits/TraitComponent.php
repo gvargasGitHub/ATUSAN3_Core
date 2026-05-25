@@ -2,7 +2,7 @@
 
 namespace Atusan\Components\Traits;
 
-use Atusan\Controller\Controller;
+use Atusan\Components\Component;
 use Atusan\Controller\Module;
 use Atusan\FileSystem\FileSystem;
 use Atusan\XML\XMLExtended;
@@ -12,14 +12,14 @@ use Exception;
 trait TraitComponent
 {
   /**
-   * @var $name
+   * @var string $name
    */
   public string $name;
 
   /**
-   * @var $owner
+   * @var Module $owner
    */
-  protected Controller $owner;
+  protected Module $owner;
 
   /**
    * @var XMLExtended $xml
@@ -30,14 +30,21 @@ trait TraitComponent
   protected XMLExtended|false $xml;
 
   /**
-   * @var Array $namespaces
+   * @var string $layout
+   */
+  protected string $layout = '';
+
+  /**
+   * @var array $namespaces
    */
   protected array $namespaces;
 
   /**
-   * 
+   * fromXML
+   * Puede retornar "Component" para la mayoría de los casos.
+   * En el caso de "Panel" y "TabContent" puede retornar "Module".
    */
-  static function fromXML(Module $owner, XMLExtended $xml): static
+  static function fromXML(Module $owner, XMLExtended $xml): Component | Module
   {
     return new static($owner, $xml);
   }
@@ -53,14 +60,14 @@ trait TraitComponent
   /**
    * 
    */
-  public function getOwner(): Controller
+  public function getOwner(): Module
   {
     return $this->owner;
   }
   /**
    * 
    */
-  public function setOwner($owner)
+  public function setOwner(Module $owner)
   {
     $this->owner = $owner;
   }
@@ -82,8 +89,9 @@ trait TraitComponent
         if (isset($v)) $this->$k = (string) $v;
     }
 
-    if (property_exists($this, 'layout')) {
-      $xmlext = XMLLoader::load($this->layout);
+    if (!empty($this->layout)) {
+      // Obtiene recurso XML
+      $xmlext = XMLLoader::load($this->locateResource($this->layout));
 
       if ($xmlext === false)
         throw new Exception(XMLLoader::getError());
@@ -93,23 +101,25 @@ trait TraitComponent
         if (isset($v)) $this->$k = (string) $v;
 
       // integra la extensión al controlador
-      $this->xml->extend($xmlext);
+      foreach($xmlext->children() as $ext) $this->xml->extend($ext);
     }
 
     unset($this->xmlRef);
   }
+
   /**
    * 
    */
-  public function locateViewFile(string $viewname): string
+  public function locateResource(string $viewname): string
   {
     $directories = [$this->owner->getDirectory(), APP_DIRECTORY];
     for ($d = 0; $d < count($directories); $d++) {
+      // pasa el directorio en turno y el nombre del componente final
       $located = FileSystem::locateFile($directories[$d], basename($viewname));
 
       if ($located) return $located;
     }
 
-    trigger_error("La vista {$viewname} no existe", E_USER_ERROR);
+    trigger_error("El recurso {$viewname} no existe", E_USER_ERROR);
   }
 }

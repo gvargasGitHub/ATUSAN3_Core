@@ -12,7 +12,7 @@ class FileSystem
   /**
    * Exists
    */
-  public static function exists($filename): bool
+  public static function exists(string $filename): bool
   {
     return @file_exists($filename);
   }
@@ -29,6 +29,10 @@ class FileSystem
 
   /**
    * Locate File
+   * @param string $root : ruta origen
+   * @param string $name : nombre.ext del archivo
+   * 
+   * @return string | false
    */
   static public function locateFile(string $root, string $name): string | false
   {
@@ -45,7 +49,6 @@ class FileSystem
       // Valida si es directorio o archivo
       if (is_dir($filename))
         $filename = static::locateFile($filename, $name);
-
       if (pathinfo($filename, PATHINFO_FILENAME) == $name) return $filename;
     }
 

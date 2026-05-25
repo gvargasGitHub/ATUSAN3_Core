@@ -2,6 +2,7 @@
 
 namespace Atusan\Components;
 
+use Atusan\Controls\DataViewControlBase;
 use Atusan\XML\XMLExtended;
 
 class Subnavbar extends ComponentNest

@@ -26,7 +26,8 @@ class DataFormControl extends DataViewControlBase
       'password' => $this->InputBasic(),
       'radio' => $this->inputRadio(),
       'switch' => $this->inputSwitch(),
-      'select' => $this->inputSelect()
+      'select' => $this->inputSelect(),
+      'case' => $this->Case()
     };
   }
 

@@ -15,8 +15,6 @@ class Log
 
   static function error(string $text, array $trace = [])
   {
-    $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
-
     error_log(
       date('H:i:s') . ": {$text} \n",
       3,

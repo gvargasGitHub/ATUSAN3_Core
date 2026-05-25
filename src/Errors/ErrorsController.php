@@ -41,6 +41,8 @@ class ErrorsController
       default:
         // limpia el BUFFER de salida
         while (ob_get_length() !== false) ob_end_clean();
+        
+        Log::error("{$errstr} in {$errfile}:{$errline}");
 
         exit(Response::instance()->unknow($errstr, "{$errstr} in {$errfile}:{$errline}"));
     }
@@ -57,13 +59,18 @@ class ErrorsController
    */
   public static function handle_exceptions(Throwable $ex)
   {
-    Log::error(get_class($ex) . ':' . $ex->getMessage() . ' in ' . $ex->getFile() . ':' . $ex->getLine());
+    // Log::error(get_class($ex) . ':' . $ex->getMessage() . ' in ' . $ex->getFile() . ':' . $ex->getLine());
+    Log::error(get_class($ex) . ':' . $ex->getMessage());
     // limpia el BUFFER de salida
     while (ob_get_length() !== false) ob_end_clean();
 
+    // exit(Response::instance()->error(
+    //   $ex->getMessage(),
+    //   get_class($ex) . ':' . $ex->getFile() . ':' . $ex->getLine()
+    // ));
     exit(Response::instance()->error(
       $ex->getMessage(),
-      get_class($ex) . ':' . $ex->getFile() . ':' . $ex->getLine()
+      get_class($ex)
     ));
   }
 
