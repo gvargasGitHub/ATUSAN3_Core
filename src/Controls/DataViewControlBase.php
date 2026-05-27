@@ -2,11 +2,12 @@
 
 namespace Atusan\Controls;
 
+use Atusan\Components\Component;
 use Atusan\Controller\Module;
-use Atusan\Types\ControlSelectOptionType;
+use Atusan\Iterators\OptionTextValueIterator;
 use Atusan\XML\XMLExtended;
 
-abstract class DataViewControlBase extends Control
+abstract class DataViewControlBase extends Component
 {
   protected string $type;
 
@@ -67,8 +68,10 @@ abstract class DataViewControlBase extends Control
     $this->xml->setAttribute('html:disabled', 'html', $enable ? '' : 'disabled');
   }
 
-  public function createList(ControlSelectOptionType $options): void
+  public function createList(OptionTextValueIterator $options): void
   {
+    $this->xml->removeChildren();
+    
     foreach ($options as $option) {
       $child = $this->xml->addChild('Option');
       $child->addAttribute('value', $option['value']);

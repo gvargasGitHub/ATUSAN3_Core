@@ -83,6 +83,19 @@ class XMLExtended extends SimpleXMLElement
   /**
    * 
    */
+  public function removeChildren():void
+  {
+    $node = dom_import_simplexml($this);
+
+    if($node === false) return;
+
+    while ($node->hasChildNodes())
+      $node->removeChild($node->firstChild);
+  }
+  
+  /**
+   * 
+   */
   public function buildAttributesPairs($ns = ''): string
   {
     $output = [];

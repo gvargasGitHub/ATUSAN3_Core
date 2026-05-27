@@ -22,6 +22,11 @@ trait TraitComponent
   protected Module $owner;
 
   /**
+   * @var Component $parent
+   */
+  protected Component $parent;
+
+  /**
    * @var XMLExtended $xml
    * De este objeto se extraen:
    * a) Atributos/Propiedades para definir la clase.
@@ -31,6 +36,7 @@ trait TraitComponent
 
   /**
    * @var string $layout
+   * Extensión del manifiesto del Componente.
    */
   protected string $layout = '';
 
@@ -71,6 +77,12 @@ trait TraitComponent
   {
     $this->owner = $owner;
   }
+
+  public function setParent(Component $parent)
+  {
+    $this->parent = $parent;
+  }
+
   /**
    * Inject XML
    * Integra la estructura definida en el archivo XML a la clase.

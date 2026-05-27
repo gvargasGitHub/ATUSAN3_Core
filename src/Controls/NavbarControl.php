@@ -2,11 +2,12 @@
 
 namespace Atusan\Controls;
 
+use Atusan\Components\Component;
 use Atusan\Controller\Module;
 use Atusan\Types\MenuItemType;
 use Atusan\XML\XMLExtended;
 
-class NavbarControl extends Control
+class NavbarControl extends Component
 {
   protected string $type;
 
@@ -73,6 +74,8 @@ class NavbarControl extends Control
     </li>
 <?php
   }
+
+  function Separator(){}
   /**
    * 
    */

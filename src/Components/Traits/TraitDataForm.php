@@ -4,7 +4,7 @@ namespace Atusan\Components\Traits;
 
 use Atusan\Http\Request\Request;
 use Atusan\Iterators\InputFileIterator;
-use Atusan\Types\ControlSelectOptionType;
+use Atusan\Iterators\OptionTextValueIterator;
 use Exception;
 
 trait TraitDataForm
@@ -81,7 +81,7 @@ trait TraitDataForm
     if ($control->getType() != 'Select')
       throw new Exception(basename(__FUNCTION__) . "El control {$name} no es una lista.");
 
-    $control->createList(new ControlSelectOptionType($data));
+    $control->createList(new OptionTextValueIterator($data));
   }
 
   /**

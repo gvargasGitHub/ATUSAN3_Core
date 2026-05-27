@@ -234,21 +234,27 @@ class DataGridControl extends DataViewControlBase
    */
   protected function Case()
   {
+    $owner = $this->parent->getOwner();
     if (($resolve = $this->xml->getAttribute('resolve')) == null) trigger_error($this->name . ' requiere el atributo "resolve."', E_USER_ERROR);
     
-    if (!method_exists($this->parent->getOwner(), $resolve)) trigger_error("$resolve no existe en {$this->parent->getOwner()->name}", E_USER_ERROR);
+    if (!method_exists($owner, $resolve)) trigger_error("$resolve no existe en {$owner->name}", E_USER_ERROR);
     
-    $value = $this->parent->getOwner()->$resolve($this->getData());
+    $value = $owner->$resolve($this->getData());
 
     foreach($this->xml->children() as $case) {
       if ($case->getAttribute('match') == $value) {
         $case->setAttribute('name', $this->name);
 
-        $caseControl = static::fromXML($this->parent->getOwner(), $case);
+        $caseControl = new DataGridControl($owner, $case);
         $caseControl->setParent($this->parent);
         $caseControl->setRow($this->row);
         $caseControl->setData($this->getData());
         
+        if(($addon = $case->getAttribute('addon')) != null) {
+          if (!method_exists($owner, $addon)) trigger_error("$addon no existe en {$owner->name}", E_USER_ERROR);
+          
+          $owner->$addon($caseControl, $this->getData());
+        }
         return $caseControl->write();
       }
     }

@@ -2,11 +2,12 @@
 
 namespace Atusan\Controls;
 
+use Atusan\Components\Component;
 use Atusan\Controller\Module;
 use Atusan\Types\MenuItemType;
 use Atusan\XML\XMLExtended;
 
-class SidebarControl extends Control
+class SidebarControl extends Component
 {
   protected string $type;
 
@@ -60,6 +61,16 @@ class SidebarControl extends Control
     </li>
 <?php
   }
+
+  /**
+   * 
+   */
+  protected function Separator(){}
+
+  /**
+   * 
+   */
+  protected function View(){}
   /**
    * 
    */

@@ -2,11 +2,12 @@
 
 namespace Atusan\Controls;
 
+use Atusan\Components\Component;
 use Atusan\Controller\Module;
 use Atusan\Types\MenuItemType;
 use Atusan\XML\XMLExtended;
 
-class SubnavbarControl extends Control
+class SubnavbarControl extends Component
 {
   protected string $type;
 
@@ -25,7 +26,7 @@ class SubnavbarControl extends Control
     match (strtolower($this->type)) {
       'item' => $this->Item(),
       'content' => $this->Content(),
-      // 'separator' => $this->Separator(),
+      'separator' => $this->Separator(),
       'view' => $this->View()
     };
   }
@@ -68,6 +69,12 @@ class SubnavbarControl extends Control
     </div>
 <?php
   }
+
+  /**
+   * 
+   */
+  protected function Separator(){}
+  
   /**
    * 
    */

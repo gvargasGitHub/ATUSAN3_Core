@@ -9,21 +9,11 @@ class TabGroupContent extends ComponentNest
   /* ------------------------
   Properties
   ------------------------ */
-  public $text;
+  public string $text;
 
-  public $view;
+  public string $view;
 
   public $closeable = false;
-
-  protected ComponentInterface $parent;
-
-  /**
-   * 
-   */
-  public function setParent(ComponentInterface $parent)
-  {
-    $this->parent = $parent;
-  }
 
   public function begin()
   {
