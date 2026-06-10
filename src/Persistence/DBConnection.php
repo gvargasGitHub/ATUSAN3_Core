@@ -4,20 +4,20 @@ namespace Atusan\Persistence;
 
 class DBConnection
 {
-  protected $driver;
+  protected DBDriverBase $driver;
 
   static public function connect(string $driver, string $host, string  $user, string $pass, ?string $db): DBConnection
   {
-    $obj = new DBConnection();
+    $conn = new DBConnection();
 
     $class = "Atusan\\Persistence\\{$driver}DBDriver";
 
-    $obj->driver = new $class($host, $user, $pass, $db);
+    $conn->driver = new $class($host, $user, $pass, $db);
 
     try {
-      $obj->driver->connect();
+      $conn->driver->connect();
 
-      return $obj;
+      return $conn;
     } catch (\Exception $ex) {
       trigger_error($ex->getMessage(), E_USER_ERROR);
     }
@@ -48,7 +48,7 @@ class DBConnection
   /**
    * 
    */
-  public function routine(string $sql, array $params = []): array
+  public function routine(string $sql, array $params = [], array $outvars = [], array $outvarstypes = []): array
   {
     return $this->driver->routine($sql, $params);
   }

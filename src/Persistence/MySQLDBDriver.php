@@ -71,9 +71,6 @@ class MySQLDBDriver extends DBDriverBase
 
     $results = $this->query('SELECT ' . implode(',', $fov));
 
-    if ($results[0]['@err_flag'] == 1)
-      new DBDriverException($results[0]['@err_text']);
-
     return $results[0];
   }
 

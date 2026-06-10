@@ -86,9 +86,6 @@ class SQLAnywhere11DBDriver extends DBDriverBase
 
     $results = $this->query('SELECT ' . implode(',', $fov));
 
-    if ($results[0]['@err_flag'] == 0)
-      new DBDriverException($results[0]['@err_text']);
-
     $s = '';
     for ($i = 0; $i < count($fov); $i++) $s .= "drop variable {$fov[$i]}; ";
     $this->query($s);

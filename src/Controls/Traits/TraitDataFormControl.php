@@ -152,9 +152,15 @@ trait TraitDataFormControl
       style="<?= $this->xml->buildPairs(';', ':', '', 'css') ?>">
       <?php
       foreach ($this->xml->children() as $opt) {
-        $selected = ($this->getValue() == $opt->getAttribute('value')) ? 'selected' : '';
+        $optText =  $opt->getAttribute('text');
+
+        if(!$opt->hasAttribute('value')) $opt->setAttribute('value', $optText);
+
+        $optValue = $opt->getAttribute('value');
+
+        $selected = ($this->getValue() == $optValue) ? 'selected' : '';
       ?>
-        <option value="<?= $opt->getAttribute('value') ?>" <?= $selected ?>><?= $opt->getAttribute('text') ?></option>
+        <option value="<?= $optValue ?>" <?= $selected ?>><?= $optText ?></option>
       <?php
       }
       ?>

@@ -239,7 +239,8 @@ class DataGridControl extends DataViewControlBase
     
     if (!method_exists($owner, $resolve)) trigger_error("$resolve no existe en {$owner->name}", E_USER_ERROR);
     
-    $value = $owner->$resolve($this->getData());
+    $data = $this->getData();
+    $value = $owner->$resolve($data);
 
     foreach($this->xml->children() as $case) {
       if ($case->getAttribute('match') == $value) {
@@ -247,13 +248,13 @@ class DataGridControl extends DataViewControlBase
 
         $caseControl = new DataGridControl($owner, $case);
         $caseControl->setParent($this->parent);
-        $caseControl->setRow($this->row);
-        $caseControl->setData($this->getData());
+        $caseControl->setRow($this->row - 1);
+        $caseControl->setData($data);
         
         if(($addon = $case->getAttribute('addon')) != null) {
           if (!method_exists($owner, $addon)) trigger_error("$addon no existe en {$owner->name}", E_USER_ERROR);
           
-          $owner->$addon($caseControl, $this->getData());
+          $owner->$addon($caseControl, $data);
         }
         return $caseControl->write();
       }
