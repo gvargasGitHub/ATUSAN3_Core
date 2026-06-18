@@ -4,14 +4,14 @@ namespace Atusan\Persistence;
 
 class SQLAnywhere11DBDriver extends DBDriverBase
 {
-  protected $affectedRows = 0;
+  protected int $affectedRows = 0;
 
-  public function connect(): void
+  public function connect(string $host, string  $user, string $pass, ?string $db, ?bool $ssl): void
   {
     $this->conn = @odbc_connect(
-      "Driver={SQL Anywhere 11};CommLinks=tcpip(Host={$this->host});ServerName={$this->db};CharSet=UTF-8;",
-      $this->user,
-      $this->pass
+      "Driver={SQL Anywhere 11};CommLinks=tcpip(Host={$host});ServerName={$db};CharSet=UTF-8;",
+      $user,
+      $pass
     );
 
     if (!$this->conn) {

@@ -2,10 +2,6 @@
 
 namespace Atusan\Controls\Traits;
 
-// use Atusan\Components\Traits\TraitComponent;
-// use Atusan\Components\Traits\TraitComponentNest;
-// use Atusan\Controls\DataFormControl;
-
 trait TraitDataFormControl
 {
   protected function Csrf()

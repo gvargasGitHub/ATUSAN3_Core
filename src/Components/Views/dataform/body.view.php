@@ -10,9 +10,13 @@ if (count($this->data) == 0) $this->data[0] = [];
       $component->setData($this->data[0]);
 
   // Escribe la vista
-  if (!empty($this->view))
+  if (!empty($this->view)) {
+    // escribe el control Csrf
+    $this->writeControl('csrf_token');
+
+    // integra la vista personalizada
     include $this->locateResource($this->view);
-  else
+  } else
     foreach ($this->components as $component) $component->write();
   ?>
 </form>

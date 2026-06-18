@@ -140,9 +140,8 @@
             if (rs.status == 'ok') {
               options.onDone(rs.data);
             } else if (rs.status == 'error') {
-              alert('Lo sentimos, algo salió mal.');
-              console.error(rs.message);
-              console.error(rs.detail);
+              alert(rs.message);
+              console.error(`${rs.message}\n${rs.detail}`);
             } else {
               options.onFail(rs.message);
             }

@@ -2,6 +2,7 @@
 
 namespace Atusan\Template;
 
+use Atusan\Controller\Module;
 use Atusan\FileSystem\FileSystem;
 use Exception;
 
@@ -14,7 +15,7 @@ class Template
    * Render
    * @invoked by: Response::view
    */
-  static public function render($module)
+  static public function render(Module $module)
   {
     self::$module = $module;
 
@@ -30,7 +31,7 @@ class Template
    * Render Nested
    * @invoked by: Response::view
    */
-  static public function renderNested($module)
+  static public function renderNested(Module $module)
   {
     self::$module = $module;
 
@@ -58,7 +59,7 @@ class Template
   /**
    * 
    */
-  static public function extend($layout)
+  static public function extend(string $layout)
   {
     $viewfile = FileSystem::locateFile(APP_DIRECTORY, $layout);
 

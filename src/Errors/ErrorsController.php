@@ -16,7 +16,7 @@ class ErrorsController
    * 
    * E_USER_ERROR es obsoleto desde PHP 8.4.0
    */
-  public static function handle_error($errno, $errstr, $errfile, $errline)
+  public static function handle_error(mixed $errno, mixed $errstr, mixed $errfile, mixed $errline)
   {
     // if error reporting is off or add @ at begin of expression
     // doesn't show
@@ -59,19 +59,19 @@ class ErrorsController
    */
   public static function handle_exceptions(Throwable $ex)
   {
-    // Log::error(get_class($ex) . ':' . $ex->getMessage() . ' in ' . $ex->getFile() . ':' . $ex->getLine());
-    Log::error(get_class($ex) . ':' . $ex->getMessage());
+    Log::error(get_class($ex) . ':' . $ex->getMessage() . ' in ' . $ex->getFile() . ':' . $ex->getLine());
+    // Log::error(get_class($ex) . ':' . $ex->getMessage());
     // limpia el BUFFER de salida
     while (ob_get_length() !== false) ob_end_clean();
 
-    // exit(Response::instance()->error(
-    //   $ex->getMessage(),
-    //   get_class($ex) . ':' . $ex->getFile() . ':' . $ex->getLine()
-    // ));
     exit(Response::instance()->error(
       $ex->getMessage(),
-      get_class($ex)
+      get_class($ex) . ':' . $ex->getFile() . ':' . $ex->getLine()
     ));
+    // exit(Response::instance()->error(
+    //   $ex->getMessage(),
+    //   get_class($ex)
+    // ));
   }
 
   /**

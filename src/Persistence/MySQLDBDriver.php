@@ -6,16 +6,28 @@ use mysqli;
 
 class MySQLDBDriver extends DBDriverBase
 {
-  public function connect(): void
+
+  public function connect(string $host, string  $user, string $pass, string $database, ?bool $ssl): void
   {
     // Siempre se debe activar el informe de errores para mysqli
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-    $this->conn = new mysqli($this->host, $this->user, $this->pass, $this->db);
+    $this->conn = mysqli_init();
+        
+	  $this->conn->options(MYSQLI_OPT_CONNECT_TIMEOUT, 5);
+	  
+    $clientFlag = ($ssl === true) ? MYSQLI_CLIENT_SSL : 0;
+
+    $this->conn->real_connect($host, $user, $pass, $database, NULL,
+        NULL, $clientFlag);
 
     $this->conn->query("SET NAMES utf8mb4");
 
     $this->conn->query("SET lc_time_names='es_MX'");
+
+    if (mysqli_connect_errno()) {
+      throw new DBDriverException(mysqli_connect_error());
+    }
   }
 
   public function close(): void
@@ -63,7 +75,7 @@ class MySQLDBDriver extends DBDriverBase
     return count($this->query($sql, $values)) === 0;
   }
 
-  public function routine(string $sql, array $values = [], $outvars = []): array
+  public function routine(string $sql, array $values = [], $outvars = [], $outvarstypes = []): array
   {
     $fov = array_merge(['@err_flag', '@err_text'], $outvars);
 
@@ -73,8 +85,6 @@ class MySQLDBDriver extends DBDriverBase
 
     return $results[0];
   }
-
-
 
   public function autocommit(bool $mode = true): bool
   {
@@ -125,7 +135,7 @@ class MySQLDBDriver extends DBDriverBase
    * Esta función previene SQL Injection ya que cualquier contenido
    * de la cadena es encapsulado dentro de las comillas.
    */
-  private function buildStringValue($value)
+  private function buildStringValue(string $value): string
   {
     # si el parámetro es de tipo date, los pasa por filtros de formato
     # para convertirlo al formato correcto
@@ -144,7 +154,7 @@ class MySQLDBDriver extends DBDriverBase
   /**
    * 
    */
-  private function checkDataType($value)
+  private function checkDataType(mixed $value): string
   {
     if (is_array($value))
       return 'array';

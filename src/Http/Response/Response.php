@@ -2,20 +2,21 @@
 
 namespace Atusan\Http\Response;
 
+use Atusan\Controller\Module;
 use Atusan\Json\JsonUtil;
 use Atusan\Template\Template;
 
 class Response implements ResponseInterface
 {
   /**
-   * @var Array $data
+   * @var array $data
    */
-  private $data = [];
+  private array $data = [];
 
   /**
    * 
    */
-  static private $response;
+  static private ?self $response = null;
 
   /**
    * Response
@@ -30,8 +31,7 @@ class Response implements ResponseInterface
 
   public static function instance()
   {
-    if (self::$response == NULL)
-      self::$response = new self();
+    if (!isset(self::$response)) self::$response = new self();
 
     return self::$response;
   }
@@ -44,7 +44,7 @@ class Response implements ResponseInterface
    * el cual, recibe como parámetro el módulo presente para incluir y
    * procesar la plantilla (template) establecida.
    */
-  public function view($module): void
+  public function view(Module $module): void
   {
     if (is_subclass_of($module, 'Atusan\\Controller\\ModuleNested'))
       Template::renderNested($module);
@@ -90,6 +90,7 @@ class Response implements ResponseInterface
       'XHR' => exit(JsonUtil::toStringFormat(['status' => 'notice', 'message' => $message, 'detail' => $message]))
     };
   }
+
   /**
    * Warning
    */

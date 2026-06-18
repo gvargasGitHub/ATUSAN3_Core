@@ -9,14 +9,14 @@ use Atusan\Types\FileUploadedType;
 class Request implements RequestInterface
 {
   /**
-   * @var Array routeParams
+   * @var array routeParams
    */
   private $routeParams;
 
   /**
    * 
    */
-  private static $request;
+  private static ?self $request = null;
 
   private array $get;
   private array $post;
@@ -46,15 +46,6 @@ class Request implements RequestInterface
 
   public static function capture(): self
   {
-    // $s = 'X-Requested-With';
-    // $v = 'XMLHttpRequest';
-    // $h = apache_request_headers();
-
-    // define(
-    //   'CONTENT_TYPE_REQUESTED',
-    //   (array_key_exists($s, $h) && $h[$s] = $v) ? 'XHR' : 'HTML'
-    // );
-
     return self::instance();
   }
 
@@ -97,18 +88,13 @@ class Request implements RequestInterface
   {
     return array_merge($this->get, $this->post, $this->json);
   }
-
-  public function print(): string
-  {
-    return print_r($this->bodyData, 1);
-  }
-
+  
   /**
    * 
    */
   function has(string $key): bool
   {
-    return array_key_exists($key, $this->bodyData);
+    return !is_null($this->get($key));
   }
 
   /**

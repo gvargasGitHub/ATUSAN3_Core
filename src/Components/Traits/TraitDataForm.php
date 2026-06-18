@@ -47,7 +47,7 @@ trait TraitDataForm
     if (!$this->components->getByName($name))
       throw new Exception(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
 
-    return $this->data[0][$name];
+    return array_key_exists($name, $this->data[0]) ? $this->data[0][$name] : null;
   }
 
   /**

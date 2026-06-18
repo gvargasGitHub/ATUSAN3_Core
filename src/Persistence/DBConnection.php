@@ -6,21 +6,18 @@ class DBConnection
 {
   protected DBDriverBase $driver;
 
-  static public function connect(string $driver, string $host, string  $user, string $pass, ?string $db): DBConnection
+  static public function connect(string $driver, string $host, string  $user, string $pass, string $database, ?bool $ssl): DBConnection
   {
     $conn = new DBConnection();
 
     $class = "Atusan\\Persistence\\{$driver}DBDriver";
 
-    $conn->driver = new $class($host, $user, $pass, $db);
+    $conn->driver = new $class();
 
-    try {
-      $conn->driver->connect();
+    // Connect generará una excepción del tipo DBDriverException
+    $conn->driver->connect($host, $user, $pass, $database, $ssl);
 
-      return $conn;
-    } catch (\Exception $ex) {
-      trigger_error($ex->getMessage(), E_USER_ERROR);
-    }
+    return $conn;
   }
 
   /**
@@ -50,7 +47,7 @@ class DBConnection
    */
   public function routine(string $sql, array $params = [], array $outvars = [], array $outvarstypes = []): array
   {
-    return $this->driver->routine($sql, $params);
+    return $this->driver->routine($sql, $params, $outvars, $outvarstypes);
   }
   /**
    * 

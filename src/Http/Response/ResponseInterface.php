@@ -2,17 +2,21 @@
 
 namespace Atusan\Http\Response;
 
-use Atusan\Module\ModuleInterface;
+use Atusan\Controller\Module;
 
 interface ResponseInterface
 {
   public function add(string $key, mixed $value): void;
 
-  public function view(ModuleInterface $module): void;
-
-  // public function nested(ModuleInterface $module): void;
+  public function view(Module $module): void;
 
   public function json(array $data = []): string;
 
   public function error(string $message, string $detail): void;
+
+  public function notice(string $message): void;
+
+  public function warning(string $message): void;
+
+  public function unknow(string $message, string $detail): void;
 }

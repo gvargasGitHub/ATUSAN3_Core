@@ -52,7 +52,7 @@ class DataGridControl extends DataViewControlBase
     // Evalua su el valor del control se obtiene de un método del "Controller".
     if ($this->xml->hasAttribute('resolve')) {
       $resolve = $this->xml->getAttribute('resolve');
-      if (!method_exists($owner, $resolve)) trigger_error("$resolve no existe en {$owner->name}", E_USER_ERROR);
+      if (!method_exists($owner, $resolve)) trigger_error("$resolve no existe en {$owner->name}", E_USER_WARNING);
       $value = $owner->$resolve($this->getData());
     } else
       $value = $this->getValue();
@@ -88,7 +88,7 @@ class DataGridControl extends DataViewControlBase
       // Se puede definir si la "Action Bar" se mostrará o no a partir de un método en "Controller".
       if ($this->xml->hasAttribute('resolve')) {
         $resolve = $this->xml->getAttribute('resolve');
-        if (!method_exists($owner, $resolve)) trigger_error("$resolve no existe en {$owner->name}", E_USER_ERROR);
+        if (!method_exists($owner, $resolve)) trigger_error("$resolve no existe en {$owner->name}", E_USER_WARNING);
 
         if (!$owner->$resolve($this->name, $this->getData())) {
           echo "</td>\n";
@@ -99,7 +99,7 @@ class DataGridControl extends DataViewControlBase
         if ($action->hasAttribute('resolve')) {
           $resolve = $action->getAttribute('resolve');
 
-          if (!method_exists($owner, $resolve)) trigger_error("$resolve no existe en {$owner->name}", E_USER_ERROR);
+          if (!method_exists($owner, $resolve)) trigger_error("$resolve no existe en {$owner->name}", E_USER_WARNING);
 
           if (!$owner->$resolve($action->getAttribute('name'), $this->getData())) continue;
         }
@@ -235,9 +235,9 @@ class DataGridControl extends DataViewControlBase
   protected function Case()
   {
     $owner = $this->parent->getOwner();
-    if (($resolve = $this->xml->getAttribute('resolve')) == null) trigger_error($this->name . ' requiere el atributo "resolve."', E_USER_ERROR);
+    if (($resolve = $this->xml->getAttribute('resolve')) == null) trigger_error($this->name . ' requiere el atributo "resolve."', E_USER_WARNING);
     
-    if (!method_exists($owner, $resolve)) trigger_error("$resolve no existe en {$owner->name}", E_USER_ERROR);
+    if (!method_exists($owner, $resolve)) trigger_error("$resolve no existe en {$owner->name}", E_USER_WARNING);
     
     $data = $this->getData();
     $value = $owner->$resolve($data);
@@ -252,7 +252,7 @@ class DataGridControl extends DataViewControlBase
         $caseControl->setData($data);
         
         if(($addon = $case->getAttribute('addon')) != null) {
-          if (!method_exists($owner, $addon)) trigger_error("$addon no existe en {$owner->name}", E_USER_ERROR);
+          if (!method_exists($owner, $addon)) trigger_error("$addon no existe en {$owner->name}", E_USER_WARNING);
           
           $owner->$addon($caseControl, $data);
         }
