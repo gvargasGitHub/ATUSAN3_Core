@@ -3,14 +3,16 @@
 namespace Atusan\Components;
 
 use Atusan\Components\Traits\TraitComponentNest;
+use Atusan\Controller\Module;
 use Atusan\Iterators\ComponentsIterator;
 use Atusan\Iterators\ComponentSourcesIterator;
+use Atusan\XML\XMLExtended;
 
 abstract class ComponentNest extends Component
 {
   use TraitComponentNest;
 
-  function __construct($owner, $xml)
+  function __construct(Module $owner, XMLExtended $xml)
   {
     parent::__construct($owner, $xml);
 
