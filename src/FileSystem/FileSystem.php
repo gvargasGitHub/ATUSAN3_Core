@@ -18,9 +18,19 @@ class FileSystem
   }
 
   /**
+   * Basename
+   */
+  public static function basename(string $separator, string $filename): string
+  {
+    $parts = explode($separator, $filename);
+
+    return end($parts);
+  }
+
+  /**
    * Get Class Directory (ChatGPT)
    */
-  public static function getClassDirectory($object)
+  public static function getClassDirectory(mixed $object)
   {
     $r = new ReflectionClass(get_class($object));
 
