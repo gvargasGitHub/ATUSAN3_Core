@@ -4,11 +4,14 @@ namespace Atusan\Controls;
 
 use Atusan\Components\Component;
 use Atusan\Controller\Module;
+use Atusan\Controls\Traits\TraitNavbarControl;
 use Atusan\Types\MenuItemType;
 use Atusan\XML\XMLExtended;
 
 class SubnavbarControl extends Component
 {
+  use TraitNavbarControl;
+  
   protected string $type;
 
   function __construct(Module $owner, XMLExtended $xml)
