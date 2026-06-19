@@ -8,8 +8,7 @@ use Exception;
 
 class Template
 {
-  // public static $app;
-  public static $module;
+  public static Module $module;
 
   /**
    * Render
@@ -59,7 +58,7 @@ class Template
   /**
    * 
    */
-  static public function extend(string $layout)
+  static public function extend(string $layout): string
   {
     $viewfile = FileSystem::locateFile(APP_DIRECTORY, $layout);
 
@@ -92,7 +91,7 @@ class Template
   /**
    * 
    */
-  public static function writeCSS()
+  public static function writeCSS(): string
   {
     $dirs = [
       'reset.css',
@@ -113,10 +112,10 @@ class Template
     ];
     $content = '';
     foreach ($dirs as $css)
-      $content .= file_get_contents(APP_CORE . '\\src\\Statics\\css\\' . $css) . "\n";
+      $content .= file_get_contents(APP_CORE . '/src/Statics/css/' . $css) . "\n";
 
     foreach (\App\Config\Config::$cssResources as $css)
-      $content .= file_get_contents(APP_ROOT . '\\public\\' . APP_NAME . '\\css\\' . $css) . "\n";
+      $content .= file_get_contents(APP_ROOT . '/public/' . APP_NAME . '/css/' . $css) . "\n";
 
     return "<style>\n" . self::minificarCSS($content) . "\n</style>";
   }
@@ -124,7 +123,7 @@ class Template
   /**
    * 
    */
-  public static function writeJS()
+  public static function writeJS(): string
   {
     $dirs = [
       'atusan.js',
@@ -135,11 +134,11 @@ class Template
     $content = '';
     foreach ($dirs as $js) {
 
-      $content .= self::minificarJS(file_get_contents(APP_CORE . '\\src\\Statics\\js\\' . $js)) . "\n";
+      $content .= self::minificarJS(file_get_contents(APP_CORE . '/src/Statics/js/' . $js)) . "\n";
     }
 
     foreach (\App\Config\Config::$jsResources as $js)
-      $content .= self::minificarJS(file_get_contents(APP_ROOT . '\\public\\' . APP_NAME . '\\js\\' . $js)) . "\n";
+      $content .= self::minificarJS(file_get_contents(APP_ROOT . '/public/' . APP_NAME . '/js/' . $js)) . "\n";
 
     return "<script>\n$content</script>\n";
   }
@@ -147,7 +146,7 @@ class Template
   /**
    * Minificador seguro para JS
    */
-  public static function minificarJS($input)
+  public static function minificarJS(string $input) : string
   {
     $output = '';
     $length = strlen($input);
@@ -212,7 +211,7 @@ class Template
       if ($inString) {
         $output .= $char;
 
-        if ($char === '\\' && $next) {
+        if ($char === '/' && $next) {
           $output .= $next;
           $i++;
         }
@@ -244,7 +243,7 @@ class Template
   /**
    * Minificador seguro para CSS
    */
-  public static function minificarCSS($input)
+  public static function minificarCSS(string $input) : string
   {
     // Eliminar comentarios
     $input = preg_replace('!/\*.*?\*/!s', '', $input);

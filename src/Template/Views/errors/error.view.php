@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><?= APP_NAME ?> Report</title>
   <style>
-    <?= file_get_contents(APP_CORE . '\\src\\Statics\\css\\alerts.css') ?>
+    <?= file_get_contents(APP_CORE . '/src/Statics/css/alerts.css') ?>
   </style>
 </head>
 

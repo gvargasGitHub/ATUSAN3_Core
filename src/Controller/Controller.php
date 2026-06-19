@@ -2,6 +2,7 @@
 
 namespace Atusan\Controller;
 
+use Atusan\FileSystem\FileSystem;
 use Atusan\Http\Request\Request;
 use Atusan\Http\Response\Response;
 
@@ -14,7 +15,7 @@ abstract class Controller implements ControllerInterface
   function __construct()
   {
     // Obtiene el nombre base de la clase
-    $this->name = basename(get_class($this));
+    $this->name = FileSystem::basename('\\', get_class($this));
 
     // Obtiene el objeto Request
     $this->request = Request::instance();

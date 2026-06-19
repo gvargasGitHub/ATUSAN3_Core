@@ -57,8 +57,9 @@ class Bootstrap
     |--------------------------------------------------------------------------
     */
     // Registro de autocarga de las clases de la App
-    Autoloader::init(APP_DIRECTORY);
-
+    $loader = Autoloader::init(APP_DIRECTORY);
+    $loader->addNamespace('App', APP_DIRECTORY);
+    
     // Zona horaria
     date_default_timezone_set(\App\Config\Config::$time_zone);
 

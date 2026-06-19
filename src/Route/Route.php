@@ -21,8 +21,12 @@ class Route
    */
   static public function resolve(): array
   {
-    if (($routeType = self::findRouteByUri($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI'])) === false)
-      throw new Exception("La ruta {$_SERVER['REQUEST_URI']} no ha sido implementada para {$_SERVER['REQUEST_METHOD']}.");
+    // Se obtiene "URI" de variable establecida por .htaccess
+    $uri = '/';
+    $uri .= isset($_GET['uri']) ? $_GET['uri'] : '';
+    
+    if (($routeType = self::findRouteByUri($_SERVER['REQUEST_METHOD'], $uri)) === false)
+      throw new Exception("La ruta {$uri} no ha sido implementada para {$_SERVER['REQUEST_METHOD']}.");
 
     if ($routeType->middlewareState) {
       if (!Session::get($routeType->middlewareFilter)) $routeType = Route::redirect($routeType->middlewareRedirectUri);
@@ -40,7 +44,7 @@ class Route
   /**
    * Redirect
    */
-  static public function redirect($uri)
+  static public function redirect(string $uri)
   {
     if (($routeType = self::findRouteByUri('GET', $uri)) === false)
       throw new Exception("La ruta {$uri} no ha sido implementada para GET.");
@@ -51,7 +55,7 @@ class Route
   /**
    * Find Route By URI
    */
-  static protected function findRouteByUri($method, $uri): mixed
+  static protected function findRouteByUri(string $method, string $uri): mixed
   {
     foreach (self::$routes[$method] as $route)
       if ($route->uri == $uri) return $route;
