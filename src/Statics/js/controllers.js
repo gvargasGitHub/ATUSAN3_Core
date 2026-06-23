@@ -96,8 +96,10 @@ class ModuleBase extends Controller {
 
     var headers = (fd.has('csrf_token')) ? { 'X-CSRF-TOKEN': fd.get('csrf_token') } : {};
     ats.startLoader();
+    
     $.ajax({
-      url,
+      // 3.0.9: Se complementa "url" para resolver implementaciones en producción.
+      url: BASE_URL + url,
       method: 'POST',
       type: 'POST',
       processData: false,
