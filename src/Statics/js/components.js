@@ -568,9 +568,10 @@ class DataForm extends DataViewBase {
     for (let p in data) if (!fd.has(p)) fd.append(p, data[p]);
 
     var headers = (fd.has('csrf_token')) ? { 'X-CSRF-TOKEN': fd.get('csrf_token') } : {};
-
+    
     $.ajax({
-      url: route,
+      // 3.0.9: Se complementa "url" para resolver implementaciones en producción.
+      url: BASE_URL + route,
       method: 'POST',
       type: 'POST',
       processData: false,
