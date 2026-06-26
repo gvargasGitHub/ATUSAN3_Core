@@ -22,8 +22,7 @@ class Route
   static public function resolve(): array
   {
     // Se obtiene "URI" de variable establecida por .htaccess
-    $uri = '/';
-    $uri .= isset($_GET['uri']) ? $_GET['uri'] : '';
+    $uri = (!isset($_GET['uri']) || empty($_GET['uri'])) ? '/' : $_GET['uri'];
     
     if (($routeType = self::findRouteByUri($_SERVER['REQUEST_METHOD'], $uri)) === false)
       throw new Exception("La ruta {$uri} no ha sido implementada para {$_SERVER['REQUEST_METHOD']}.");

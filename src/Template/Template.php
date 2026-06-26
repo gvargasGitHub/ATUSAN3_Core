@@ -58,14 +58,15 @@ class Template
   /**
    * 
    */
-  static public function extend(string $layout): string
+  static public function extend(string $layout): void
   {
-    $viewfile = FileSystem::locateFile(APP_DIRECTORY, $layout);
+    // $viewfile = FileSystem::locateFile(APP_DIRECTORY, $layout);
 
-    if ($viewfile === false)
-      throw new Exception("El sistema no puede encontrar {$layout}");
+    // if ($viewfile === false)
+    //   throw new Exception("El sistema no puede encontrar {$layout}");
 
-    require $viewfile;
+    // require $viewfile;
+    require APP_DIRECTORY . DS . $layout;
   }
 
   static public function renderError(string $message, string $detail)

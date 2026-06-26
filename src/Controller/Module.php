@@ -6,6 +6,7 @@ use Atusan\Components\Traits\TraitComponentNest;
 use Atusan\FileSystem\FileSystem;
 use Atusan\Iterators\ComponentsIterator;
 use Atusan\Iterators\ComponentSourcesIterator;
+use Atusan\Template\Template;
 use Atusan\XML\XMLLoader;
 
 abstract class Module extends Controller
@@ -149,6 +150,13 @@ abstract class Module extends Controller
     echo "\n<script>\nvar {$this->name} = new {$className}(\"{$this->name}\");\n</script>\n\n";
   }
   
+  // ----------------------------------
+  // Template extensions
+  // ----------------------------------
+  public function extend(string $layout): void
+  {
+    Template::extend($layout);
+  }
   // ----------------------------------
   //  TraitComponent
   // ----------------------------------
