@@ -73,7 +73,7 @@ class ModuleBase extends Controller {
     this.components.forEach(componentName => window[componentName].init());
   }
 
-  send(url, options) {
+  send(route, options) {
 
     var fd = new FormData();
 
@@ -95,11 +95,14 @@ class ModuleBase extends Controller {
       };
 
     var headers = (fd.has('csrf_token')) ? { 'X-CSRF-TOKEN': fd.get('csrf_token') } : {};
+
+    route = ats.parseRoute(route);
+
     ats.startLoader();
     
+    let url = BASE_URL + route;
     $.ajax({
-      // 3.0.9: Se complementa "url" para resolver implementaciones en producción.
-      url: BASE_URL + url,
+      url,
       method: 'POST',
       type: 'POST',
       processData: false,

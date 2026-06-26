@@ -3,14 +3,21 @@
  */
 (function (window) {
   var
+    parseRoute = function(route){
+      let patt = /^(\/)/;
+
+      return (patt.test(route)) ? route.replace(patt,'') : route;
+    },
     openModule = function (route, params) {
-      if (!params) window.location.replace(window.location.origin + route);
+      route = parseRoute(route);
+
+      if (!params) window.location.replace(BASE_URL + route);
 
       if (params) {
         // Obtiene el formulario de app
         const form = document.getElementById("appForm");
         if (!form) throw new Error('El formulario de app no existe.');
-        form.setAttribute("action", route);
+        form.setAttribute("action", BASE_URL + route);
 
         // integra parametros
         for (let prm in params) {
@@ -99,10 +106,11 @@
     },
     // info = (message) => console.info(message),
     info = (message) => { },
+    
     /**
      * Send
      */
-    send = function (url, options) {
+    send = function (route, options) {
 
       var fd = new FormData();
       if (typeof options.data == "object") {
@@ -122,10 +130,12 @@
         };
       var headers = (fd.has('csrf_token')) ? { 'X-CSRF-TOKEN': fd.get('csrf_token') } : {};
       
+      route = parseRoute(route);
+
       startLoader();
+      let url = BASE_URL + route;
       $.ajax({
-        // 3.0.9: Se complementa "url" para resolver implementaciones en producción.
-        url: BASE_URL + url,
+        url,
         method: 'POST',
         type: 'POST',
         processData: false,
@@ -163,6 +173,7 @@
   addEvent("unload", stopLoader);
 
   window.ats = {
+    parseRoute,
     openModule,
     attachModule,
     attachForm,

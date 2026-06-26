@@ -15,17 +15,55 @@ class URL
     $port     = ( ( ! $ssl && $port=='80' ) || ( $ssl && $port=='443' ) ) ? '' : ':'.$port;
     $host     = ( $use_forwarded_host && isset( $s['HTTP_X_FORWARDED_HOST'] ) ) ? $s['HTTP_X_FORWARDED_HOST'] : ( isset( $s['HTTP_HOST'] ) ? $s['HTTP_HOST'] : null );
     $host     = isset( $host ) ? $host : $s['SERVER_NAME'] . $port;
+    
     return $protocol . '://' . $host;
   }
 
+  /**
+   * Full
+   */
   static public function full( array $s, $use_forwarded_host = false ): string
   {
     return self::origin( $s, $use_forwarded_host ) . $s['REQUEST_URI'];
   }
 
+  /**
+   * Base
+   */
   static public function base(array $s, $use_forwarded_host=false)
   {
-		return self::origin($s, $use_forwarded_host)
-      . str_replace("?{$s['QUERY_STRING']}", '', $s['REQUEST_URI']);
+		return self::origin($s, $use_forwarded_host) . str_replace(self::getUri(), '', $s['REQUEST_URI']) ;
 	}
+
+  /**
+   * Request URI
+   */
+  static public function requestUri(array $s): string
+  {
+    return $s['REQUEST_URI'];
+  }
+
+  /**
+   * Script DirName
+   */
+  static public function scriptDirName(array $s): string
+  {
+    return pathinfo($s['SCRIPT_NAME'],PATHINFO_DIRNAME);
+  }
+
+  /**
+   * Query String
+   */
+  static public function queryString(array $s): string
+  {
+    return $s['QUERY_STRING'];
+  }
+
+  /**
+   * GET uri
+   */
+  static public function getUri(): string
+  {
+    return isset($_GET['uri']) ? $_GET['uri'] : '';
+  }
 }

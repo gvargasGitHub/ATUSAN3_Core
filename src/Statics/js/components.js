@@ -559,7 +559,7 @@ class DataForm extends DataViewBase {
     ev.preventDefault();
 
     let { view } = DataViewBase.getControlId(ev.target);
-    let route = ev.target.getAttribute("ats-route");
+    let route = ats.parseRoute(ev.target.getAttribute("ats-route"));
 
     // Uso de FormData. Nota: Incluye elementos "type=file".
     var fd = new FormData(ev.target);
@@ -1293,13 +1293,13 @@ class TabGroup extends Component {
 
   /**
    * Open Module
-   * @param {String} path 
+   * @param {String} route 
    * @param {Object} data 
    */
-  openModule(path, data) {
+  openModule(route, data) {
     if (typeof data == "undefined") data = {};
 
-    this.owner.send(path, {
+    this.owner.send(route, {
       data,
       onDone: module => {
         let button, content;
@@ -1538,13 +1538,13 @@ class Panel extends Component {
 
   /**
    * Open Module
-   * @param {String} path 
+   * @param {String} route 
    * @param {Object} data 
    */
-  openModule(path, data) {
+  openModule(route, data) {
     if (typeof data == "undefined") data = {};
 
-    this.owner.send(path, {
+    this.owner.send(route, {
       data,
       onDone: module => {
         // Limpia el contenido
