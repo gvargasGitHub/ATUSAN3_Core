@@ -121,7 +121,7 @@ class ModuleBase extends Controller {
             alert(rs.message);
             console.error(`${rs.message}\n${rs.detail}`);
           } else {
-            options.onFail(rs.message);
+            options.onFail(rs);
           }
         } catch (e) {
           console.error(e.message);

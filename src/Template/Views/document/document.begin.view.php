@@ -1,3 +1,6 @@
+<?php
+$className = (self::$module instanceof \Atusan\Controller\ModuleNested) ? 'ModuleNested' : 'Module';
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -25,4 +28,10 @@
   <div class="ats-loader-overlay" id="ats-loader">
     <div class="ats-loader-indicator"></div>
   </div>
-  <?php require 'module.begin.view.php'; ?>
+  <script>
+    var <?= self::$module->name ?> = new <?= $className ?>("<?= self::$module->name ?>");
+  </script>
+  <div id="board">
+    <?php self::renderBoard() ?>
+  </div>
+  

@@ -10,9 +10,9 @@ interface ResponseInterface
 
   public function view(Module $module): void;
 
-  public function json(array $data = []): string;
+  public function json(array $data = []): void;
 
-  public function error(string $message, string $detail): void;
+  public function exception(string $message, string $detail): void;
 
   public function notice(string $message): void;
 

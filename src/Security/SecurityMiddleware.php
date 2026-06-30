@@ -39,8 +39,6 @@ class SecurityMiddleware
     $allowed = ['GET', 'POST', 'PUT', 'DELETE'];
 
     if (!in_array($request->method(), $allowed, true)) {
-      // http_response_code(405);
-      // exit(Response::instance()->error('Método ' . $request->method() . ' no permitido.'));
       throw new Exception('Método ' . $request->method() . ' no permitido.');
     }
   }

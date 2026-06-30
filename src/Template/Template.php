@@ -10,6 +10,13 @@ class Template
 {
   public static Module $module;
 
+  public static array $board = [
+    'notice'=>[],
+    'warning'=>[],
+    'unknow'=>[],
+    'exception'=>[],
+    'error'=>[]
+  ];
   /**
    * Render
    * @invoked by: Response::view
@@ -60,28 +67,22 @@ class Template
    */
   static public function extend(string $layout): void
   {
-    // $viewfile = FileSystem::locateFile(APP_DIRECTORY, $layout);
-
-    // if ($viewfile === false)
-    //   throw new Exception("El sistema no puede encontrar {$layout}");
-
-    // require $viewfile;
     require APP_DIRECTORY . DS . $layout;
   }
 
-  static public function renderError(string $message, string $detail)
+  static public function renderException(string $message, string $detail)
   {
-    include __DIR__ . DS . 'Views' . DS . 'errors' . DS . 'error.view.php';
+    include __DIR__ . DS . 'Views' . DS . 'errors' . DS . 'exception.view.php';
   }
 
   static public function renderNotice(string $message)
   {
-    include __DIR__ . DS . 'Views' . DS . 'errors' . DS . 'notice.view.php';
+    self::$board['notice'][] = [$message, $message];
   }
 
   static public function renderWarning(string $message)
   {
-    include __DIR__ . DS . 'Views' . DS . 'errors' . DS . 'warning.view.php';
+    self::$board['warning'][] = [$message, $message];
   }
 
   static public function renderUnknow(string $message, string $detail)
@@ -89,6 +90,16 @@ class Template
     include __DIR__ . DS . 'Views' . DS . 'errors' . DS . 'unknow.view.php';
   }
 
+  static public function renderBoard()
+  {
+    foreach(self::$board as $k=>$stack) {
+      foreach($stack as $data) {
+        $message = $data[0];
+        $detail = $data[1];
+        include __DIR__ . DS . 'Views' . DS . 'errors' . DS . "{$k}.view.php";
+      }
+    }
+  }
   /**
    * 
    */

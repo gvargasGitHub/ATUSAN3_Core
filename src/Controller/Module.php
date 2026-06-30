@@ -7,6 +7,7 @@ use Atusan\FileSystem\FileSystem;
 use Atusan\Iterators\ComponentsIterator;
 use Atusan\Iterators\ComponentSourcesIterator;
 use Atusan\Template\Template;
+use Atusan\XML\XMLExtended;
 use Atusan\XML\XMLLoader;
 
 abstract class Module extends Controller
@@ -18,6 +19,8 @@ abstract class Module extends Controller
   protected string $template = '';
 
   protected string $title = '';
+
+  protected XMLExtended $xmlTemplate;
 
   function __construct()
   {
@@ -91,8 +94,11 @@ abstract class Module extends Controller
     else
       if (($this->xml = XMLLoader::load($ref)) === false) throw new \Exception(XMLLoader::getError());
 
-    // Carga Manifiesto
+    // Carga Manifiesto del "Module"
     $this->injectXML();
+
+    // Carga Manifiesto de "Template"
+    $this->injectTemplateXML();
 
     // Establece las fuentes de donde obtendrá los Componentes
     $this->setSources();
@@ -143,13 +149,27 @@ abstract class Module extends Controller
   /**
    * 
    */
-  public function writeJS()
+  protected function injectTemplateXML()
   {
-    $className = $this instanceof ModuleNested ? 'ModuleNested' : 'Module';
+    // Se construye la ruta al archivo Template.xml
+    // La ruta predeterminada es: APP_DIRECTORY/Templates/[template_name]/[template_name.xml]
+    $templateDir = APP_DIRECTORY . DS
+      . implode(DS, ['Templates', $this->template]) . DS
+      . $this->template . ".xml";
 
-    echo "\n<script>\nvar {$this->name} = new {$className}(\"{$this->name}\");\n</script>\n\n";
+    // Se obtiene el archivo Template.xml declarado o un template vacio
+    $this->xmlTemplate = FileSystem::exists($templateDir) ? XMLLoader::load($templateDir) : XMLLoader::empty();
+
+    if ($this->xmlTemplate === false)
+      throw new \Exception(XMLLoader::getError());
+
+    # Actualiza "namespaces"
+    $this->namespaces = array_merge(
+      $this->namespaces,
+      $this->xmlTemplate->getDocNamespaces(true, true)
+    );
   }
-  
+    
   // ----------------------------------
   // Template extensions
   // ----------------------------------
@@ -171,26 +191,7 @@ abstract class Module extends Controller
     // Se establece Root como el contenedor de los Componentes del módulo
     $this->addSource('module', $this->xml);
 
-    // Se construye la ruta al archivo Template.xml
-    // La ruta predeterminada es: APP_DIRECTORY/Templates/[template_name]/[template_name.xml]
-    $templateDir = APP_DIRECTORY . DS
-      . implode(DS, ['Templates', $this->getTemplate()]) . DS
-      . $this->getTemplate() . ".xml";
-
-    // Se obtiene el archivo Template.xml declarado o un template vacio
-    $xmlTemplate = FileSystem::exists($templateDir) ? XMLLoader::load($templateDir) : XMLLoader::empty();
-
-    if ($xmlTemplate === false)
-      throw new \Exception(XMLLoader::getError());
-
-    # Actualiza "namespaces"
-    $this->namespaces = array_merge(
-      $this->namespaces,
-      $xmlTemplate->getDocNamespaces(true, true)
-    );
-    // Se establece Root como el contenedor de los Componentes declarados
-    // en la template
-    $this->addSource('template', $xmlTemplate);
+    $this->addSource('template', $this->xmlTemplate);
   }
 
   /**

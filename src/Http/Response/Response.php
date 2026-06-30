@@ -49,7 +49,7 @@ class Response implements ResponseInterface
     if (is_subclass_of($module, 'Atusan\\Controller\\ModuleNested'))
       Template::renderNested($module);
     else
-      exit(Template::render($module));
+      Template::render($module);
   }
 
   /**
@@ -63,20 +63,21 @@ class Response implements ResponseInterface
   /**
    * Json
    */
-  public function json(array $data = []): string
+  public function json(array $data = []): void
   {
     $this->data = array_merge($this->data, $data);
-    exit(JsonUtil::toStringFormat(['status' => 'ok', 'data' => $this->data]));
+
+    echo JsonUtil::toStringFormat(['status' => 'ok', 'data' => $this->data]);
   }
 
   /**
    * Error
    */
-  public function error(string $message, string $detail): void
+  public function exception(string $message, string $detail): void
   {
-    echo match (CONTENT_TYPE_REQUESTED) {
-      'HTML' => Template::renderError($message, $detail),
-      'XHR' => JsonUtil::toStringFormat(['status' => 'error', 'message' => $message, 'detail' => $detail])
+    match (CONTENT_TYPE_REQUESTED) {
+      'HTML' => Template::renderException($message, $detail),
+      'XHR' => exit(JsonUtil::toStringFormat(['status' => 'error', 'message' => $message, 'detail' => $detail]))
     };
   }
 
@@ -85,7 +86,7 @@ class Response implements ResponseInterface
    */
   public function notice(string $message): void
   {
-    echo match (CONTENT_TYPE_REQUESTED) {
+    match (CONTENT_TYPE_REQUESTED) {
       'HTML' => Template::renderNotice($message),
       'XHR' => exit(JsonUtil::toStringFormat(['status' => 'notice', 'message' => $message, 'detail' => $message]))
     };
@@ -96,7 +97,7 @@ class Response implements ResponseInterface
    */
   public function warning(string $message): void
   {
-    echo match (CONTENT_TYPE_REQUESTED) {
+    match (CONTENT_TYPE_REQUESTED) {
       'HTML' => Template::renderWarning($message),
       'XHR' => exit(JsonUtil::toStringFormat(['status' => 'warning', 'message' => $message, 'detail' => $message]))
     };
@@ -107,7 +108,7 @@ class Response implements ResponseInterface
    */
   public function unknow(string $message, string $detail): void
   {
-    echo match (CONTENT_TYPE_REQUESTED) {
+    match (CONTENT_TYPE_REQUESTED) {
       'HTML' => Template::renderUnknow($message, $detail),
       'XHR' => exit(JsonUtil::toStringFormat(['status' => 'unknow', 'message' => $message, 'detail' => $detail]))
     };

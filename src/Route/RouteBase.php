@@ -21,7 +21,7 @@ trait RouteBase
   /**
    * Add Route
    */
-  static protected function add(string $method, string $uri, $controller, string $resolve = 'index')
+  static protected function add(string $method, string $uri, string $controller, string $resolve = 'index')
   {
     array_push(self::$routes[$method], new RouteType($uri, $controller, $resolve, self::$middlewareState, self::$middlewareFilter, self::$middlewareRedirectUri));
   }
@@ -32,7 +32,7 @@ trait RouteBase
     self::add('GET', $uri, $controller);
   }
 
-  static public function post(string $uri, $controller)
+  static public function post(string $uri, string $controller)
   {
     self::add('POST', $uri, $controller);
   }

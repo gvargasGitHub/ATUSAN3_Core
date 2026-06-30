@@ -20,12 +20,10 @@ class ErrorsController
   {
     // if error reporting is off or add @ at begin of expression
     // doesn't show
-    if (0 == error_reporting())
-      return;
+    if (0 == error_reporting()) return;
 
     // if exclude any type of error, doesn't show
-    if (!(error_reporting() & $errno))
-      return;
+    if (!(error_reporting() & $errno)) return;
 
     // escape
     $errstr = htmlspecialchars($errstr);
@@ -60,18 +58,13 @@ class ErrorsController
   public static function handle_exceptions(Throwable $ex)
   {
     Log::error(get_class($ex) . ':' . $ex->getMessage() . ' in ' . $ex->getFile() . ':' . $ex->getLine());
-    // Log::error(get_class($ex) . ':' . $ex->getMessage());
-    // limpia el BUFFER de salida
+    
     while (ob_get_length() !== false) ob_end_clean();
 
-    exit(Response::instance()->error(
+    exit(Response::instance()->exception(
       $ex->getMessage(),
       get_class($ex) . ':' . $ex->getFile() . ':' . $ex->getLine()
     ));
-    // exit(Response::instance()->error(
-    //   $ex->getMessage(),
-    //   get_class($ex)
-    // ));
   }
 
   /**

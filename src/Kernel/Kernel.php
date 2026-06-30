@@ -37,8 +37,8 @@ class Kernel
 
     // Si el "controller" es una subclase de "ModuleInterface", entonces,
     // invocará la carga de los Componentes de "Module"
-    if (is_subclass_of($controller, 'Atusan\\Module\\ModuleInterface'))
-      $controller->attachComponents();
+    // if (is_subclass_of($controller, 'Atusan\\Module\\ModuleInterface'))
+    //   $controller->attachComponents();
 
     // Resuelve la petición
     $controller->{$routeType->resolve}();

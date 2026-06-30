@@ -18,12 +18,12 @@ class Session
   {
     global $phpsessid, $sessfile;
     
-    Log::info('Session Path:' . ini_get('session.save_path'));
-    Log::info('Session Status:' . self::$status[session_status()]);
+    // Log::info('Session Path:' . ini_get('session.save_path'));
+    // Log::info('Session Status:' . self::$status[session_status()]);
 
     if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
-    Log::info('Session Status:' . self::$status[session_status()]);
+    // Log::info('Session Status:' . self::$status[session_status()]);
 
     if (session_status() === PHP_SESSION_NONE) {
       if (!isset($_COOKIE['PHPSESSID']) || empty($_COOKIE['PHPSESSID'])) {

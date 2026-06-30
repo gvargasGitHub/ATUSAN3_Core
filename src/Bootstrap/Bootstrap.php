@@ -14,6 +14,7 @@ class Bootstrap
    */
   static public function app()
   {
+    // Definición del tipo de petición.
     $s = 'X-Requested-With';
     $v = 'XMLHttpRequest';
     $h = apache_request_headers();

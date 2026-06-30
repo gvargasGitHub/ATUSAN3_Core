@@ -1,6 +1,15 @@
+#board {
+  position: fixed;
+  bottom: 0;
+  right: 15px;
+  z-index: 9;
+  width: 50%;
+}
+
 .alert {
   margin: 5px;
   padding: 16px;
+  border-radius: 5px;
 }
 
 .alert.notice {
