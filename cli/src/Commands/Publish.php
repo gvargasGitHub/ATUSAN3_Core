@@ -24,8 +24,8 @@ class Publish extends MakeBase
     $pubDir = APP_ROOT . DS . 'public' . DS;
     @rename($pubDir . 'newapp', $pubDir . $this->args['--name']);
     
-    //Edita archivo .env.example
-    $envFile = APP_ROOT . DS . '.env.example';
+    //Edita archivo .env.newapp
+    $envFile = APP_ROOT . DS . '.env.newapp';
     if(($fileContent = @file_get_contents($envFile)) !== false) {
       $fileContent = str_replace('newapp', $this->args['--name'], $fileContent);
       file_put_contents($envFile, $fileContent);
