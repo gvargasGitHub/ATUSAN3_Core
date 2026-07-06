@@ -24,8 +24,10 @@ class TabGroup extends ComponentNest
   }
 
   /** */
-  public function write(): void
+  public function write(): string
   {
+    ob_start();
     include __DIR__ . DS . 'Views' . DS . 'tabgroup/view.php';
+    return ob_get_clean();
   }
 }

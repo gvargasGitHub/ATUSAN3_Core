@@ -54,9 +54,9 @@ class URL
   /**
    * Query String
    */
-  static public function queryString(array $s): string
+  static public function queryString(array $s): string | null
   {
-    return $s['QUERY_STRING'];
+    return isset($s['QUERY_STRING']) ? $s['QUERY_STRING'] : null;
   }
 
   /**

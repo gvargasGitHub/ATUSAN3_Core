@@ -7,19 +7,19 @@ abstract class DataViewBase extends ComponentNest
   /* ------------------------
   Properties
   ------------------------ */
-  public $title;
+  public string $title;
 
-  public $footer;
+  public string $footer;
 
-  public $route;
+  public string $route;
 
-  protected $type;
+  protected string $type;
 
-  protected $view;
+  protected string $view;
 
-  protected $data = [];
+  protected array $data = [];
 
-  protected $index = 0;
+  protected int $index = 0;
 
   /**
    * 

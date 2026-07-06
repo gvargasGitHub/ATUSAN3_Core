@@ -90,8 +90,8 @@ class DataTree extends DataViewBase
             echo "<tr>\n";
             foreach ($container->children() as $control) {
               $component = $this->components->getByName($control->getAttribute('name'));
-              $component->setDataType($datatype);
-              $component->write();
+              if (is_a($component, 'Atusan\\Controls\\DataTreeControl')) $component->setDataType($datatype);
+              echo $component->write();
             }
             echo "</tr>\n";
             ?>
@@ -167,11 +167,13 @@ class DataTree extends DataViewBase
   /**
    * Write
    */
-  public function write(): void
+  public function write(): string
   {
-    if (!property_exists($this, 'title')) $this->title = '';
-    if (!property_exists($this, 'footer')) $this->footer = '';
+    if (empty($this->title)) $this->title = '';
+    if (empty($this->footer)) $this->footer = '';
 
+    ob_start();
     include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/view.php';
+    return ob_get_clean();
   }
 }

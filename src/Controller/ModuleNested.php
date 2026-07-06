@@ -30,9 +30,9 @@ abstract class ModuleNested extends Module
    * Nested
    * Este método es invicado por TabGroupContent.View.
    */
-  public function nested()
+  public function nested(): string
   {
-    echo $this->buildNested();
+    return $this->buildNested();
   }
 
   /**

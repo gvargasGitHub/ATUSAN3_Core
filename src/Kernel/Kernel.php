@@ -33,14 +33,13 @@ class Kernel
     [$controller, $routeType] = Route::resolve();
 
     // Inicia captura de salida
-    ob_start();
+    // ob_start();
 
-    // Si el "controller" es una subclase de "ModuleInterface", entonces,
-    // invocará la carga de los Componentes de "Module"
-    // if (is_subclass_of($controller, 'Atusan\\Module\\ModuleInterface'))
-    //   $controller->attachComponents();
-
-    // Resuelve la petición
-    $controller->{$routeType->resolve}();
+    // Resuelve la petición. Ahora, al método del controlador invocado
+    // se le pasan los parámetros de la ruta (uri) de la petición.
+    call_user_func_array(
+      [$controller, $routeType->resolve], 
+      $request->getUriParams()
+    );
   }
 }

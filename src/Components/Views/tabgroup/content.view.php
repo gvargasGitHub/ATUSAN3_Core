@@ -6,9 +6,9 @@ if (!empty($this->view))
 else {
   foreach ($this->components as $component) {
     if (is_subclass_of($component, '\\Atusan\\Controller\\ModuleNested'))
-      $component->nested();
+      echo $component->nested();
     else
-      $component->write();
+      echo $component->write();
   }
 }
 

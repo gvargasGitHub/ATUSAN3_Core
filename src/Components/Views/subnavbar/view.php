@@ -15,7 +15,7 @@
     ?>
       <ul class="<?= strtolower($source->name) ?>">
         <?php
-        foreach ($source->xml->children() as $child) $this->components->getByName($child->getAttribute('name'))->write();
+        foreach ($source->xml->children() as $child) echo $this->components->getByName($child->getAttribute('name'))->write();
         ?>
       </ul>
     <?php

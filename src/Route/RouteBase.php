@@ -27,14 +27,14 @@ trait RouteBase
   }
 
 
-  static public function get(string $uri, string $controller)
+  static public function get(string $uri, string $controller, string $resolve = 'index')
   {
-    self::add('GET', $uri, $controller);
+    self::add('GET', $uri, $controller, $resolve);
   }
 
-  static public function post(string $uri, string $controller)
+  static public function post(string $uri, string $controller, string $resolve = 'index')
   {
-    self::add('POST', $uri, $controller);
+    self::add('POST', $uri, $controller, $resolve);
   }
 
   static public function ajax(string $uri, string $controller, string $resolve)
@@ -47,18 +47,18 @@ trait RouteBase
     self::add('POST', $uri, $controller, 'nestedToJson');
   }
 
-  static public function put(string $uri, string $controller)
+  static public function put(string $uri, string $controller, string $resolve = 'index')
   {
-    self::add('PUT', $uri, $controller);
+    self::add('PUT', $uri, $controller, $resolve);
   }
 
-  static public function patch(string $uri, string $controller)
+  static public function patch(string $uri, string $controller, string $resolve = 'index')
   {
-    self::add('PATCH', $uri, $controller);
+    self::add('PATCH', $uri, $controller, $resolve);
   }
 
-  static public function delete(string $uri, string $controller)
+  static public function delete(string $uri, string $controller, string $resolve = 'index')
   {
-    self::add('DELETE', $uri, $controller);
+    self::add('DELETE', $uri, $controller, $resolve);
   }
 }

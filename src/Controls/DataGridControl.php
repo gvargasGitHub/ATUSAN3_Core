@@ -9,8 +9,9 @@ class DataGridControl extends DataViewControlBase
   /**
    * Write
    */
-  public function write(): void
+  public function write(): string
   {
+    ob_start();
     match ($this->type) {
       'Hidden' => $this->InputHidden(),
       'Icon' => $this->IconStates(),
@@ -27,6 +28,7 @@ class DataGridControl extends DataViewControlBase
       'Menu' => $this->MenuOptions(),
       'Case' => $this->Case()
     };
+    return ob_get_clean();
   }
 
   public function getId(): string

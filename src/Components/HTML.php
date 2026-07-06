@@ -4,12 +4,12 @@ namespace Atusan\Components;
 
 class HTML extends Component
 {
-  protected $style;
+  protected string $style;
 
-  protected $colspan;
+  protected int $colspan;
 
-  function write(): void
+  function write(): string
   {
-    echo str_replace('<?xml version="1.0"?>', '', $this->xml->asXml());
+    return str_replace('<?xml version="1.0"?>', '', $this->xml->asXml());
   }
 }

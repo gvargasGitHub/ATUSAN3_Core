@@ -6,8 +6,8 @@ use Atusan\Types\DataTreeDataType;
 
 class DataTreeControl extends DataViewControlBase
 {
-  protected int $index;
-  protected int $level;
+  protected int $index = 0;
+  protected int $level = 0;
 
   public function setDataType(DataTreeDataType $datatype)
   {
@@ -16,9 +16,11 @@ class DataTreeControl extends DataViewControlBase
     $this->data  = $datatype->data;
   }
 
-  public function write(): void
+  public function write(): string
   {
+    ob_start();
     $this->{$this->type}();
+    return ob_get_clean();
   }
 
   public function getId(): string

@@ -24,14 +24,16 @@ class SidebarControl extends Component
   /**
    * 
    */
-  public function write(): void
+  public function write(): string
   {
+    ob_start();
     match (strtolower($this->type)) {
       'item' => $this->Item(),
       'content' => $this->Content(),
       'separator' => $this->Separator(),
       'view' => $this->View()
     };
+    return ob_get_clean();
   }
 
   function Item()
@@ -57,7 +59,7 @@ class SidebarControl extends Component
           foreach ($this->xml->children() as $xml) {
             $item = SidebarControl::fromXML($this->parent->owner, $xml);
             $item->setParent($this->parent);
-            $item->write();
+            echo $item->write();
           } ?>
         </ul>
       </div>

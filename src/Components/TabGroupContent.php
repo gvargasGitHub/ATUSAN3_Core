@@ -15,19 +15,21 @@ class TabGroupContent extends ComponentNest
 
   public $closeable = false;
 
-  public function begin()
-  {
-    include __DIR__ . DS . 'Views' . DS . 'tabgroup/content-begin.view.php';
-  }
+  // public function begin()
+  // {
+  //   include __DIR__ . DS . 'Views' . DS . 'tabgroup/content-begin.view.php';
+  // }
 
-  public function end()
-  {
-    include __DIR__ . DS . 'Views' . DS . 'tabgroup/content-end.view.php';
-  }
+  // public function end()
+  // {
+  //   include __DIR__ . DS . 'Views' . DS . 'tabgroup/content-end.view.php';
+  // }
 
-  public function button()
+  public function button(): string
   {
+    ob_start();
     include __DIR__ . DS . 'Views' . DS . 'tabgroup/button.view.php';
+    return ob_get_clean();
   }
 
   protected function itemType()
@@ -55,8 +57,10 @@ class TabGroupContent extends ComponentNest
 
   protected function finalDefinitions(): void {}
 
-  public function write(): void
+  public function write(): string
   {
+    ob_start();
     include __DIR__ . DS . 'Views' . DS . 'tabgroup/content.view.php';
+    return ob_get_clean();
   }
 }

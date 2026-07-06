@@ -39,17 +39,16 @@ class Response implements ResponseInterface
   /**
    * View
    * Este método es invocado desde el método "index" de cada Módulo
-   * extendido de la clase Atusan\Module.
+   * extendido de la clase Atusan\Controller\Module.
    * Finaliza el tratamiento de la petición invocando Template::render
    * el cual, recibe como parámetro el módulo presente para incluir y
    * procesar la plantilla (template) establecida.
    */
   public function view(Module $module): void
   {
-    if (is_subclass_of($module, 'Atusan\\Controller\\ModuleNested'))
-      Template::renderNested($module);
-    else
-      Template::render($module);
+    $className = ($module instanceof \Atusan\Controller\ModuleNested) ? 'ModuleNested' : 'Module';
+
+    echo Template::render($className, $module);
   }
 
   /**

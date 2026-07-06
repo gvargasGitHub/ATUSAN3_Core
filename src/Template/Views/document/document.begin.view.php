@@ -1,5 +1,6 @@
 <?php
-$className = (self::$module instanceof \Atusan\Controller\ModuleNested) ? 'ModuleNested' : 'Module';
+/** @var string $className */
+/** @var string $moduleName */
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -7,7 +8,8 @@ $className = (self::$module instanceof \Atusan\Controller\ModuleNested) ? 'Modul
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
+  <link rel="shortcut icon" type="image/png" href="public/favicon.ico">
+
   <title><?= $_ENV['APP_TITLE'] ?></title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
@@ -29,7 +31,7 @@ $className = (self::$module instanceof \Atusan\Controller\ModuleNested) ? 'Modul
     <div class="ats-loader-indicator"></div>
   </div>
   <script>
-    var <?= self::$module->name ?> = new <?= $className ?>("<?= self::$module->name ?>");
+    var <?= $moduleName ?> = new <?= $className ?>("<?= $moduleName ?>");
   </script>
   <div id="board">
     <?php self::renderBoard() ?>
