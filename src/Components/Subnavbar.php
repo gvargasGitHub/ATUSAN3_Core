@@ -35,9 +35,11 @@ class Subnavbar extends ComponentNest
   /**
    * Write :: Component
    */
-  public function write(): void
+  public function write(): string
   {
     if (!property_exists($this, 'title')) $this->title = "";
+    ob_start(); 
     include __DIR__ . DS . 'Views' . DS . 'subnavbar/view.php';
+    return ob_get_clean();
   }
 }

@@ -1,4 +1,5 @@
 <?php
+/** @var Atusan\XML\XMLExtended $xml */
 [
   'name' => $name,
   'text' => $text,

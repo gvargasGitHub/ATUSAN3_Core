@@ -6,6 +6,7 @@ use Atusan\Components\Traits\TraitComponentNest;
 use Atusan\FileSystem\FileSystem;
 use Atusan\Iterators\ComponentsIterator;
 use Atusan\Iterators\ComponentSourcesIterator;
+use Atusan\Log\Log;
 use Atusan\Template\Template;
 use Atusan\XML\XMLExtended;
 use Atusan\XML\XMLLoader;
@@ -19,6 +20,8 @@ abstract class Module extends Controller
   protected string $template = '';
 
   protected string $title = '';
+
+  protected string $view = '';
 
   protected XMLExtended $xmlTemplate;
 
@@ -84,6 +87,22 @@ abstract class Module extends Controller
   }
 
   /**
+   * 
+   */
+  public function setView(string $view): void
+  {
+    $this->view = $view;
+  }
+
+  /**
+   * 
+   */
+  public function getView(): string
+  {
+    return $this->view;
+  }
+
+  /**
    * Initialize Components
    * Obtiene el manifiesto del "Modulo" y lo integra al objeto.
    */
@@ -113,11 +132,9 @@ abstract class Module extends Controller
   protected function getXMLFilename(): string | null
   {
     # El archivo XML de un Módulo puede tener las siguiente nomenclatura:
-    // a) module-directory/{module-name}.xml
-    // b) module-directory/Components.xml
-    // c) app-directory/Components/{module-name}.xml
+    // - module-directory/Components.xml
+    // - app-directory/Components/{module-name}.xml
     $dirs = [
-      $this->directory . "/{$this->name}.xml",
       $this->directory . "/Components.xml",
       APP_DIRECTORY . "/Components/{$this->name}.xml"
     ];
@@ -132,15 +149,17 @@ abstract class Module extends Controller
    */
   public function getViewFilename(): string | null
   {
-    // La vista puede tener las siguientes nomenclaturas:
-    // a) module-directory/[module-name].view.php
-    // b) module-directory/View.php
-    // c) app-directory/Views/{module-name}.view.php
-    $dirs = [
-      $this->directory . DS . "{$this->name}.view.php",
-      $this->directory . DS . "View.php",
-      APP_DIRECTORY . DS . "/Views/{$this->name}.view.php"
-    ];
+    // Si la propiedad "view" está definida, se busca la vista en la ruta especificada
+    if (!empty($this->view)) {
+      $dirs = [APP_DIRECTORY . DS . "{$this->view}"];
+    } else {
+      // Si la propiedad "view" no está definida, se busca la vista en las rutas predeterminadas
+      $dirs = [
+        $this->directory . DS . "View.php",
+        APP_DIRECTORY . DS . "/Views/{$this->name}.php"
+      ];
+    }
+    
     foreach ($dirs as $dir) if (FileSystem::exists($dir)) return $dir;
 
     return null;
@@ -169,7 +188,22 @@ abstract class Module extends Controller
       $this->xmlTemplate->getDocNamespaces(true, true)
     );
   }
+  
+   /**
+   * Write
+   */
+  public function write(): string
+  {
+    if (($ref = $this->getViewFilename()) == null)
+      throw new \Exception("La vista {$ref} de {$this->name} no existe");
     
+    ob_start();
+    
+    include $ref;
+
+    return ob_get_clean();
+  }
+
   // ----------------------------------
   // Template extensions
   // ----------------------------------
@@ -198,15 +232,4 @@ abstract class Module extends Controller
    * 
    */
   protected function finalDefinitions(): void {}
-
-  /**
-   * Write
-   */
-  public function write(): void
-  {
-    if (($ref = $this->getViewFilename()) == null)
-      throw new \Exception("La vista de {$this->name} no existe");
-
-    include $ref;
-  }
 }

@@ -7,5 +7,5 @@ interface ComponentInterface
   /**
    * 
    */
-  public function write(): void;
+  public function write(): string;
 }

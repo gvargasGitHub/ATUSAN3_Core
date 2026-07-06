@@ -23,6 +23,7 @@ class Request implements RequestInterface
   private array $server;
   private array $headers;
   private array $json;
+  private array $uriparams;
 
   private FilesUploadedIterator $files;
 
@@ -34,6 +35,7 @@ class Request implements RequestInterface
     $this->headers = $this->parseHeaders();
     $this->json    = $this->parseJsonBody();
     $this->files   = $this->parseFiles();
+    $this->uriparams = [];
   }
 
   public static function instance(): self
@@ -76,9 +78,33 @@ class Request implements RequestInterface
       return $this->get[$key];
     }
 
+    if (array_key_exists($key, $this->uriparams)) {
+      return $this->uriparams[$key];
+    }
+
     return $default;
   }
 
+  /**
+   * Add Uri Param
+   * @invoked: Atusan\Route\Route::parseUriParams
+   */
+  public function addUriParam(string $key, mixed $value): void
+  {
+    $this->uriparams[$key] = $value;
+  }
+
+  /**
+   * 
+   */
+  public function getUriParams(): array
+  {
+    return $this->uriparams;
+  }
+
+  /**
+   * Get Uploaded Files
+   */
   public function files(): FilesUploadedIterator
   {
     return $this->files;

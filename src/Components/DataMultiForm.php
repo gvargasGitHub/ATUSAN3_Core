@@ -108,16 +108,17 @@ class DataMultiForm extends DataViewBase
   {
     foreach ($this->sources->getAllByName($sectionName) as $form) {
       echo '<div class="' . strtolower($sectionName) . '">';
+      
       // Escribe la vista
-      if (!empty($form->view)) {
-        if (file_exists($this->owner->directory . DS . "{$form->view}.php"))
-          include $this->owner->directory . DS . "{$form->view}.php";
-        else {
-          $located = FileSystem::locateFile(APP_DIRECTORY, basename($form->view), 'php');
-          if (!$located) trigger_error("La vista {$this->view} no existe", E_USER_ERROR);
-
-          include $located[0];
-        }
+      if ($form->xml->hasAttribute('view')) {
+        $view = $form->xml->getAttribute('view') . '.php';
+        if (file_exists($this->owner->getDirectory() . DS . $view))
+          include $this->owner->getDirectory() . DS . $view;
+        elseif (file_exists(APP_DIRECTORY . DS . 'Views' . DS . $view))
+          include APP_DIRECTORY . DS . 'Views' . DS . $view;
+        else
+          throw new \Exception("La vista {$view} no existe", E_USER_ERROR);
+        
       } else {
         if (count($this->data) == 0) $this->data[0] = [];
 
@@ -126,7 +127,7 @@ class DataMultiForm extends DataViewBase
 
           if (is_subclass_of($component, 'Atusan\\Controls\\DataViewControlBase')) $component->setData($this->data[0]);
 
-          $component->write();
+          echo $component->write();
         }
       }
       echo "\n</div>\n";
@@ -179,12 +180,14 @@ class DataMultiForm extends DataViewBase
   /**
    * 
    */
-  public function write(): void
+  public function write(): string
   {
-    if (!property_exists($this, 'title')) $this->title = '';
-    if (!property_exists($this, 'footer')) $this->footer = '';
-    if (!property_exists($this, 'route')) $this->route = $_SERVER['REQUEST_URI'];
+    if (empty($this->title)) $this->title = '';
+    if (empty($this->footer)) $this->footer = '';
+    if (empty($this->route)) $this->route = $_SERVER['REQUEST_URI'];
 
+    ob_start();
     include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/view.php';
+    return ob_get_clean();
   }
 }

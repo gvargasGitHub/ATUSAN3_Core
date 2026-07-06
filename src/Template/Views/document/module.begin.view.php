@@ -1,6 +1,7 @@
 <?php
-$className = (self::$module instanceof \Atusan\Controller\ModuleNested) ? 'ModuleNested' : 'Module';
+/** @var string $className */
+/** @var string $moduleName */
 ?>
 <script>
-  var <?= self::$module->name ?> = new <?= $className ?>("<?= self::$module->name ?>");
+  var <?= $moduleName ?> = new <?= $className ?>("<?= $moduleName ?>");
 </script>

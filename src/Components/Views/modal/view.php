@@ -9,7 +9,7 @@
       if (!empty($this->view))
         include $this->locateResource($this->view);
       else {
-        foreach ($this->components as $component) $component->write();
+        foreach ($this->components as $component) echo $component->write();
       }
       ?>
     </div>

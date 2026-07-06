@@ -4,11 +4,10 @@ namespace Atusan\Template;
 
 use Atusan\Controller\Module;
 use Atusan\FileSystem\FileSystem;
-use Exception;
 
 class Template
 {
-  public static Module $module;
+  // public static Module $module;
 
   public static array $board = [
     'notice'=>[],
@@ -21,45 +20,31 @@ class Template
    * Render
    * @invoked by: Response::view
    */
-  static public function render(Module $module)
+  static public function render(string $className, Module $module): string
   {
-    self::$module = $module;
+    // Establece el nombre del módulo para ser usado en la plantilla (template)
+    $moduleName = $module->name;
 
-    $viewfile = self::getViewFilename();
-    // getViewFilename generará una Excepción en caso de no encontrar la "Vista".
+    $templateFile = FileSystem::locateFile(APP_DIRECTORY . DS
+      . implode(DS, ['Templates', $module->getTemplate()]), $module->getTemplate() . ".view");
 
-    require __DIR__ . DS . 'Views' . DS . 'document' . DS . 'document.begin.view.php';
-    require $viewfile;
-    require __DIR__ . DS . 'Views' . DS . 'document' . DS . 'document.close.view.php';
-  }
+    $dirViews = __DIR__ . DS . 'Views' . DS . 'document' . DS;
 
-  /**
-   * Render Nested
-   * @invoked by: Response::view
-   */
-  static public function renderNested(Module $module)
-  {
-    self::$module = $module;
+    ob_start();
 
-    $viewfile = self::getViewFilename();
-    // getViewFilename generará una Excepción en caso de no encontrar la "Vista".
+    if ($className === 'ModuleNested')
+      require  $dirViews . 'module.begin.view.php';
+    else
+      require $dirViews . 'document.begin.view.php';
 
-    require __DIR__ . DS . 'Views' . DS . 'document' . DS . 'module.begin.view.php';
-    require $viewfile;
-  }
+    if ($templateFile)
+      require $templateFile;
+    else
+      echo $module->write();
 
-  /**
-   * 
-   */
-  static protected function getViewFilename(): string
-  {
-    $viewfile = FileSystem::locateFile(APP_DIRECTORY . DS
-      . implode(DS, ['Templates', self::$module->getTemplate()]), self::$module->getTemplate() . ".view");
+    if ($className == 'Module') require $dirViews . 'document.close.view.php';
 
-    if ($viewfile === false)
-      throw new Exception("El sistema no puede encontrar " . self::$module->template . ".view");
-
-    return $viewfile;
+    return ob_get_clean();
   }
 
   /**

@@ -1,3 +1,7 @@
+<?php 
+/** @var string $message */
+/** @var string $detail */
+?>
 <!DOCTYPE html>
 <html lang="es">
 

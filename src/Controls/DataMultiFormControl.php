@@ -10,8 +10,9 @@ class DataMultiFormControl extends DataViewControlBase
   /**
    * 
    */
-  public function write(): void
+  public function write(): string
   {
+    ob_start(); 
     match (strtolower($this->type)) {
       'autocomplete' => $this->AutoComplete(),
       'csrf' => $this->Csrf(),
@@ -28,6 +29,7 @@ class DataMultiFormControl extends DataViewControlBase
       'switch' => $this->inputSwitch(),
       'select' => $this->inputSelect()
     };
+    return ob_get_clean();
   }
 
   public function getId(): string

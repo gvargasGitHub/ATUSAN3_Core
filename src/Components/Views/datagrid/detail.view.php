@@ -14,7 +14,7 @@ for ($row = 0; $row < $nofRows; $row++) {
           $component->setRow($row);
         }
 
-        $component->write();
+        echo $component->write();
       }
       ?>
     </tr>
