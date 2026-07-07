@@ -32,14 +32,27 @@ class Subnavbar extends ComponentNest
     foreach ($this->components as $component) $component->setParent($this);
   }
 
+  // ----------------------------------
+  //  ComponentInterface
+  // ----------------------------------
   /**
-   * Write :: Component
+   * make
+   * @return string
    */
-  public function write(): string
+  public function make(): string
   {
     if (!property_exists($this, 'title')) $this->title = "";
     ob_start(); 
     include __DIR__ . DS . 'Views' . DS . 'subnavbar/view.php';
     return ob_get_clean();
+  }
+
+  /**
+   * write
+   * @return void
+   */
+  public function write(): void
+  {
+    echo $this->make();
   }
 }

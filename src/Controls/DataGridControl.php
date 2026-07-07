@@ -6,10 +6,14 @@ use Atusan\Types\MenuOptionType;
 
 class DataGridControl extends DataViewControlBase
 {
+  // ----------------------------------
+  //  ComponentInterface
+  // ----------------------------------
   /**
-   * Write
+   * make
+   * @return string
    */
-  public function write(): string
+  public function make(): string
   {
     ob_start();
     match ($this->type) {
@@ -29,6 +33,15 @@ class DataGridControl extends DataViewControlBase
       'Case' => $this->Case()
     };
     return ob_get_clean();
+  }
+
+  /**
+   * write
+   * @return void
+   */
+  public function write(): void
+  {
+    echo $this->make();
   }
 
   public function getId(): string

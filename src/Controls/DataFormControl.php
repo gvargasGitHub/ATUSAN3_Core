@@ -7,10 +7,15 @@ use Atusan\Controls\Traits\TraitDataFormControl;
 class DataFormControl extends DataViewControlBase
 {
   use TraitDataFormControl;
+  
+  // ----------------------------------
+  //  ComponentInterface
+  // ----------------------------------
   /**
-   * 
+   * make
+   * @return string
    */
-  public function write(): string
+  public function make(): string
   {
     ob_start();
     match (strtolower($this->type)) {
@@ -31,6 +36,15 @@ class DataFormControl extends DataViewControlBase
       'case' => $this->Case()
     };
     return ob_get_clean();
+  }
+
+  /**
+   * write
+   * @return void
+   */
+  public function write(): void
+  {
+    echo $this->make();
   }
 
   public function getId(): string

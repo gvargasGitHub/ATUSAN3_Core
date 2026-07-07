@@ -15,6 +15,6 @@ if (empty($this->route)) $this->route = $_SERVER['REQUEST_URI']; ?>
   $this->writeSection('BottomForm');
 
   // Finalmente imprime grupo de botones
-  echo $this->buttons->write();
+  echo $this->buttons->make();
   ?>
 </form>

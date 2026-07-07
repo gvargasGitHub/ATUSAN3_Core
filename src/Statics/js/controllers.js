@@ -72,7 +72,11 @@ class ModuleBase extends Controller {
     ats.info(`initComponents de ${this.name}:${this.components.length}`);
     this.components.forEach(componentName => window[componentName].init());
   }
-
+  /**
+   * Sends a request to the server.
+   * @param {string} route 
+   * @param {object} options 
+   */
   send(route, options) {
 
     var fd = new FormData();
@@ -136,13 +140,16 @@ class ModuleBase extends Controller {
   }
 };
 /**
- * @var String __ModuleActive__
+ * @var {string} __ModuleActive__
  * Almacena el nombre del objeto "Module" presente.
  * Esta variable se actualiza en el "constructor"
  * de la clase "Module".
  */
 var __ModuleActive__ = undefined;
 
+/**
+ * Module
+ */
 class Module extends ModuleBase {
   /**
    * 

@@ -349,6 +349,9 @@ class DataViewBase extends Component {
  * DataForm
  */
 class DataForm extends DataViewBase {
+  /**
+   * init
+   */
   init() {
     super.init();
     this.entries = [];
@@ -356,6 +359,10 @@ class DataForm extends DataViewBase {
     this.load();
   }
 
+  /**
+   * load
+   * @returns {void}
+   */
   load() {
     this.maplists.clear();
 
@@ -417,10 +424,14 @@ class DataForm extends DataViewBase {
       if (!this.maplists.has(control)) this.maplists.set(control, ControlBase.instance('autocomplete', this, control, el));
     });
 
-
     this.onPopulateDone();
   }
 
+  /**
+   * disableItem
+   * @param {string} control
+   * @returns {void}
+   */
   disableItem(control) {
     const elms = this.findByName(control);
 
@@ -428,7 +439,12 @@ class DataForm extends DataViewBase {
 
     elms.forEach(el => el.disabled = true);
   }
-
+  
+  /**
+   * enableItem
+   * @param {string} control
+   * @returns {void}
+   */
   enableItem(control) {
     const elms = this.findByName(control);
 
@@ -437,6 +453,12 @@ class DataForm extends DataViewBase {
     elms.forEach(el => el.disabled = false);
   }
 
+  /**
+   * feedList
+   * @param {string} control
+   * @param {Array} list
+   * @returns {void}
+   */
   feedList(control, list) {
     const elms = this.findByName(control);
 
@@ -448,6 +470,11 @@ class DataForm extends DataViewBase {
       throw new Error(`${control} no es una lista desplegable`);
   }
 
+  /**
+   * inflate
+   * @param {string} content
+   * @returns {void}
+   */
   inflate(content) {
     const body = this.element.querySelector(".body");
     while (body.hasChildNodes()) body.removeChild(body.firstChild);
@@ -459,6 +486,10 @@ class DataForm extends DataViewBase {
     this.onPopulateDone();
   }
 
+  /**
+   * getData
+   * @returns {Object}
+   */
   getData() {
     var data = {};
 
@@ -467,6 +498,11 @@ class DataForm extends DataViewBase {
     return data;
   }
 
+  /**
+   * getItem
+   * @param {string} control
+   * @returns {void}
+   */
   getItem(control) {
     const elms = this.findByName(control);
 
@@ -499,6 +535,12 @@ class DataForm extends DataViewBase {
     }
   }
 
+  /**
+   * setItem
+   * @param {string} control 
+   * @param {string} value 
+   * @returns {void}
+   */
   setItem(control, value) {
     const elms = this.findByName(control);
 
@@ -519,6 +561,11 @@ class DataForm extends DataViewBase {
     }
   }
 
+  /**
+   * setFocus
+   * @param {string} control
+   * @returns {void}
+   */
   setFocus(control) {
     const elms = this.findByName(control);
 
@@ -627,7 +674,7 @@ class DataForm extends DataViewBase {
 };
 
 /**
- * 
+ * DataMultiForm
  */
 class DataMultiForm extends DataForm {
   constructor(name, owner) {

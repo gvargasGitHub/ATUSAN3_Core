@@ -17,6 +17,6 @@ if (count($this->data) == 0) $this->data[0] = [];
     // integra la vista personalizada
     include $this->locateResource($this->view);
   } else
-    foreach ($this->components as $component) echo $component->write();
+    foreach ($this->components as $component) echo $component->make();
   ?>
 </form>

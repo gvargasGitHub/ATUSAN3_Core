@@ -4,12 +4,12 @@
 <div id="<?= $this->name ?>" class="ats-tabgroup">
   <div class="buttons">
     <?php
-    foreach ($this->components as $content) echo $content->button();
+    foreach ($this->components as $content) echo $content->makeButton();
     ?>
   </div>
   <div class="contents">
     <?php
-    foreach ($this->components as $content) echo $content->write();
+    foreach ($this->components as $content) echo $content->make();
     ?>
   </div>
 </div>
