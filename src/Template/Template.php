@@ -40,7 +40,7 @@ class Template
     if ($templateFile)
       require $templateFile;
     else
-      echo $module->write();
+      echo $module->make();
 
     if ($className == 'Module') require $dirViews . 'document.close.view.php';
 

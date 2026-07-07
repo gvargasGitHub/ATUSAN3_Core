@@ -8,8 +8,24 @@ class HTML extends Component
 
   protected int $colspan;
 
-  function write(): string
+  // ----------------------------------
+  //  ComponentInterface
+  // ----------------------------------
+  /**
+   * make
+   * @return string
+   */
+  public function make(): string
   {
     return str_replace('<?xml version="1.0"?>', '', $this->xml->asXml());
+  }
+
+  /**
+   * write
+   * @return void
+   */
+  public function write(): void
+  {
+    echo $this->make();
   }
 }

@@ -8,7 +8,7 @@ else {
     if (is_subclass_of($component, '\\Atusan\\Controller\\ModuleNested'))
       echo $component->nested();
     else
-      echo $component->write();
+      echo $component->make();
   }
 }
 

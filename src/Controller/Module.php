@@ -189,10 +189,10 @@ abstract class Module extends Controller
     );
   }
   
-   /**
-   * Write
+  /**
+   * Make
    */
-  public function write(): string
+  public function make(): string
   {
     if (($ref = $this->getViewFilename()) == null)
       throw new \Exception("La vista {$ref} de {$this->name} no existe");
@@ -202,6 +202,13 @@ abstract class Module extends Controller
     include $ref;
 
     return ob_get_clean();
+  }
+  /**
+   * Write
+   */
+  public function write(): void
+  {
+    echo $this->make();
   }
 
   // ----------------------------------

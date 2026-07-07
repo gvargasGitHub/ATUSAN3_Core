@@ -22,6 +22,9 @@ abstract class ButtonGroupBase extends Component
     $this->finalDefinitions();
   }
 
+  // ----------------------------------
+  //  Abstract Methods
+  // ----------------------------------
   abstract protected function defineGroupType(): string;
 
   abstract protected function finalDefinitions(): void;
@@ -39,10 +42,26 @@ abstract class ButtonGroupBase extends Component
     return implode(' ', $this->css_classes);
   }
 
-  public function write(): string
+  // ----------------------------------
+  //  ComponentInterface
+  // ----------------------------------
+  /**
+   * make
+   * @return string
+   */
+  public function make(): string
   {
     ob_start();
     include __DIR__ . DS . 'Views' . DS . 'buttongroup/view.php';
     return ob_get_clean();
+  }
+
+  /**
+   * write
+   * @return void
+   */
+  public function write(): void
+  {
+    echo $this->make();
   }
 }

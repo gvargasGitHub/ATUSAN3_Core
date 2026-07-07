@@ -15,8 +15,6 @@ abstract class ModuleNested extends Module
   {
     ob_start();
 
-    // $this->attachComponents();
-
     $this->index();
 
     $content = ob_get_contents();

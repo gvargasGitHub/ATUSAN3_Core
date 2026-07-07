@@ -127,7 +127,7 @@ class DataMultiForm extends DataViewBase
 
           if (is_subclass_of($component, 'Atusan\\Controls\\DataViewControlBase')) $component->setData($this->data[0]);
 
-          echo $component->write();
+          echo $component->make();
         }
       }
       echo "\n</div>\n";
@@ -177,10 +177,15 @@ class DataMultiForm extends DataViewBase
     foreach ($this->components as $component) if (is_subclass_of($component, 'Atusan\\Controls\\DataViewControlBase')) $component->setParent($this);
   }
 
+  // ----------------------------------
+  //  ComponentInterface
+  // ----------------------------------
+
   /**
-   * 
+   * make
+   * @return string
    */
-  public function write(): string
+  public function make(): string
   {
     if (empty($this->title)) $this->title = '';
     if (empty($this->footer)) $this->footer = '';
@@ -189,5 +194,14 @@ class DataMultiForm extends DataViewBase
     ob_start();
     include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/view.php';
     return ob_get_clean();
+  }
+
+  /**
+   * write
+   * @return void
+   */
+  public function write(): void
+  {
+    echo $this->make();
   }
 }

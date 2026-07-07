@@ -3,11 +3,22 @@
  */
 (function (window) {
   var
+    /**
+     * parseRoute
+     * @param {string} route
+     * @returns {string}
+     */
     parseRoute = function(route){
       let patt = /^(\/)/;
 
       return (patt.test(route)) ? route.replace(patt,'') : route;
     },
+    /**
+     * openModule
+     * @param {string} route
+     * @param {object} params
+     * @returns {void}
+     */
     openModule = function (route, params) {
       route = parseRoute(route);
 
@@ -31,19 +42,31 @@
         form.requestSubmit();
       }
     },
+    /**
+     * attachModule
+     * @param {Module} module
+     * @returns {void}
+     */
     attachModule = function (module) {
       // Mueve cada uno de los componentes "modal" al final
       // de "body".
       const modals = document.querySelectorAll('content .ats-modal');
       const body = document.querySelector('body');
       if (modals && body)
-        modals.forEach(modal => body.appendChild(modal));
+        modals.forEach(modal => {
+          // valida que el modal no esté ya en body
+          if (!body.contains(modal)) body.appendChild(modal)
+        });
 
       // Inicializa los componentes de Module
       module.initComponents();
 
       module.onOpen();
     },
+    /**
+     * Attaches the application form to the body.
+     * @returns {void}
+     */
     attachForm = function () {
       const body = document.getElementsByTagName("body");
 
@@ -54,14 +77,29 @@
       form.addEventListener("submit", onSubmit);
       body[0].appendChild(form);
     },
+    /**
+     * Handles the submission of the application form.
+     * @param {Event} event
+     * @returns {void}
+     */
     onSubmit = function (event) {
       console.log('Enviando appForm');
     },
+    /**
+     * Adds an event listener to the window.
+     * @param {string} eventName
+     * @param {Function} callBack
+     * @returns {void}
+     */
     addEvent = function (eventName, callBack) {
       (window.addEventListener)
         ? window.addEventListener(eventName, callBack)
         : window.attachEvent("on" + eventName, callBack);
     },
+    /**
+     * Hides the navigation dropdown.
+     * @returns {void}
+     */
     hideNavDropdown = function () {
       var x = document.querySelectorAll(".ats-menubar .dropdown");
 
@@ -91,6 +129,10 @@
       //     navresponsiveicons[i].classList.remove("transform");
       // }
     },
+    /**
+     * Hides the menu options dropdown.
+     * @returns {void}
+     */
     hideMenuOptionsDropDown = function () {
       const x = document.querySelectorAll("table>tbody>tr>td.menu-options div.content");
 
@@ -98,17 +140,27 @@
 
       for (let i = 0; i < x.length; i++) x[i].classList.remove("show");
     },
+    /**
+     * Starts the loader.
+     * @returns {void}
+     */
     startLoader = function () {
       document.getElementById("ats-loader").style.display = "block";
     },
+    /**
+     * Stops the loader.
+     * @returns {void}
+     */
     stopLoader = function () {
       document.getElementById("ats-loader").style.display = "none";
     },
-    // info = (message) => console.info(message),
     info = (message) => { },
     
     /**
-     * Send
+     * Sends a request to the server.
+     * @param {string} route
+     * @param {object} options
+     * @returns {void}
      */
     send = function (route, options) {
 

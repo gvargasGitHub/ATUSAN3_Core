@@ -16,11 +16,27 @@ class DataTreeControl extends DataViewControlBase
     $this->data  = $datatype->data;
   }
 
-  public function write(): string
+  // ----------------------------------
+  //  ComponentInterface
+  // ----------------------------------
+  /**
+   * make
+   * @return string
+   */
+  public function make(): string
   {
     ob_start();
     $this->{$this->type}();
     return ob_get_clean();
+  }
+
+  /**
+   * write
+   * @return void
+   */
+  public function write(): void
+  {
+    echo $this->make();
   }
 
   public function getId(): string

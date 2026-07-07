@@ -25,7 +25,7 @@ class TabGroupContent extends ComponentNest
   //   include __DIR__ . DS . 'Views' . DS . 'tabgroup/content-end.view.php';
   // }
 
-  public function button(): string
+  public function makeButton(): string
   {
     ob_start();
     include __DIR__ . DS . 'Views' . DS . 'tabgroup/button.view.php';
@@ -57,10 +57,26 @@ class TabGroupContent extends ComponentNest
 
   protected function finalDefinitions(): void {}
 
-  public function write(): string
+  // ----------------------------------
+  //  ComponentInterface
+  // ----------------------------------
+  /**
+   * make
+   * @return string
+   */
+  public function make(): string
   {
     ob_start();
     include __DIR__ . DS . 'Views' . DS . 'tabgroup/content.view.php';
     return ob_get_clean();
+  }
+
+  /**
+   * write
+   * @return void
+   */
+  public function write(): void
+  {
+    echo $this->make();
   }
 }

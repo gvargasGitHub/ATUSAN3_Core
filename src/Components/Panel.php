@@ -14,7 +14,7 @@ class Panel extends ComponentNest
       if ($source->xml->hasAttribute('view'))
         include $this->owner->getDirectory() . DS . "{$source->xml->getAttribute('view')}.php";
       else
-        foreach ($source->xml->children() as $child) echo $this->components->getByName($child->getAttribute('name'))->write();
+        foreach ($source->xml->children() as $child) echo $this->components->getByName($child->getAttribute('name'))->make();
     }
   }
   // ----------------------------------
@@ -34,13 +34,27 @@ class Panel extends ComponentNest
    */
   protected function finalDefinitions(): void {}
 
+  // ----------------------------------
+  //  ComponentInterface
+  // ----------------------------------
+  
   /**
-   * 
+   * make
+   * @return string
    */
-  public function write(): string
+  public function make(): string
   {
     ob_start();
     include __DIR__ . DS . 'Views' . DS . 'panel/view.php';
     return ob_get_clean();
+  }
+
+  /**
+   * write
+   * @return void
+   */ 
+  public function write(): void
+  {
+    echo $this->make();
   }
 }

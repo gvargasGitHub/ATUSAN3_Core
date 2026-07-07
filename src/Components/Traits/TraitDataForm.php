@@ -25,9 +25,9 @@ trait TraitDataForm
   /**
    * Write Control
    * 
-   * @exception
+   * @return void
    */
-  public function writeControl(string $name): string
+  public function writeControl(string $name): void
   {
     if (!($control = $this->components->getByName($name)))
       throw new Exception(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
@@ -36,7 +36,7 @@ trait TraitDataForm
 
     $control->setData($this->data[0]);
 
-    return $control->write();
+    echo $control->make();
   }
 
   /**

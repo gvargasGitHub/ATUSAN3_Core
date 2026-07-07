@@ -21,10 +21,15 @@ class SubnavbarControl extends Component
     $this->type = substr($this->xml->getName(), 4);
   }
 
+  // ----------------------------------
+  //  ComponentInterface
+  // ----------------------------------
+
   /**
-   * 
+   * make
+   * @return string
    */
-  public function write(): string
+  public function make(): string
   {
     ob_start();
     match (strtolower($this->type)) {
@@ -36,7 +41,17 @@ class SubnavbarControl extends Component
     return ob_get_clean();
   }
 
-  function Item()
+  /**
+   * write
+   * @return void
+   */
+  public function write(): void
+  {
+    echo $this->make();
+  }
+
+
+  protected function Item()
   {
     $miType = $this->itemType();
 ?>
@@ -44,7 +59,7 @@ class SubnavbarControl extends Component
   <?php
   }
 
-  function Content()
+  protected function Content()
   {
     $miType = $this->itemType();
   ?>
@@ -55,14 +70,14 @@ class SubnavbarControl extends Component
         foreach ($this->xml->children() as $xml) {
           $item = SubnavbarControl::fromXML($this->parent->owner, $xml);
           $item->setParent($this->parent);
-          echo $item->write();
+          echo $item->make();
         } ?>
       </div>
     </div>
   <?php
   }
 
-  function View()
+  protected function View()
   {
     $miType = $this->itemType();
   ?>
