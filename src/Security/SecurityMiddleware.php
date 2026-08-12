@@ -61,4 +61,68 @@ class SecurityMiddleware
   {
     Csrf::regenerate();
   }
+
+  // ------------------------------------------------
+  // Authorization Block
+  // ------------------------------------------------
+  /**
+   * Get Authorization Header
+   * ChatGPT/ATUSAN 3/Authorization Header
+   * @return string
+   */
+  public static function getAuthorizationHeader(): string
+  {
+      $authHeader =
+          $_SERVER['HTTP_AUTHORIZATION'] ??
+          $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ??
+          '';
+
+      if ($authHeader === '' && function_exists('getallheaders')) {
+          $headers = getallheaders();
+          $authHeader = $headers['Authorization'] ?? '';
+      }
+
+      return trim($authHeader);
+  }
+
+  /**
+   * Get Bearer Token
+   * ChatGPT/ATUSAN 3/Authorization Header
+   * @return string|null
+   */
+  public static function getBearerToken(): ?string
+  {
+      $authHeader = self::getAuthorizationHeader();
+
+      return stripos($authHeader, 'Bearer ') === 0
+          ? trim(substr($authHeader, 7))
+          : null;
+  }
+
+  /**
+   * Get Basic Auth
+   * ChatGPT/ATUSAN 3/Authorization Header
+   * @return array|null
+   */
+  public static function getBasicAuth(): ?array
+  {
+      $authHeader = self::getAuthorizationHeader();
+
+      if (stripos($authHeader, 'Basic ') !== 0) {
+          return null;
+      }
+
+      $decoded = base64_decode(trim(substr($authHeader, 6)), true);
+
+      if ($decoded === false || !str_contains($decoded, ':')) {
+          return null;
+      }
+
+      [$username, $password] = explode(':', $decoded, 2);
+
+      return [
+          'username' => $username,
+          'password' => $password
+      ];
+  }
 }

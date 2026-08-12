@@ -2,22 +2,14 @@
 
 namespace App\Services;
 
-use Atusan\Services\ServiceBase;
-use Atusan\Session\AppSession;
+use Atusan\Controller\Service;
 
-class service_name extends ServiceBase
+class service_name extends Service
 {
-  function close()
+  public function index()
   {
-    AppSession::close();
-
-    $this->response->json();
-  }
-
-  function keepAlive()
-  {
-    AppSession::keepAlive();
-
-    $this->response->json();
+    return $this->response->json([
+      'message' => 'Hello World'
+    ]);
   }
 }

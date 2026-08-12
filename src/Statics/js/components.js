@@ -616,30 +616,19 @@ class DataForm extends DataViewBase {
 
     var headers = (fd.has('csrf_token')) ? { 'X-CSRF-TOKEN': fd.get('csrf_token') } : {};
     
-    $.ajax({
-      // 3.0.9: Se complementa "url" para resolver implementaciones en producción.
+    ats.startLoader();
+    // Note: Se reemplaza $.ajax por ats.post para unificar la forma de enviar solicitudes al servidor.
+    ats.post({
       url: BASE_URL + route,
-      method: 'POST',
-      type: 'POST',
-      processData: false,
-      contentType: false,
       headers,
-      data: fd
-    })
-      .done(rs => {
-        try {
-          rs = JSON.parse(rs);
-          if (rs.status == 'ok')
-            window[view].onSubmitDone(rs.data);
-          else
-            window[view].onSubmitFail(rs);
-        } catch (e) {
-          console.error(e.message);
-          console.error(rs);
-        }
-      })
-      .fail((xhr, status, error) => console.error(error))
-      .always(() => ats.info('Transacción terminada'));
+      data: fd}, {
+      onDone: (rs) => {
+        window[view].onSubmitDone(rs);
+      },
+      onFail: (err) => {
+        window[view].onSubmitFail(err);
+      }
+    });
   }
 
   static handlerFormResetEvent(ev) {

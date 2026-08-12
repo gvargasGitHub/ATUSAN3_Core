@@ -3,6 +3,7 @@
 namespace Atusan\Http\Response;
 
 use Atusan\Controller\Module;
+use Atusan\Http\Request\Request;
 use Atusan\Json\JsonUtil;
 use Atusan\Template\Template;
 
@@ -12,6 +13,11 @@ class Response implements ResponseInterface
    * @var array $data
    */
   private array $data = [];
+
+  /**
+   * @var String $message
+   */
+  private String $message = '';
 
   /**
    * 
@@ -60,23 +66,35 @@ class Response implements ResponseInterface
   }
 
   /**
+   * Message
+   */
+  public function message(string $message): void
+  {
+    $this->message = $message;
+  }
+
+  /**
    * Json
    */
   public function json(array $data = []): void
   {
-    $this->data = array_merge($this->data, $data);
-
-    echo JsonUtil::toStringFormat(['status' => 'ok', 'data' => $this->data]);
+    if(Request::instance()->hasInvalidJsonBody()) {
+      $this->message = Request::instance()->jsonBodyError();
+      $this->exception('Petición con JSON inválido.', $this->message);
+    } else {
+      $this->data = array_merge($this->data, $data);
+      $this->jsonResponse(['status' => 'ok', 'message' => $this->message, 'data' => $this->data]);
+    }
   }
 
   /**
-   * Error
+   * Exceptions
    */
   public function exception(string $message, string $detail): void
   {
     match (CONTENT_TYPE_REQUESTED) {
       'HTML' => Template::renderException($message, $detail),
-      'XHR' => exit(JsonUtil::toStringFormat(['status' => 'error', 'message' => $message, 'detail' => $detail]))
+      'JSON' => $this->jsonResponse(['status' => 'error', 'message' => $message, 'detail' => $detail])
     };
   }
 
@@ -87,7 +105,7 @@ class Response implements ResponseInterface
   {
     match (CONTENT_TYPE_REQUESTED) {
       'HTML' => Template::renderNotice($message),
-      'XHR' => exit(JsonUtil::toStringFormat(['status' => 'notice', 'message' => $message, 'detail' => $message]))
+      'JSON' => $this->jsonResponse(['status' => 'notice', 'message' => $message, 'detail' => $message])
     };
   }
 
@@ -98,7 +116,7 @@ class Response implements ResponseInterface
   {
     match (CONTENT_TYPE_REQUESTED) {
       'HTML' => Template::renderWarning($message),
-      'XHR' => exit(JsonUtil::toStringFormat(['status' => 'warning', 'message' => $message, 'detail' => $message]))
+      'JSON' => $this->jsonResponse(['status' => 'warning', 'message' => $message, 'detail' => $message])
     };
   }
 
@@ -109,7 +127,26 @@ class Response implements ResponseInterface
   {
     match (CONTENT_TYPE_REQUESTED) {
       'HTML' => Template::renderUnknow($message, $detail),
-      'XHR' => exit(JsonUtil::toStringFormat(['status' => 'unknow', 'message' => $message, 'detail' => $detail]))
+      'JSON' => $this->jsonResponse(['status' => 'unknow', 'message' => $message, 'detail' => $detail])
     };
+  }
+
+  /**
+   * Json Response (ChatGPT/ATUSAN 3/Definir CONTENT_TYPE_REQUESTED)
+   */
+  private function jsonResponse(array $data): never
+  {
+      header('Content-Type: application/json; charset=utf-8');
+
+      exit(JsonUtil::toStringFormat($data));
+  }
+
+  /**
+   * Status
+   * ChatGPT/ATUSAN 3/Parse JSON Body
+   */
+  public static function status(int $code): void
+  {
+      http_response_code($code);
   }
 }

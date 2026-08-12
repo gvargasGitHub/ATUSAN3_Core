@@ -14,15 +14,15 @@ class Bootstrap
    */
   static public function app()
   {
-    // Definición del tipo de petición.
-    $s = 'X-Requested-With';
-    $v = 'XMLHttpRequest';
-    $h = apache_request_headers();
+    // Definición del tipo de petición (ChatGPT/ATUSAN 3/Definir CONTENT_TYPE_REQUESTED).
+    $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+    $xhr    = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '';
 
-    define(
-      'CONTENT_TYPE_REQUESTED',
-      (array_key_exists($s, $h) && $h[$s] = $v) ? 'XHR' : 'HTML'
-    );
+    $isJson =
+        str_contains($accept, 'application/json')
+        || strcasecmp($xhr, 'XMLHttpRequest') === 0;
+
+    define('CONTENT_TYPE_REQUESTED', $isJson ? 'JSON' : 'HTML');
 
     // Constantes de directorios
     define('DS', DIRECTORY_SEPARATOR);
