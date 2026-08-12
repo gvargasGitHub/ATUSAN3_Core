@@ -104,39 +104,15 @@ class ModuleBase extends Controller {
 
     ats.startLoader();
     
-    let url = BASE_URL + route;
-    $.ajax({
-      url,
-      method: 'POST',
-      type: 'POST',
-      processData: false,
-      contentType: false,
+    // Note: Se reemplaza $.ajax por ats.post para unificar la forma de enviar solicitudes al servidor.
+    ats.post({
+      url: BASE_URL + route,
       headers,
       data: fd
-    })
-      .done(rs => {
-        // La respuesta obtenida tendrá la estructura:
-        // {status, data, message, detail}
-        try {
-          rs = JSON.parse(rs); // disparará "Error" si es inválida.
-          if (rs.status == 'ok') {
-            options.onDone(rs.data);
-          } else if (rs.status == 'error') {
-            alert(rs.message);
-            console.error(`${rs.message}\n${rs.detail}`);
-          } else {
-            options.onFail(rs);
-          }
-        } catch (e) {
-          console.error(e.message);
-          console.error(rs);
-        }
-      })
-      .fail((xhr, status, error) => console.error(error))
-      .always(() => {
-        ats.stopLoader();
-        ats.info('Transacción terminada');
-      });
+    }, {
+      onDone: options.onDone,
+      onFail: options.onFail
+    });
   }
 };
 /**

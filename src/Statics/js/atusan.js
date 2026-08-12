@@ -185,35 +185,59 @@
       route = parseRoute(route);
 
       startLoader();
-      let url = BASE_URL + route;
-      $.ajax({
-        url,
-        method: 'POST',
-        type: 'POST',
-        processData: false,
-        contentType: false,
+      
+      // Note: Se reemplaza $.ajax por ats.post para unificar la forma de enviar solicitudes al servidor.
+      post({
+        url: BASE_URL + route,
         headers,
         data: fd
-      })
+      }, {
+        onDone: options.onDone,
+        onFail: options.onFail
+      });
+    },
+    /**
+     * Posts data to the server.
+     * @param {object} options
+     * @param {object} callbacks
+     * 
+     * Object options:
+     * - url: string
+     * - headers: object
+     * - data: FormData
+     * Object callbacks:
+     * - onDone: function
+     * - onFail: function
+     * 
+     * @returns {void}
+     */
+    post = function (options, callbacks) {
+      options.method = 'POST';
+      options.contentType = false;
+      options.processData = false;
+      options.dataType = 'json'; // ChatGPT / Atusan 3/AJAX - JSON
+
+      $.ajax(options)
         .done(rs => {
           // La respuesta obtenida tendrá la estructura:
           // {status, data, message, detail}
-          try {
-            rs = JSON.parse(rs); // disparará "Error" si es inválida.
-            if (rs.status == 'ok') {
-              options.onDone(rs.data);
-            } else if (rs.status == 'error') {
-              alert(rs.message);
-              console.error(`${rs.message}\n${rs.detail}`);
-            } else {
-              options.onFail(rs);
-            }
-          } catch (e) {
-            console.error(e.message);
-            console.error(rs);
+          // Se agregó al método json de la clase "Response" la línea
+          // `header('Content-Type: application/json');` para que el navegador
+          // reconozca la respuesta como JSON y no como texto plano.
+          // ChatGPT / Atusan 3/AJAX - JSON
+          if (rs.status == 'ok') {
+            callbacks.onDone(rs.data);
+          } else if (rs.status == 'error') {
+            alert(rs.message);
+            console.error(`${rs.message}\n${rs.detail}`);
+          } else {
+            callbacks.onFail(rs);
           }
         })
-        .fail((xhr, status, error) => console.error(error))
+        .fail((xhr, status, error) => {
+          console.error(`AJAX: ${status} - ${error}`);
+          console.error(xhr.responseText);
+        })
         .always(() => {
           stopLoader();
           info('Transacción terminada');
@@ -234,7 +258,8 @@
     startLoader,
     stopLoader,
     info,
-    send
+    send,
+    post
   };
 
   $("document").ready(() => {

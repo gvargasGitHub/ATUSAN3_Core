@@ -4,8 +4,9 @@ namespace Atusan\Route;
 
 use Atusan\Types\RouteType;
 
-trait RouteBase
+trait TraitRoute
 {
+  
   static private $routes = [
     'GET' => [],
     'POST' => [],

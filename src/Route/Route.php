@@ -9,7 +9,7 @@ use Exception;
 
 class Route
 {
-  use RouteBase;
+  use TraitRoute;
   /**
    * Implementation
    */

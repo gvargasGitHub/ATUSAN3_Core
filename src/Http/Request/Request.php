@@ -14,7 +14,7 @@ class Request implements RequestInterface
   private $routeParams;
 
   /**
-   * 
+   * Get the singleton instance of the request
    */
   private static ?self $request = null;
 
@@ -23,7 +23,21 @@ class Request implements RequestInterface
   private array $server;
   private array $headers;
   private array $json;
+  /**
+   * @var array $uriparams
+   * Este arreglo contiene los parámetros de la "uri" que son obtenidos
+   * desde la ruta establecida en "Route.php". Estos parámetros son 
+   * agregados al objeto Request mediante el método "addUriParam" invocado 
+   * desde el método "parseUriParams" de la clase "Route". 
+   * Los parámetros de la "uri" son aquellos que están definidos en la ruta 
+   * con llaves, por ejemplo: "/user/{id}".
+   * Estos parámetros se pasan como argumentos al método del controlador 
+   * invocado para resolver la petición.
+   */
   private array $uriparams;
+
+  private bool $jsonBodyInvalid = false;
+  private ?string $jsonBodyError = null;
 
   private FilesUploadedIterator $files;
 
@@ -38,6 +52,9 @@ class Request implements RequestInterface
     $this->uriparams = [];
   }
 
+  /**
+   * Get the singleton instance of the request
+   */
   public static function instance(): self
   {
     if (self::$request == NULL)
@@ -45,7 +62,9 @@ class Request implements RequestInterface
 
     return self::$request;
   }
-
+  /**
+   * Alias for instance() method to capture the current request
+   */
   public static function capture(): self
   {
     return self::instance();
@@ -62,7 +81,7 @@ class Request implements RequestInterface
   }
 
   /**
-   * 
+   * Get a value from the request
    */
   public function get(string $key, mixed $default = null): mixed
   {
@@ -85,6 +104,14 @@ class Request implements RequestInterface
     return $default;
   }
 
+  public function all(): array
+  {
+    return array_merge($this->get, $this->post, $this->json);
+  }
+
+  // ----------------------------------
+  // URI Parameters
+  // ----------------------------------
   /**
    * Add Uri Param
    * @invoked: Atusan\Route\Route::parseUriParams
@@ -95,7 +122,13 @@ class Request implements RequestInterface
   }
 
   /**
-   * 
+   * Get Uri Params
+   * Este método retorna un arreglo asociativo con los parámetros de la "uri" que fueron
+   * definidos en la ruta establecida en "Route.php". Este método es invocado desde el 
+   * método "execute" de la clase "Kernel.php" para pasar los parámetros de la "uri" al
+   * controlador invocado para resolver la petición. Los parámetros de la "uri" son 
+   * aquellos que están definidos en la ruta con llaves, por ejemplo: "/user/{id}".
+   * @return array
    */
   public function getUriParams(): array
   {
@@ -109,14 +142,9 @@ class Request implements RequestInterface
   {
     return $this->files;
   }
-
-  public function all(): array
-  {
-    return array_merge($this->get, $this->post, $this->json);
-  }
   
   /**
-   * 
+   * Check if a value exists in the request
    */
   function has(string $key): bool
   {
@@ -124,7 +152,7 @@ class Request implements RequestInterface
   }
 
   /**
-   * 
+   * Parse uploaded files
    */
   public function parseFiles(): FilesUploadedIterator
   {
@@ -160,6 +188,7 @@ class Request implements RequestInterface
 
     return $iterator;
   }
+  
   /**
    * Get Route Param
    */
@@ -168,11 +197,17 @@ class Request implements RequestInterface
     return array_key_exists($key, $this->routeParams) ? $this->routeParams[$key] : null;
   }
 
+  /**
+   * Get Header Value
+   */
   public function header(string $key): ?string
   {
     return $this->headers[strtolower($key)] ?? null;
   }
 
+  /**
+   * Check if the request body is JSON
+   */
   public function isJson(): bool
   {
     return str_contains(
@@ -181,32 +216,62 @@ class Request implements RequestInterface
     );
   }
 
+  /**
+   * Get the JSON body of the request
+   */
   public function json(): array
   {
     return $this->json;
   }
 
+  /**
+   * Parse the JSON body
+   * ChatGPT/ATUSAN 3/Parse JSON Body
+   * @return array
+   */
   private function parseJsonBody(): array
   {
-    if ($this->method() === 'GET') {
-      return [];
-    }
+      if ($this->method() === 'GET') {
+          return [];
+      }
 
-    $contentType = strtolower($this->header('Content-Type') ?? '');
+      $contentType = strtolower(
+          trim(explode(';', $this->header('Content-Type') ?? '', 2)[0])
+      );
 
-    if (!str_contains($contentType, 'application/json')) {
-      return [];
-    }
+      if ($contentType !== 'application/json') {
+          return [];
+      }
 
-    $raw = file_get_contents('php://input');
-    if (!$raw) {
-      return [];
-    }
+      $raw = file_get_contents('php://input');
 
-    $data = json_decode($raw, true);
-    return is_array($data) ? $data : [];
+      if ($raw === false || $raw === '') {
+          return [];
+      }
+
+      $data = json_decode($raw, true);
+
+      if (json_last_error() !== JSON_ERROR_NONE) {
+        $this->jsonBodyInvalid = true;
+        $this->jsonBodyError = json_last_error_msg();
+        return [];
+      }
+
+      return is_array($data) ? $data : [];
   }
 
+  public function hasInvalidJsonBody(): bool
+  {
+      return $this->jsonBodyInvalid;
+  }
+
+  public function jsonBodyError(): ?string
+  {
+      return $this->jsonBodyError;
+  }
+  /**
+   * Parse the headers from the server variables
+   */
   private function parseHeaders(): array
   {
     $headers = [];
