@@ -2,6 +2,7 @@
 
 namespace Atusan\Components\Traits;
 
+use Atusan\Components\ComponentNest;
 use Atusan\Iterators\ComponentsIterator;
 use Atusan\Iterators\ComponentSourcesIterator;
 use Atusan\XML\XMLExtended;
@@ -39,6 +40,20 @@ trait TraitComponentNest
   function __get(string $name)
   {
     return $this->components->getByName($name) ?? null;
+  }
+
+  /**
+   * Find Component by ID
+   * Este método permite obtener un "Component" integrado a la clase por su nombre de declaración.
+   * Esto evita disparar la advertencia de "Cannot access to undefined property" vigente desde PHP 8.0.
+   * 
+   * @param string $id Nombre de declaración del "Component" a buscar.
+   * 
+   * @return ComponentNest|null Retorna el "Component" si se encuentra, de lo contrario retorna null.
+   */
+  public function findViewById(string $id) : ComponentNest|null
+  {
+    return $this->components->getByName($id) ?? null;
   }
 
   /**
@@ -119,12 +134,13 @@ trait TraitComponentNest
   }
 
   /**
-   * 
+   * Set Sources
    */
   abstract protected function setSources(): void;
 
   /**
-   * 
+   * Set Final Definitions
+
    */
   abstract protected function finalDefinitions(): void;
 }

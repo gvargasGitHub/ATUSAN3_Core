@@ -15,16 +15,6 @@ class TabGroupContent extends ComponentNest
 
   public $closeable = false;
 
-  // public function begin()
-  // {
-  //   include __DIR__ . DS . 'Views' . DS . 'tabgroup/content-begin.view.php';
-  // }
-
-  // public function end()
-  // {
-  //   include __DIR__ . DS . 'Views' . DS . 'tabgroup/content-end.view.php';
-  // }
-
   public function makeButton(): string
   {
     ob_start();

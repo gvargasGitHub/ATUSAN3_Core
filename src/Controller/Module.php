@@ -43,7 +43,7 @@ abstract class Module extends Controller
     $this->components = new ComponentsIterator;
 
     // Inicializa Componentes
-    $this->initComponents();
+    $this->_initializeComponents();
   }
 
   /**
@@ -106,9 +106,9 @@ abstract class Module extends Controller
    * Initialize Components
    * Obtiene el manifiesto del "Modulo" y lo integra al objeto.
    */
-  protected function initComponents(): void
+  protected function _initializeComponents(): void
   {
-    if (($ref = $this->getXMLFilename()) == null)
+    if (($ref = $this->_getXMLFilename()) == null)
       $this->xml = XMLLoader::empty();
     else
       if (($this->xml = XMLLoader::load($ref)) === false) throw new \Exception(XMLLoader::getError());
@@ -117,7 +117,7 @@ abstract class Module extends Controller
     $this->injectXML();
 
     // Carga Manifiesto de "Template"
-    $this->injectTemplateXML();
+    $this->_injectTemplateXML();
 
     // Establece las fuentes de donde obtendrá los Componentes
     $this->setSources();
@@ -129,7 +129,7 @@ abstract class Module extends Controller
   /**
    * Get XML Filename
    */
-  protected function getXMLFilename(): string | null
+  protected function _getXMLFilename(): string | null
   {
     # El archivo XML de un Módulo puede tener las siguiente nomenclatura:
     // - module-directory/Components.xml
@@ -168,7 +168,7 @@ abstract class Module extends Controller
   /**
    * 
    */
-  protected function injectTemplateXML()
+  protected function _injectTemplateXML()
   {
     // Se construye la ruta al archivo Template.xml
     // La ruta predeterminada es: APP_DIRECTORY/Templates/[template_name]/[template_name.xml]
