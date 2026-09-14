@@ -34,9 +34,14 @@ class SecurityMiddleware
     // header("Content-Security-Policy: default-src 'self';");
   }
 
+  /**
+   * checkHttpMethod
+   * @param Request $request
+   * @throws Exception
+   */
   private static function checkHttpMethod(Request $request): void
   {
-    $allowed = ['GET', 'POST', 'PUT', 'DELETE'];
+    $allowed = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
 
     if (!in_array($request->method(), $allowed, true)) {
       throw new Exception('Método ' . $request->method() . ' no permitido.');

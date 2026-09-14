@@ -12,7 +12,7 @@ class ModelBase
   static $pass = 'DB_PASS';
   static $dbname = 'DB_NAME';
 
-  protected $conn;
+  protected DBConnection $conn;
 
   function __construct()
   {

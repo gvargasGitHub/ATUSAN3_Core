@@ -6,7 +6,18 @@ class DBConnection
 {
   protected DBDriverBase $driver;
 
-  static public function connect(string $driver, string $host, string  $user, string $pass, string $database, ?bool $ssl): DBConnection
+  /**
+   * connect
+   * @param string $driver
+   * @param string $host
+   * @param string $user
+   * @param string $pass
+   * @param string $database
+   * @param ?bool $ssl
+   * 
+   * @return DBConnection
+   */
+  static public function connect(string $driver, string $host, string  $user, string $pass, string $database, ?bool $ssl = false): DBConnection
   {
     $conn = new DBConnection();
 
