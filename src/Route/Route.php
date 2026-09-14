@@ -102,14 +102,25 @@ class Route
   /**
    * MiddleWare
    */
-  static public function middleware(string $filter, callable $addRoutes, string $redirect = '/')
-  {
+  static public function middleware(
+    string $filter,
+    callable $addRoutes,
+    string $redirect = '/'
+  ): void {
+    $previousState = self::$middlewareState;
+    $previousFilter = self::$middlewareFilter;
+    $previousRedirect = self::$middlewareRedirectUri;
+
     self::$middlewareState = 1;
     self::$middlewareFilter = $filter;
     self::$middlewareRedirectUri = $redirect;
 
-    if (!is_callable($addRoutes)) throw new Exception('El segundo parámetro debe ser una función.');
-
-    call_user_func($addRoutes);
+    try {
+        $addRoutes();
+    } finally {
+        self::$middlewareState = $previousState;
+        self::$middlewareFilter = $previousFilter;
+        self::$middlewareRedirectUri = $previousRedirect;
+    }
   }
 }
