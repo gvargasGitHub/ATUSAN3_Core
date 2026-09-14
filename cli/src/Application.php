@@ -9,12 +9,20 @@ use AtusanCLI\Commands\MakeNested;
 use AtusanCLI\Commands\MakeService;
 use AtusanCLI\Commands\Publish;
 
+use AtusanCLI\Commands\Info;
+use AtusanCLI\Commands\Init;
+use AtusanCLI\Commands\Validate;
+
 class Application
 {
   protected $commands = [];
 
   public function __construct()
   {
+    $this->register('info', Info::class);
+    $this->register('init', Init::class);
+    $this->register('validate', Validate::class);
+
     $this->register('make:app', MakeApp::class);
     $this->register('make:module', MakeModule::class);
     $this->register('make:nested', MakeNested::class);
@@ -82,13 +90,30 @@ class Application
   }
 
   protected function showHelp()
-  {
-    echo "ATUSAN CLI\n\n";
-    echo "Comandos disponibles:\n";
+{
+    echo "ATUSAN CLI" . EOL . EOL;
+    echo "Comandos disponibles:" . EOL;
 
-    foreach (['publish', 'app', 'module', 'model', 'service'] as $w)
-      $this->how(['--what' => $w]);
-  }
+    echo "init       Inicializa atusan.json" . EOL;
+    echo "info       Muestra información del proyecto" . EOL;
+    echo "validate   Valida el manifiesto del proyecto" . EOL;
+
+    echo EOL;
+
+    foreach (
+        [
+            'publish',
+            'app',
+            'module',
+            'nested',
+            'model',
+            'service'
+        ]
+        as $w
+    ) {
+        $this->how(['--what' => $w]);
+    }
+}
 
   /**
    * How Command
@@ -104,6 +129,11 @@ class Application
       case 'module':
         echo "New Module.\n";
         echo "make:module --app ? --name ? --type [basic*|nested] --start --parent ? --template ? --title ?\n";
+        // echo str_repeat('-', 40) . EOL;
+        break;
+      case 'nested':
+        echo "New Nested Module.\n";
+        echo "make:nested --app ? --name ? --parent ? --template ? --title ?\n";
         // echo str_repeat('-', 40) . EOL;
         break;
       case 'model':
