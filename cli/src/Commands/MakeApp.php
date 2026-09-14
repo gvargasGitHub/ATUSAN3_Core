@@ -2,6 +2,8 @@
 
 namespace AtusanCLI\Commands;
 
+use AtusanCLI\Manifest;
+
 class MakeApp extends MakeBase
 {
   function required(): array
@@ -45,6 +47,12 @@ class MakeApp extends MakeBase
     $fileContent = str_replace('app_title', $this->args['--title'], $fileContent);
     $fileContent = str_replace('app_start', $this->args['--start'], $fileContent);
     file_put_contents($appDir . DS . '.env', $fileContent);
+
+    // Registra la aplicación en atusan.json,
+    // si el manifiesto ya existe.
+    Manifest::registerApplication(
+        $this->args['--name']
+    );
 
     echo "La aplicación {$this->args['--name']} se creó exitosamente." . EOL;
   }
