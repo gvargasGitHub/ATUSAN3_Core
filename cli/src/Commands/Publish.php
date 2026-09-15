@@ -2,6 +2,8 @@
 
 namespace AtusanCLI\Commands;
 
+use AtusanCLI\Manifest;
+
 class Publish extends MakeBase
 {
   function required(): array
@@ -38,6 +40,9 @@ class Publish extends MakeBase
     $logsFolder = APP_ROOT . DS . 'logs';
     if (!@file_exists($logsFolder)) @mkdir($logsFolder, '0777');
 
+    Manifest::publishApplication(
+        $this->args['--name']
+    );
     echo "Proyecto {$this->args['--name']} publicado." . EOL;
   }
 }

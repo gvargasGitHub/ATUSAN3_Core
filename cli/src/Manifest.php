@@ -10,7 +10,7 @@ class Manifest
 
     public static function path(): string
     {
-        return APP_ROOT . DS . self::FILE;
+        return APP_ROOT . DS . '.atusan' . DS . self::FILE;
     }
 
     public static function exists(): bool
@@ -137,7 +137,7 @@ class Manifest
             ],
 
             'agents' => [
-                'instructions' => 'AGENTS.md',
+                'instructions' => '../AGENTS.md',
                 'stack' => 'STACK.md'
             ]
         ];
@@ -173,6 +173,37 @@ class Manifest
                 $appsDirectory,
                 $appName
             );
+
+        self::save($manifest);
+    }
+
+    public static function publishApplication(string $appName): void {
+        if (!self::exists()) {
+            return;
+        }
+
+        $manifest = self::load();
+
+        $appsDirectory =
+            $manifest['paths']['applications'] ?? 'app';
+
+        $items =
+            $manifest['applications']['items'] ?? [];
+
+        unset($items['newapp']);
+
+        $items[$appName] = [
+            'namespace' => 'App',
+            'directory' =>
+                $appsDirectory . '/' . $appName,
+            'routing' => 'Route.php'
+        ];
+
+        $manifest['applications']['active'] =
+            $appName;
+
+        $manifest['applications']['items'] =
+            $items;
 
         self::save($manifest);
     }

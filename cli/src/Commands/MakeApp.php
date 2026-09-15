@@ -43,11 +43,16 @@ class MakeApp extends MakeBase
       APP_ROOT . DS . 'public' . DS . $this->args['--name'] . DS . 'js'
     );
     // Edita archivo .env
-    $fileContent = file_get_contents($appDir . DS . '.env');
-    $fileContent = str_replace('app_title', $this->args['--title'], $fileContent);
-    $fileContent = str_replace('app_start', $this->args['--start'], $fileContent);
-    file_put_contents($appDir . DS . '.env', $fileContent);
-
+    if ($fileContent = file_get_contents($appDir . DS . '.env.newapp')) {
+      $fileContent = str_replace('app_title', $this->args['--title'], $fileContent);
+      // $fileContent = str_replace('app_start', $this->args['--start'], $fileContent);
+      file_put_contents($appDir . DS . '.env', $fileContent);
+    } else {
+      echo "ERROR:No se pudo leer el archivo .env.newapp" . EOL;
+    }
+    // Renombra .env.newapp a .env
+    @rename($appDir . DS . '.env.newapp', $appDir . DS . '.env');
+    
     // Registra la aplicación en atusan.json,
     // si el manifiesto ya existe.
     Manifest::registerApplication(
