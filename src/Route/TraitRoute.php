@@ -22,43 +22,84 @@ trait TraitRoute
   /**
    * Add Route
    */
-  static protected function add(string $method, string $uri, string $controller, string $resolve = 'index')
+  static protected function add(
+    string $method, 
+    string $uri, 
+    string $controller, 
+    string $resolve = 'index') : void
   {
     array_push(self::$routes[$method], new RouteType($uri, $controller, $resolve, self::$middlewareState, self::$middlewareFilter, self::$middlewareRedirectUri));
   }
 
-
-  static public function get(string $uri, string $controller, string $resolve = 'index')
+  /**
+   * Add GET Route
+   */
+  static public function get(
+    string $uri, 
+    string $controller, 
+    string $resolve = 'index') : void
   {
     self::add('GET', $uri, $controller, $resolve);
   }
 
-  static public function post(string $uri, string $controller, string $resolve = 'index')
+  static public function post(
+    string $uri, 
+    string $controller, 
+    string $resolve = 'index') : void
   {
     self::add('POST', $uri, $controller, $resolve);
   }
 
-  static public function ajax(string $uri, string $controller, string $resolve)
+  /**
+   * Add AJAX Route
+   */
+  static public function ajax(
+    string $uri, 
+    string $controller, 
+    string $resolve) : void
   {
     self::add('POST', $uri, $controller, $resolve);
   }
 
-  static public function nested(string $uri, string $controller)
+  /**
+   * Add Nested Route
+   */
+  static public function nested(
+    string $uri, 
+    string $controller) : void
   {
     self::add('POST', $uri, $controller, 'nestedToJson');
   }
 
-  static public function put(string $uri, string $controller, string $resolve = 'index')
+  /**
+   * Add PUT Route
+   */
+  static public function put(
+    string $uri, 
+    string $controller, 
+    string $resolve = 'index') : void
   {
     self::add('PUT', $uri, $controller, $resolve);
   }
 
-  static public function patch(string $uri, string $controller, string $resolve = 'index')
+  /**
+   * Add PATCH Route
+   */
+  static public function patch(
+    string $uri, 
+    string $controller, 
+    string $resolve = 'index') : void
   {
     self::add('PATCH', $uri, $controller, $resolve);
   }
 
-  static public function delete(string $uri, string $controller, string $resolve = 'index')
+  /**
+   * Add DELETE Route
+   */
+  static public function delete(
+    string $uri, 
+    string $controller, 
+    string $resolve = 'index') : void
   {
     self::add('DELETE', $uri, $controller, $resolve);
   }
