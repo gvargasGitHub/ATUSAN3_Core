@@ -6,6 +6,7 @@ use Atusan\Autoloader\Autoloader;
 use Atusan\Errors\ErrorsController as Errors;
 use Atusan\FileSystem\FileSystem;
 use Atusan\Kernel\Kernel;
+use Atusan\Log\Log;
 
 class Bootstrap
 {
@@ -13,18 +14,12 @@ class Bootstrap
    * App
    */
   static public function app()
-  {
-    // Definición del tipo de petición (ChatGPT/ATUSAN 3/Definir CONTENT_TYPE_REQUESTED).
-    $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
-    $xhr    = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '';
-
-    $isJson =
-        str_contains($accept, 'application/json')
-        || strcasecmp($xhr, 'XMLHttpRequest') === 0;
-
-    define('CONTENT_TYPE_REQUESTED', $isJson ? 'JSON' : 'HTML');
-
-    // Constantes de directorios
+  { 
+    /*
+    |--------------------------------------------------------------------------
+    | Constantes de directorios
+    |--------------------------------------------------------------------------
+    */
     define('DS', DIRECTORY_SEPARATOR);
     define('APP_ROOT', FileSystem::findRoot(__DIR__));
     define('APP_CORE', dirname(__DIR__, 2));
@@ -44,11 +39,35 @@ class Bootstrap
     define('APP_DIRECTORY', APP_ROOT . DS . $_ENV['APPS_DIRECTORY'] . DS . APP_NAME);
     /*
     |--------------------------------------------------------------------------
+    | Tipo de Contenido solicitado
+    | Determina el tipo de respuesta esperado.
+    |--------------------------------------------------------------------------
+    */
+    $accept          = $_SERVER['HTTP_ACCEPT'] ?? '';
+    $contentType     = $_SERVER['CONTENT_TYPE'] ?? '';
+    $requestedWith   = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '';
+
+    $isJson =
+        stripos($accept, 'application/json') !== false
+        || stripos($contentType, 'application/json') !== false
+        || strcasecmp($requestedWith, 'XMLHttpRequest') === 0;
+
+    define(
+        'CONTENT_TYPE_REQUESTED', $isJson ? 'JSON' : 'HTML'
+    );
+    // v3.0.20
+    if (APP_DEBUG) {
+      Log::info("Uri:{$_SERVER['QUERY_STRING']};Method:{$_SERVER['REQUEST_METHOD']};ContentTypeRequested:" 
+        . CONTENT_TYPE_REQUESTED 
+        . "; Accept:{$accept}; ContentType:{$contentType};RequestedWith:{$requestedWith};");
+    }
+    /*
+    |--------------------------------------------------------------------------
     | Manejo de errores
     |--------------------------------------------------------------------------
     */
     error_reporting(E_ALL);
-    ini_set('display_errors', '1');
+    ini_set('display_errors', APP_DEBUG ? '1' : '0');
 
     // Registro de manejo de errores
     Errors::register();

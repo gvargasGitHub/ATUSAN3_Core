@@ -2,13 +2,12 @@
 
 namespace Atusan\Http\Response;
 
-use Atusan\Controller\Module;
-use Atusan\Http\Request\Request;
-use Atusan\Json\JsonUtil;
-use Atusan\Template\Template;
+use Atusan\Controller\Module as Controller;
 
 class Response implements ResponseInterface
 {
+  use TraitRender;
+
   /**
    * @var array $data
    */
@@ -18,6 +17,14 @@ class Response implements ResponseInterface
    * @var String $message
    */
   private String $message = '';
+
+  /**
+   * @var array $board
+   */
+  private array $board = [
+    'notice'=>[],
+    'warning'=>[]
+  ];
 
   /**
    * 
@@ -33,28 +40,17 @@ class Response implements ResponseInterface
   function __construct()
   {
     $this->data = [];
+    $this->board = [];
   }
 
+  /**
+   * Instance
+   */
   public static function instance()
   {
     if (!isset(self::$response)) self::$response = new self();
 
     return self::$response;
-  }
-
-  /**
-   * View
-   * Este método es invocado desde el método "index" de cada Módulo
-   * extendido de la clase Atusan\Controller\Module.
-   * Finaliza el tratamiento de la petición invocando Template::render
-   * el cual, recibe como parámetro el módulo presente para incluir y
-   * procesar la plantilla (template) establecida.
-   */
-  public function view(Module $module): void
-  {
-    $className = ($module instanceof \Atusan\Controller\ModuleNested) ? 'ModuleNested' : 'Module';
-
-    echo Template::render($className, $module);
   }
 
   /**
@@ -66,7 +62,26 @@ class Response implements ResponseInterface
   }
 
   /**
+   * Add Notice (board)
+   * @param String $message
+   */
+  public function addNotice(string $message):void
+  {
+    $this->board['notice'][] = [$message, $message];
+  }
+
+  /**
+   * Add Warning (board)
+   * @param String $message
+   */
+  public function addWarning(string $message):void
+  {
+    $this->board['warning'][] = [$message, $message];
+  }
+
+  /**
    * Message
+   * @param String $message
    */
   public function message(string $message): void
   {
@@ -74,78 +89,142 @@ class Response implements ResponseInterface
   }
 
   /**
+   * View
+   * Este método es invocado desde el método "index" de cada Módulo
+   * extendido de la clase Atusan\Controller\Module.
+   * Finaliza el tratamiento de la petición invocando renderView
+   * el cual, recibe como parámetro el módulo presente para incluir y
+   * procesar la plantilla (template) establecida.
+   */
+  public function view(
+    Controller $module): void
+  {
+    // establece los Encabezados de Documento
+    header('Content-Type: text/html; charset=utf-8');
+
+    // Establece si el módulo solicitado es de la clase ModuleNested.
+    // Esta distinción es importante porque determina:
+    // a) Contrucción de la vista.
+    // b) Finalizar o no
+    $isNested = ($module instanceof \Atusan\Controller\ModuleNested);
+
+    echo $this->renderView($isNested, $module);
+  }
+
+  /**
+   * Html
+   * Este método es invocado desde el método "index" de cada Módulo
+   * extendido de la clase Atusan\Controller\Module.
+   * Finaliza el tratamiento de la petición invocando renderView
+   * el cual, recibe como parámetro el módulo presente para incluir y
+   * procesar la plantilla (template) establecida.
+   */
+  public function html(
+    Controller $module): void
+  {
+    $this->view($module);
+  }
+
+  /**
    * Json
+   * Este método es invocado por el método "resolve" de cada Módulo o Servicio.
    */
   public function json(array $data = []): void
   {
-    if(Request::instance()->hasInvalidJsonBody()) {
-      $this->message = Request::instance()->jsonBodyError();
-      $this->exception('Petición con JSON inválido.', $this->message);
-    } else {
-      $this->data = array_merge($this->data, $data);
-      $this->jsonResponse(['status' => 'ok', 'message' => $this->message, 'data' => $this->data]);
-    }
+    header('Content-Type: application/json; charset=utf-8');
+
+    // mezcla los valores previamente agregados con los pasados
+    $this->data = array_merge($this->data, $data);
+    // emite la respuesta
+    echo self::renderJson('ok', $this->message, $this->data, null);
+  }
+
+   /**
+   * Notice (JSON)
+   * Este método solo es deben ser invocados desde los métodos "resolve" para
+   * responder a peticiones JSON (AJAX, Fetch, APIs).
+   * Este método no corresponde a un error de tipo http.
+   */
+  public function notice(
+    string $message): void
+  {
+    header('Content-Type: application/json; charset=utf-8');
+
+    echo self::renderJson(
+        'notice',
+        $message,
+        null,
+        null);
+    exit();
   }
 
   /**
-   * Exceptions
+   * Warning  (JSON)
+   * Este método solo es deben ser invocados desde los métodos "resolve" para
+   * responder a peticiones JSON (AJAX, Fetch, APIs).
+   * Este método no corresponde a un error de tipo http.
    */
-  public function exception(string $message, string $detail): void
+  public function warning(
+    string $message): void
   {
-    match (CONTENT_TYPE_REQUESTED) {
-      'HTML' => Template::renderException($message, $detail),
-      'JSON' => $this->jsonResponse(['status' => 'error', 'message' => $message, 'detail' => $detail])
-    };
+    header('Content-Type: application/json; charset=utf-8');
+
+    echo self::renderJson(
+        'warning',
+        $message,
+        null,
+        null);
+    exit();
   }
 
   /**
-   * Notice
+   * Error (JSON)
    */
-  public function notice(string $message): void
+  public function error(
+    int $code,
+    string $message
+  ) : void
   {
-    match (CONTENT_TYPE_REQUESTED) {
-      'HTML' => Template::renderNotice($message),
-      'JSON' => $this->jsonResponse(['status' => 'notice', 'message' => $message, 'detail' => $message])
-    };
+    header('Content-Type: application/json; charset=utf-8');
+
+    $this->throwExitError('JSON', $code, $message, null, null);
   }
 
   /**
-   * Warning
+   * Write Board
+   * Este método despliega contenido HTML.
+   * 
+   * @invoked by: Views/document/document.begin.view
    */
-  public function warning(string $message): void
+  protected function writeBoard(): void
   {
-    match (CONTENT_TYPE_REQUESTED) {
-      'HTML' => Template::renderWarning($message),
-      'JSON' => $this->jsonResponse(['status' => 'warning', 'message' => $message, 'detail' => $message])
-    };
+    echo $this->renderBoard($this->board);
   }
 
   /**
-   * Unknow
+   * Throw Exit Error
    */
-  public function unknow(string $message, string $detail): void
+  public function throwExitError(
+    string $contentTypeRequested,
+    int $code,
+    string $message,
+    ?string $type, 
+    ?string $detail
+    ) : never
   {
-    match (CONTENT_TYPE_REQUESTED) {
-      'HTML' => Template::renderUnknow($message, $detail),
-      'JSON' => $this->jsonResponse(['status' => 'unknow', 'message' => $message, 'detail' => $detail])
-    };
+    $this->status($code);
+
+    $type = ($type == null) ? 'error' : $type;
+
+    echo self::renderError($contentTypeRequested, $type, $message, $detail);
+    exit(1);
   }
-
-  /**
-   * Json Response (ChatGPT/ATUSAN 3/Definir CONTENT_TYPE_REQUESTED)
-   */
-  private function jsonResponse(array $data): never
-  {
-      header('Content-Type: application/json; charset=utf-8');
-
-      exit(JsonUtil::toStringFormat($data));
-  }
-
+  
   /**
    * Status
    * ChatGPT/ATUSAN 3/Parse JSON Body
    */
-  public static function status(int $code): void
+  public function status(int $code): void
   {
       http_response_code($code);
   }

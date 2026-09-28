@@ -2,10 +2,9 @@
 
 namespace Atusan\Route;
 
-use Atusan\Http\Request\Request;
+use Atusan\Exceptions\NotFoundException;
 use Atusan\Session\Session;
 use Atusan\Types\RouteType;
-use Exception;
 
 class Route
 {
@@ -20,83 +19,88 @@ class Route
 
   /**
    * Resolve
+   * Obtiene el parámetro "uri" del URL de la petición y busca la coincidencia
+   * en las declaraciones de rutas. En caso de que la ruta encontrada, esté
+   * declarada dentro de un filtro de validación, verifica el filtro.
+   * Resolve retornará:
+   *  - RouteType
+   *  - HttpUri
+   * 
+   * Resolve disparará un error controlado de tipo NOTICE en caso de error (v3.0.20).
    */
   static public function resolve(): array
   {
     // Se obtiene "URI" de variable establecida por .htaccess
-    $uri = (!isset($_GET['uri']) || empty($_GET['uri'])) ? '/' : $_GET['uri'];
+    $httpURI = (!isset($_GET['uri']) || empty($_GET['uri'])) ? '/' : $_GET['uri'];
 
     // busca la coincidencia en Rutas
-    if (($routeType = self::findRouteByUri($_SERVER['REQUEST_METHOD'], $uri)) === false)
-      throw new Exception("La ruta {$uri} no ha sido implementada para {$_SERVER['REQUEST_METHOD']}.");
-    
+    if (($routeType = self::findRouteByUri($_SERVER['REQUEST_METHOD'], $httpURI)) === false) {
+      // v3.0.20
+      throw new NotFoundException("La ruta {$httpURI} no ha sido implementada para {$_SERVER['REQUEST_METHOD']}.");
+    }
     // Si la Ruta tiene el "estado middleware" activo valida que
     // exista en la Sesión el valor, si no, entonces, re-direcciona
     // la petición a la ruta establecida 
     if ($routeType->middlewareState) {
-      if (!Session::get($routeType->middlewareFilter)) $routeType = Route::redirect($routeType->middlewareRedirectUri);
+      if (Session::get($routeType->middlewareFilter)) {
+        $routeType = Route::redirect($routeType->middlewareRedirectUri);
+      } else  {
+        // v3.0.20
+        throw new NotFoundException("El filtro {$routeType->middlewareFilter} no existe.");
+      }
     }
 
-    // Obtiene los parámetros de "uri"
-    self::parseUriParams($routeType->uri, $uri);
-
-    $controller = new $routeType->controller();
-
-    // Valida que exista el método establecido en Route para resolver la petición
-    if (!method_exists($controller, $routeType->resolve))
-      throw new Exception("El método {$routeType->resolve} no existe para {$controller->name}");
-
-    return [$controller, $routeType];
+    return [$routeType, $httpURI];
   }
 
   /**
    * Redirect
    */
-  static public function redirect(string $uri)
+  static public function redirect(
+    string $redirectURI) : RouteType
   {
-    if (($routeType = self::findRouteByUri('GET', $uri)) === false)
-      throw new Exception("La ruta {$uri} de direccionamiento no ha sido implementada para GET.");
+    if (($routeType = self::findRouteByUri('GET', $redirectURI)) === false) {
+      // v3.0.20
+      throw new NotFoundException("La ruta {$redirectURI} de direccionamiento no ha sido implementada para GET.");
+    }
 
     return $routeType;
   }
 
   /**
    * Find Route By URI
+   * Recibe el método de la petición y la ruta URI entregada por .htaccess.
+   * Recorre las rutas establecidas bajo el método y busca la coincidencia.
+   * 
+   * @param string $method
+   * @param string $httpURI
+   * 
+   * @return RouteType | false
    */
-  static protected function findRouteByUri(string $method, string $uri): RouteType | false
+  static protected function findRouteByUri(
+    string $method, 
+    string $httpURI): RouteType | false
   {
-    foreach (self::$routes[$method] as $type) {
-      // Valida si la ruta en turno tiene declarados parámetros
-      if(preg_match('#\{([A-Za-z0-9\-\_\@|\.])+\}#', $type->uri)) {
-        // crea el patrón de validación de "uri"
+    // Recorre las rutas establecidas bajo el método
+    foreach (self::$routes[$method] as $routeType) {
+      // Verifica si la ruta tiene declaración de parámetros
+      if (preg_match('#\{([A-Za-z0-9\-\_\@|\.])+\}#', $routeType->uri)) {
+        // crea el patrón de validación de "uri" eliminando las llaves {} de
+        // la URI declarada y poder verificar la URI recibida
         $patt = '#^' .  preg_replace_callback('#\{([A-Za-z0-9\-\_\@|\.])+\}#',
           function(){
             return '([A-Za-z0-9\-\_\@|\.])+';
-          }, $type->uri) . '(/)*$#';;
-        // si la ruta coincide, entonces retorna el tipo
-        if (preg_match($patt, $uri)) return $type;
-      } elseif ($type->uri == $uri) return $type;
+          }, $routeType->uri) . '(/)*$#';
+
+        // Utiliza el patrón generado y verifica si la ruta coincide
+        if (preg_match($patt, $httpURI)) return $routeType;
+
+      } elseif ($routeType->uri == $httpURI) {
+        return $routeType;
+      }
     }
 
     return false;
-  }
-
-  /**
-   * Parse Uri Params
-   */
-  static protected function parseUriParams(string $typeUri, string $uri): void
-  {
-    $request = Request::instance();
-
-    $typeUriParts = explode('/', $typeUri);
-    $uriParts = explode('/', $uri);
-
-    foreach($typeUriParts as $i=>$segment) {
-      if(preg_match('#\{([A-Za-z0-9\-\_\@|\.])+\}#', $segment)) {
-        $key = str_replace(['{','}'], '', $segment);
-        $request->addUriParam($key, $uriParts[$i]);
-      }
-    }
   }
 
   /**

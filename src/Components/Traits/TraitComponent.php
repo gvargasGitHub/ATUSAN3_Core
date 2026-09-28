@@ -4,10 +4,10 @@ namespace Atusan\Components\Traits;
 
 use Atusan\Components\Component;
 use Atusan\Controller\Module;
+use Atusan\Exceptions\InternalServerException;
 use Atusan\FileSystem\FileSystem;
 use Atusan\XML\XMLExtended;
 use Atusan\XML\XMLLoader;
-use Exception;
 
 trait TraitComponent
 {
@@ -106,7 +106,7 @@ trait TraitComponent
       $xmlext = XMLLoader::load($this->locateResource($this->layout));
 
       if ($xmlext === false)
-        throw new Exception(XMLLoader::getError());
+        throw new InternalServerException(XMLLoader::getError());
 
       // integra atributos de la raiz de la extension al controlador
       foreach ($xmlext->attributes() as $k => $v)

@@ -44,15 +44,6 @@ class DataForm extends DataViewBase
   // ----------------------------------
   //  DataViewBase
   // ----------------------------------
-  /**
-   * Import
-   */
-  public function import(array $data): int
-  {
-    $this->data[0] = array_merge($this->data[0], $data);
-
-    return count($this->data);
-  }
 
   // ----------------------------------
   //  TraitComponent

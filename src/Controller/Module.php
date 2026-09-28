@@ -3,6 +3,7 @@
 namespace Atusan\Controller;
 
 use Atusan\Components\Traits\TraitComponentNest;
+use Atusan\Exceptions\InternalServerException;
 use Atusan\FileSystem\FileSystem;
 use Atusan\Iterators\ComponentsIterator;
 use Atusan\Iterators\ComponentSourcesIterator;
@@ -111,7 +112,8 @@ abstract class Module extends Controller
     if (($ref = $this->_getXMLFilename()) == null)
       $this->xml = XMLLoader::empty();
     else
-      if (($this->xml = XMLLoader::load($ref)) === false) throw new \Exception(XMLLoader::getError());
+      if (($this->xml = XMLLoader::load($ref)) === false) 
+        throw new InternalServerException(XMLLoader::getError());
 
     // Carga Manifiesto del "Module"
     $this->injectXML();
@@ -180,7 +182,7 @@ abstract class Module extends Controller
     $this->xmlTemplate = FileSystem::exists($templateDir) ? XMLLoader::load($templateDir) : XMLLoader::empty();
 
     if ($this->xmlTemplate === false)
-      throw new \Exception(XMLLoader::getError());
+      throw new InternalServerException(XMLLoader::getError());
 
     # Actualiza "namespaces"
     $this->namespaces = array_merge(
@@ -195,7 +197,7 @@ abstract class Module extends Controller
   public function make(): string
   {
     if (($ref = $this->getViewFilename()) == null)
-      throw new \Exception("La vista {$ref} de {$this->name} no existe");
+      throw new InternalServerException("La vista {$ref} de {$this->name} no existe");
     
     ob_start();
     

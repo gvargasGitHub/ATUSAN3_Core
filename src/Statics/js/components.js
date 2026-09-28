@@ -618,14 +618,15 @@ class DataForm extends DataViewBase {
     
     ats.startLoader();
     // Note: Se reemplaza $.ajax por ats.post para unificar la forma de enviar solicitudes al servidor.
+    // v3.0.20: Se remplaza onDone -> done y onFail -> fail.
     ats.post({
       url: BASE_URL + route,
       headers,
       data: fd}, {
-      onDone: (rs) => {
+      done: (rs) => {
         window[view].onSubmitDone(rs);
       },
-      onFail: (err) => {
+      fail: (err) => {
         window[view].onSubmitFail(err);
       }
     });
@@ -1337,18 +1338,18 @@ class TabGroup extends Component {
 
     this.owner.send(route, {
       data,
-      onDone: module => {
+      done: module => {
         let button, content;
 
         let prior = this.current;
 
-        let i = this.contents.findIndex(val => val == module.name);
+        let i = this.contents.findIndex(val => val == module.data.name);
         if (i === -1) {
           // No existe
           close = document.createElement("I");
           close.setAttribute("ats-owner", this.owner.name);
           close.setAttribute("ats-parent", this.name);
-          close.setAttribute("ats-name", module.name);
+          close.setAttribute("ats-name", module.data.name);
           close.classList.add("close");
           close.addEventListener('click', TabGroup.handlerCloseEvent);
 
@@ -1356,47 +1357,47 @@ class TabGroup extends Component {
           button = document.createElement("BUTTON");
           button.setAttribute("ats-owner", this.owner.name);
           button.setAttribute("ats-parent", this.name);
-          button.setAttribute("ats-name", module.name);
+          button.setAttribute("ats-name", module.data.name);
           button.classList.add("closeable");
 
-          button.id = `${this.name}-${module.name}-button`;
-          button.appendChild(document.createTextNode(module.title));
+          button.id = `${this.name}-${module.data.name}-button`;
+          button.appendChild(document.createTextNode(module.data.title));
           button.appendChild(close);
           button.addEventListener('click', TabGroup.handlerButtonEvent);
           this.element.querySelector(".buttons")
             .append(button);
 
           content = document.createElement("DIV");
-          content.id = `${this.name}-${module.name}`;
+          content.id = `${this.name}-${module.data.name}`;
           content.classList.add("content");
           content.classList.add(this.name);
 
-          this.__parseScripts(content, module.content);
+          this.__parseScripts(content, module.data.content);
 
           this.element.querySelector(".contents")
             .append(content);
 
-          this[module.name] = new TabGroupContent(module.name, this.owner, this, button);
+          this[module.data.name] = new TabGroupContent(module.data.name, this.owner, this, button);
 
-          this.contents.push(module.name);
+          this.contents.push(module.data.name);
 
-          this.current = module.name;
+          this.current = module.data.name;
         } else {
           // Existe
-          button = this[module.name].button;
-          this[module.name].update(module.content);
+          button = this[module.data.name].button;
+          this[module.data.name].update(module.data.content);
         }
 
         this.__selectContent(button);
 
         // Module onOpen Event
-        if (window[module.name] == null) console.error(`${module.name} no fue creado.`);
-        ats.attachModule(window[module.name]);
+        if (window[module.data.name] == null) console.error(`${module.data.name} no fue creado.`);
+        ats.attachModule(window[module.data.name]);
 
         // onChange Event
         if (prior != this.current && typeof this.onChange == "function") this.onChange({ prior, current: this.current });
       },
-      onFail: rs => console.error(rs)
+      fail: rs => console.error(rs)
     });
   }
 
@@ -1582,24 +1583,24 @@ class Panel extends Component {
 
     this.owner.send(route, {
       data,
-      onDone: module => {
+      done: module => {
         // Limpia el contenido
         const panel = this.panels.get('content');
         while (panel.hasChildNodes()) panel.removeChild(panel.firstChild);
 
         // No existe
         var content = document.createElement("DIV");
-        content.id = `${this.name}-${module.name}`;
+        content.id = `${this.name}-${module.data.name}`;
 
-        this.__parseScripts(content, module.content);
+        this.__parseScripts(content, module.data.content);
 
         panel.append(content);
 
         // Module onOpen Event
-        if (window[module.name] == null) console.error(`${module.name} no fue creado.`);
-        ats.attachModule(window[module.name]);
+        if (window[module.data.name] == null) console.error(`${module.data.name} no fue creado.`);
+        ats.attachModule(window[module.data.name]);
       },
-      onFail: rs => console.error(rs)
+      fail: rs => console.error(rs)
     });
   }
 

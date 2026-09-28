@@ -2,8 +2,8 @@
 
 namespace Atusan\Http\Request;
 
+use Atusan\Exceptions\BadRequestException;
 use Atusan\Iterators\FilesUploadedIterator;
-use Atusan\Log\Log;
 use Atusan\Types\FileUploadedType;
 
 class Request implements RequestInterface
@@ -32,7 +32,7 @@ class Request implements RequestInterface
    * Los parámetros de la "uri" son aquellos que están definidos en la ruta 
    * con llaves, por ejemplo: "/user/{id}".
    * Estos parámetros se pasan como argumentos al método del controlador 
-   * invocado para resolver la petición.
+   * invocado para resolver la petición emulando el comportamiento de CodeIgniter.
    */
   private array $uriparams;
 
@@ -41,9 +41,14 @@ class Request implements RequestInterface
 
   private FilesUploadedIterator $files;
 
+  /**
+   * 
+   */
   private function __construct()
   {
     $this->get     = $_GET;
+    // elimina el parámetro uri de get
+    unset($this->get['uri']);
     $this->post    = $_POST;
     $this->server  = $_SERVER;
     $this->headers = $this->parseHeaders();
@@ -106,7 +111,7 @@ class Request implements RequestInterface
 
   public function all(): array
   {
-    return array_merge($this->get, $this->post, $this->json);
+    return array_merge($this->get, $this->post, $this->json, $this->uriparams);
   }
 
   // ----------------------------------
@@ -130,9 +135,9 @@ class Request implements RequestInterface
    * aquellos que están definidos en la ruta con llaves, por ejemplo: "/user/{id}".
    * @return array
    */
-  public function getUriParams(): array
+  public function getUriParams(string $routeTypeUri, string $httpURI): array
   {
-    return $this->uriparams;
+    return $this->parseUriParams($routeTypeUri, $httpURI);
   }
 
   /**
@@ -231,33 +236,53 @@ class Request implements RequestInterface
    */
   private function parseJsonBody(): array
   {
-      if ($this->method() === 'GET') {
-          return [];
-      }
-
-      $contentType = strtolower(
-          trim(explode(';', $this->header('Content-Type') ?? '', 2)[0])
-      );
-
-      if ($contentType !== 'application/json') {
-          return [];
-      }
-
-      $raw = file_get_contents('php://input');
-
-      if ($raw === false || $raw === '') {
-          return [];
-      }
-
-      $data = json_decode($raw, true);
-
-      if (json_last_error() !== JSON_ERROR_NONE) {
-        $this->jsonBodyInvalid = true;
-        $this->jsonBodyError = json_last_error_msg();
+    // Body vacio en peticiones GET
+    if ($this->method() === 'GET') {
         return [];
-      }
+    }
 
-      return is_array($data) ? $data : [];
+    $contentType = strtolower(
+        trim(explode(';', $this->header('Content-Type') ?? '', 2)[0])
+    );
+    
+    if ($contentType !== 'application/json') {
+        return [];
+    }
+    
+    $raw = file_get_contents('php://input');
+
+    if ($raw === false || $raw === '') {
+        return [];
+    }
+
+    $data = json_decode($raw, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+      $this->jsonBodyInvalid = true;
+      $this->jsonBodyError = json_last_error_msg();
+      
+      throw new BadRequestException('Body Raw: ' . json_last_error_msg());
+    }
+
+    return is_array($data) ? $data : [];
+  }
+
+  /**
+   * Parse Uri Params
+   */
+  private function parseUriParams(string $routeTypeUri, string $httpUri): array
+  {
+    $routeTypeUriParts = explode('/', $routeTypeUri);
+    $httpUriParts = explode('/', $httpUri);
+
+    foreach($routeTypeUriParts as $i=>$segment) {
+      if(preg_match('#\{([A-Za-z0-9\-\_\@|\.])+\}#', $segment)) {
+        $key = str_replace(['{','}'], '', $segment);
+        $this->addUriParam($key, $httpUriParts[$i]);
+      }
+    }
+
+    return $this->uriparams;
   }
 
   public function hasInvalidJsonBody(): bool
@@ -280,6 +305,8 @@ class Request implements RequestInterface
       if (str_starts_with($key, 'HTTP_')) {
         $name = strtolower(str_replace('_', '-', substr($key, 5)));
         $headers[$name] = $value;
+      } elseif (strtoupper($key) === 'CONTENT_TYPE') {
+        $headers['content-type'] = $value;
       }
     }
 

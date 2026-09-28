@@ -1,0 +1,39 @@
+<?php
+/** @var string $className */
+/** @var string $moduleName */
+?>
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="shortcut icon" type="image/png" href="public/favicon.ico">
+
+  <title><?= $_ENV['APP_TITLE'] ?></title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+  <!-- Framework CSS -->
+  <?= self::writeCSS() ?>
+
+  <script>
+    const BASE_URL = '<?= Atusan\Http\URL::base($_SERVER) ?>';
+  </script>
+  <!-- Framework JS -->
+  <?= self::writeJS() ?>
+</head>
+
+<body>
+  <div class="ats-loader-overlay" id="ats-loader">
+    <div class="ats-loader-indicator"></div>
+  </div>
+  <script>
+    var <?= $moduleName ?> = new <?= $className ?>("<?= $moduleName ?>");
+  </script>
+  <div id="board">
+    <?php $this->writeBoard() ?>
+  </div>
+  

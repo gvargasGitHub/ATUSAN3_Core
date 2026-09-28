@@ -117,7 +117,7 @@ class DataMultiForm extends DataViewBase
         elseif (file_exists(APP_DIRECTORY . DS . 'Views' . DS . $view))
           include APP_DIRECTORY . DS . 'Views' . DS . $view;
         else
-          throw new \Exception("La vista {$view} no existe", E_USER_ERROR);
+          trigger_error("La vista {$view} no existe");
         
       } else {
         if (count($this->data) == 0) $this->data[0] = [];
@@ -137,15 +137,6 @@ class DataMultiForm extends DataViewBase
   // ----------------------------------
   //  DataViewBase
   // ----------------------------------
-  /**
-   * Import
-   */
-  public function import(array $data): int
-  {
-    $this->data[0] = array_merge($this->data[0], $data);
-
-    return count($this->data);
-  }
   
   // ----------------------------------
   //  TraitComponent
