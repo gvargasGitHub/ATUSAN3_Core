@@ -4,7 +4,7 @@
 (function (window) {
   var
     /**
-     * parseRoute
+     * Parse Route
      * @param {string} route
      * @returns {string}
      */
@@ -157,9 +157,11 @@
     info = (message) => { },
     
     /**
+     * Send
      * Sends a request to the server.
      * @param {string} route
      * @param {object} options
+     * 
      * @returns {void}
      */
     send = function (route, options) {
@@ -172,16 +174,33 @@
           fd.append(key, options.data[key]);
         }
       }
-      if (typeof options.onDone == "undefined")
-        throw new Error('Debe definir options.onDone como función.');
+      // v3.0.20
+      if (typeof options.onDone === "function") {
+        console.warn('El uso de onDone es obsoleto, use done.');
+        options.done = options.onDone;
+      }
+        
+      if (typeof options.done == "undefined") {
+        console.error('Debe definir done como función.');
+        throw new Error('Debe definir done como función.');
+      }
 
-      if (typeof options.onFail == "undefined")
-        options.onFail = rs => {
+      if (typeof options.onFail === "function") {
+        console.warn('El uso de onFail es obsoleto, use fail.');
+        options.fail = options.onFail;
+      }
+      // Si el Usuario no define una acción para onFail, se establece
+      // esta acción predeterminada
+      if (typeof options.fail === "undefined") {
+        options.fail = rs => {
           alert(rs.message);
           console.warn(rs.detail);
         };
+      }
+      // Si se ha agregado un token CSRF, entonces integra el encabezado.
       var headers = (fd.has('csrf_token')) ? { 'X-CSRF-TOKEN': fd.get('csrf_token') } : {};
       
+      // manda analizar la ruta para quitar separador "/" al inicio
       route = parseRoute(route);
 
       startLoader();
@@ -192,12 +211,16 @@
         headers,
         data: fd
       }, {
-        onDone: options.onDone,
-        onFail: options.onFail
+        done: options.done,
+        fail: options.fail
       });
     },
     /**
      * Posts data to the server.
+     * @invokedBy atusan.send
+     * @invokedBy components.DataForm.handlerFormSubmitEvent
+     * @invokedBy controllers.ModuleBase.send
+     * 
      * @param {object} options
      * @param {object} callbacks
      * 
@@ -206,8 +229,8 @@
      * - headers: object
      * - data: FormData
      * Object callbacks:
-     * - onDone: function
-     * - onFail: function
+     * - done: function
+     * - fail: function
      * 
      * @returns {void}
      */
@@ -219,6 +242,7 @@
 
       $.ajax(options)
         .done(rs => {
+          stopLoader();
           // La respuesta obtenida tendrá la estructura:
           // {status, data, message, detail}
           // Se agregó al método json de la clase "Response" la línea
@@ -226,21 +250,17 @@
           // reconozca la respuesta como JSON y no como texto plano.
           // ChatGPT / Atusan 3/AJAX - JSON
           if (rs.status == 'ok') {
-            callbacks.onDone(rs.data);
-          } else if (rs.status == 'error') {
-            alert(rs.message);
-            console.error(`${rs.message}\n${rs.detail}`);
+            callbacks.done(rs);
           } else {
-            callbacks.onFail(rs);
+            callbacks.fail(rs);
           }
         })
+        // Si el Servidor responde con códigos 400s o 500s, se envia a
+        // la consola de Errores
         .fail((xhr, status, error) => {
+          stopLoader();
           console.error(`AJAX: ${status} - ${error}`);
           console.error(xhr.responseText);
-        })
-        .always(() => {
-          stopLoader();
-          info('Transacción terminada');
         });
     };
 

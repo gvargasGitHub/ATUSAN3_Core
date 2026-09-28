@@ -5,7 +5,6 @@ namespace Atusan\Components\Traits;
 use Atusan\Http\Request\Request;
 use Atusan\Iterators\InputFileIterator;
 use Atusan\Iterators\OptionTextValueIterator;
-use Exception;
 
 trait TraitDataForm
 {
@@ -30,7 +29,7 @@ trait TraitDataForm
   public function writeControl(string $name): void
   {
     if (!($control = $this->components->getByName($name)))
-      throw new Exception(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
+      trigger_error(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
 
     if (count($this->data) == 0) $this->data[0] = [];
 
@@ -45,7 +44,7 @@ trait TraitDataForm
   public function getItem(string $name)
   {
     if (!$this->components->getByName($name))
-      throw new Exception(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
+      trigger_error(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
 
     return array_key_exists($name, $this->data[0]) ? $this->data[0][$name] : null;
   }
@@ -56,7 +55,7 @@ trait TraitDataForm
   public function setItem(string $name, mixed $value)
   {
     if (!$this->components->getByName($name))
-      throw new Exception(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
+      trigger_error(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
 
     $this->data[0][$name] = $value;
   }
@@ -76,10 +75,10 @@ trait TraitDataForm
   public function feedList(string $name, array $data)
   {
     if (!($control = $this->components->getByName($name)))
-      throw new Exception(basename(__FUNCTION__) . "El control {$name} no existe para {$this->name}");
+      trigger_error(basename(__FUNCTION__) . "El control {$name} no existe para {$this->name}");
 
     if ($control->getType() != 'Select')
-      throw new Exception(basename(__FUNCTION__) . "El control {$name} no es una lista.");
+      trigger_error(basename(__FUNCTION__) . "El control {$name} no es una lista.");
 
     $control->createList(new OptionTextValueIterator($data));
   }
@@ -93,7 +92,7 @@ trait TraitDataForm
   public function typeControl(string $name, string $type = null)
   {
     if (!($control = $this->components->getByName($name)))
-      throw new Exception(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
+      trigger_error(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
 
     $lastType = $control->getType();
 
@@ -110,7 +109,7 @@ trait TraitDataForm
   public function enableControl(string $name, bool $enable)
   {
     if (!($control = $this->components->getByName($name)))
-      throw new Exception(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
+      trigger_error(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
 
     $control->setEnable($enable);
   }
@@ -121,8 +120,26 @@ trait TraitDataForm
   public function filesOf(string $name): InputFileIterator | null
   {
     if (!($this->components->getByName($name)))
-      throw new Exception(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
+      trigger_error(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
 
     return Request::instance()->files()->$name;
+  }
+
+  // ----------------------------------
+  //  DataViewBase
+  // ----------------------------------
+  /**
+   * Import
+   */
+  public function import(array $data): int
+  {
+    foreach($data as $name=>$value) {
+      if (!$this->components->getByName($name))
+        trigger_error(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
+
+      $this->data[0][$name] = $value;
+    }
+
+    return count($this->data);
   }
 }

@@ -17,10 +17,10 @@ class Template
     'error'=>[]
   ];
   /**
-   * Render
+   * Render View
    * @invoked by: Response::view
    */
-  static public function render(string $className, Module $module): string
+  static public function renderView(string $className, Module $module): string
   {
     // Establece el nombre del módulo para ser usado en la plantilla (template)
     $moduleName = $module->name;
@@ -30,6 +30,8 @@ class Template
 
     $dirViews = __DIR__ . DS . 'Views' . DS . 'document' . DS;
 
+    // Inicia la captura de buffer de salida contralada.
+    // Aqui se atrapará todo lo generado por el controlador
     ob_start();
 
     if ($className === 'ModuleNested')
@@ -44,6 +46,7 @@ class Template
 
     if ($className == 'Module') require $dirViews . 'document.close.view.php';
 
+    // finalmente, retorna el buffer y limpia
     return ob_get_clean();
   }
 
@@ -55,9 +58,14 @@ class Template
     require APP_DIRECTORY . DS . $layout;
   }
 
-  static public function renderException(string $message, string $detail)
+  static public function renderException(string $type, string $message, string $detail)
   {
     include __DIR__ . DS . 'Views' . DS . 'errors' . DS . 'exception.view.php';
+  }
+
+  static public function renderError(string $message, string $detail)
+  {
+    include __DIR__ . DS . 'Views' . DS . 'errors' . DS . 'error.view.php';
   }
 
   static public function renderNotice(string $message)

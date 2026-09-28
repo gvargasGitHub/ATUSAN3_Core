@@ -1,4 +1,5 @@
 <?php 
+/** @var string $type */
 /** @var string $message */
 /** @var string $detail */
 ?>
@@ -17,7 +18,7 @@
 <body>
   <h3><?= APP_NAME ?> Report:</h3>
   <div class="alert error">
-    <strong>Exception: </strong><?= $message ?>
+    <strong><?= $type ?>: </strong><?= $message ?>
     <pre><?= isset($detail) ? $detail : '' ?></pre>
   </div>
 </body>

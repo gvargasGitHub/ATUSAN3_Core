@@ -2,6 +2,7 @@
 
 namespace Atusan\Security;
 
+use Atusan\Exceptions\ForbiddenException;
 use Atusan\Http\Request\Request;
 use Atusan\Session\Session;
 use Exception;
@@ -44,7 +45,7 @@ class SecurityMiddleware
     $allowed = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
 
     if (!in_array($request->method(), $allowed, true)) {
-      throw new Exception('Método ' . $request->method() . ' no permitido.');
+      throw new ForbiddenException('Método ' . $request->method() . ' no permitido.');
     }
   }
 

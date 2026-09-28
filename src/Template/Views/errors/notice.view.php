@@ -2,5 +2,5 @@
 /** @var string $message */
 ?>
 <div class="alert notice">
-  <strong>Info: </strong><?= $message ?>
+  <strong>Info: </strong><?= htmlspecialchars($message) ?>
 </div>

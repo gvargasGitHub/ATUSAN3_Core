@@ -36,6 +36,8 @@ class ModuleBase extends Controller {
     super(name);
     ats.info(`Creando módulo ${name}`);
     this.components = [];
+    // v3.0.20: Se remplaza el código personalizado por el centralizado.
+    this.send = ats.send;
   }
 
   static active() {
@@ -71,48 +73,6 @@ class ModuleBase extends Controller {
   initComponents() {
     ats.info(`initComponents de ${this.name}:${this.components.length}`);
     this.components.forEach(componentName => window[componentName].init());
-  }
-  /**
-   * Sends a request to the server.
-   * @param {string} route 
-   * @param {object} options 
-   */
-  send(route, options) {
-
-    var fd = new FormData();
-
-    fd.append('module', this.name);
-    if (typeof options.data == "object") {
-      for (const key in options.data) {
-        if (!Object.hasOwn(options.data, key)) continue;
-
-        fd.append(key, options.data[key]);
-      }
-    }
-    if (typeof options.onDone == "undefined")
-      throw new Error('Debe definir options.onDone como función.');
-
-    if (typeof options.onFail == "undefined")
-      options.onFail = rs => {
-        alert(rs.message);
-        console.warn(rs.detail);
-      };
-
-    var headers = (fd.has('csrf_token')) ? { 'X-CSRF-TOKEN': fd.get('csrf_token') } : {};
-
-    route = ats.parseRoute(route);
-
-    ats.startLoader();
-    
-    // Note: Se reemplaza $.ajax por ats.post para unificar la forma de enviar solicitudes al servidor.
-    ats.post({
-      url: BASE_URL + route,
-      headers,
-      data: fd
-    }, {
-      onDone: options.onDone,
-      onFail: options.onFail
-    });
   }
 };
 /**
