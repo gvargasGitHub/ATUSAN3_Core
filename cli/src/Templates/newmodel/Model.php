@@ -6,14 +6,14 @@ use Atusan\Model\ModelBase;
 
 class model_name extends ModelBase
 {
-  function selectAll()
+  function selectAll() : array
   {
     $sql = 'SELECT cols FROM table_name';
 
     return $this->conn->query($sql, []);
   }
 
-  function get($id)
+  function get(mixed $id) : array
   {
     $sql = 'SELECT cols FROM table_name WHERE id = ?';
 
@@ -22,7 +22,7 @@ class model_name extends ModelBase
     return ($r) ? $r[0] : ['id' => 0, 'cols' => ''];
   }
 
-  function list($id)
+  function list(mixed $id) : array
   {
     $sql = 'SELECT id as `value`, cols as `text`
       FROM table_name
@@ -31,7 +31,7 @@ class model_name extends ModelBase
     return $this->conn->query($sql, [$id]);
   }
 
-  public function save($data)
+  public function save(array $data) : array
   {
     $this->conn->autocommit(false);
 
@@ -48,7 +48,7 @@ class model_name extends ModelBase
     return $res;
   }
 
-  public function delete($data)
+  public function delete(array $data) : array
   {
     $this->conn->autocommit(false);
 
