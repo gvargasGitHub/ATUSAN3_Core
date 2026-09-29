@@ -3,6 +3,7 @@
 namespace Atusan\Model;
 
 use Atusan\Persistence\DBConnection;
+use Atusan\Persistence\DBDriverInterface;
 
 class ModelBase
 {
@@ -12,8 +13,11 @@ class ModelBase
   static $pass = 'DB_PASS';
   static $dbname = 'DB_NAME';
 
-  protected DBConnection $conn;
+  protected DBDriverInterface $conn;
 
+  /**
+   * Constructor
+   */
   function __construct()
   {
     $this->conn = DBConnection::connect(
@@ -25,7 +29,12 @@ class ModelBase
     );
   }
 
-  static public function connect(): DBConnection
+  /**
+   * Connect
+   * Ofrece una alternativa para obtener el recurso de conexión
+   * a la base de datos.
+   */
+  public static function connect(): DBDriverInterface
   {
     return DBConnection::connect(
       $_ENV[static::$driver],
@@ -40,4 +49,11 @@ class ModelBase
   {
     return new static();
   }
+
+  static function getNew(): static
+  {
+    return new static();
+  }
+
+
 }
