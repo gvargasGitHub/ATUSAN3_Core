@@ -23,4 +23,12 @@ abstract class Controller implements ControllerInterface
     // Crea objeto Response
     $this->response = Response::instance();
   }
+
+  /**
+   * Get New
+   */
+  public static function getNew() : static
+  {
+    return new static();
+  }
 }

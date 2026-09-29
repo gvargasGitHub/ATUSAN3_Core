@@ -4,18 +4,50 @@ namespace Atusan\Persistence;
 
 interface DBDriverInterface
 {
+  /**
+   * Connect
+   */
+  public function connect(
+    string $host, 
+    string  $user, 
+    string $pass, 
+    string $db, 
+    ?bool $ssl): static;
 
-  public function connect(string $host, string  $user, string $pass, string $db, ?bool $ssl): void;
-
+  /** 
+   * Close
+   */
   public function close(): void;
 
-  public function query(string $sql, array $values = []): array;
+  /**
+   * Query
+   */
+  public function query(
+    string $sql, 
+    array $values = []): array;
 
-  public function execute(string $sql, array $values = []): bool;
+  /**
+   * Execute
+   */
+  public function execute(
+    string $sql, 
+    array $values = []): bool;
 
-  public function routine(string $sql, array $values = [], array $outvars = [], array $outvarstypes = []): array;
+  /**
+   * Routine
+   */
+  public function routine(
+    string $sql, 
+    array $values = [], 
+    array $outvars = [], 
+    array $outvarstypes = []): array;
 
-  public function autocommit(bool $mode = true): bool;
+  /**
+   * Autocommit
+   * @param bool $mode
+   */
+  public function autocommit(
+    bool $mode = true): bool;
 
   public function commit(): bool;
 

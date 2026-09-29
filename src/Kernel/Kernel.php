@@ -10,18 +10,6 @@ use Atusan\Security\SecurityMiddleware;
 class Kernel
 {
   /**
-   * Handle
-   */
-  static public function handle(): Request
-  {
-    // Implementa rutas de app
-    Route::implement();
-
-    // Crea y retorna instancia Request
-    return Request::capture();
-  }
-
-  /**
    * Execute
    */
   static public function execute(Request $request)
@@ -34,11 +22,12 @@ class Kernel
 
     // Route: Resuelve la ruta (uri) de la petición.
     // En caso de que la ruta no sea reconocida, Route::resolve generará
-    // una Exception de tipo CoreException.
+    // una Exception de tipo NotFoundException.
+    // v3.0.21 Route::resolve implementa las rutas de App
     [$routeType, $httpURI] = Route::resolve();
 
     // v3.0.20 Kernel crea la instancia del controlador.
-    $controller = new $routeType->controller();
+    $controller = $routeType->controller::getNew();
 
     // v3.0.20 Kernel valida si tanto el controlador como el método existen
     if (!method_exists($controller, $routeType->resolve)) {
