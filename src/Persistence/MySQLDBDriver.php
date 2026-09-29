@@ -2,80 +2,116 @@
 
 namespace Atusan\Persistence;
 
+use Atusan\Exceptions\DBConnectionException;
 use mysqli;
+use mysqli_sql_exception;
 
 class MySQLDBDriver extends DBDriverBase
 {
 
-  public function connect(string $host, string  $user, string $pass, string $database, ?bool $ssl): void
+  protected mysqli $mysqli;
+
+  /**
+   * Connect
+   */
+  public function connect(
+    string $host, 
+    string  $user, 
+    string $pass, 
+    string $database, 
+    ?bool $ssl): static
   {
     // Siempre se debe activar el informe de errores para mysqli
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-    $this->conn = mysqli_init();
+    $this->mysqli = mysqli_init();
         
-	  $this->conn->options(MYSQLI_OPT_CONNECT_TIMEOUT, 5);
+	  $this->mysqli->options(MYSQLI_OPT_CONNECT_TIMEOUT, 5);
 	  
     $clientFlag = ($ssl === true) ? MYSQLI_CLIENT_SSL : 0;
 
-    $this->conn->real_connect($host, $user, $pass, $database, NULL,
-        NULL, $clientFlag);
+    try {
+      $this->mysqli->real_connect($host, $user, $pass, $database, NULL,
+          NULL, $clientFlag);
 
-    $this->conn->query("SET NAMES utf8mb4");
+      $this->mysqli->query("SET NAMES utf8mb4");
 
-    $this->conn->query("SET lc_time_names='es_MX'");
-
-    if (mysqli_connect_errno()) {
-      throw new DBDriverException(mysqli_connect_error());
+      $this->mysqli->query("SET lc_time_names='es_MX'");
+    } catch (mysqli_sql_exception $ex) {
+      throw new DBConnectionException($ex->getMessage());
     }
+
+    return $this;
   }
 
+  /**
+   * Close
+   */
   public function close(): void
   {
-    $this->conn->close();
+    $this->mysqli->close();
   }
 
-  public function query(string $sql, array $values = []): array
+  /**
+   * Query
+   */
+  public function query(
+    string $sql, 
+    array $values = []): array
   {
     if (count($values) !== preg_match_all('/\?/', $sql))
-      new DBDriverException('El número de valores no coincide con los parámetros de la consulta');
+      new DBConnectionException('El número de valores no coincide con los parámetros de la consulta');
 
     if (count($values) > 0) {
       $p = [];
       for ($i = 0; $i < count($values); $i++) {
         $p[$i] = ($this->checkDataType($values[$i]) == 'string')
-          ? $this->buildStringValue($this->conn->real_escape_string($values[$i]))
+          ? $this->buildStringValue($this->mysqli->real_escape_string($values[$i]))
           : $values[$i];
       }
 
       for ($i = 0; $i < count($p); $i++) $sql = preg_replace('/\?/', $p[$i], $sql, 1);
     }
-
-    // devuelve objeto MySQL_Result para conjunto de resultados,
-    // false en caso de fallo y true para consultas exitosas
-    $q = $this->conn->query($sql, MYSQLI_STORE_RESULT);
-
-    if ($q === true) return [];
-    if ($q === false) new DBDriverException($this->conn->error);
-
     $result = [];
-    while ($r = $q->fetch_assoc()) {
-      array_push($result, $r);
+    try {
+      // devuelve objeto MySQL_Result para conjunto de resultados,
+      // false en caso de fallo y true para consultas exitosas
+      $q = $this->mysqli->query($sql, MYSQLI_STORE_RESULT);
 
-      $this->clearStoredProcedure();
+      if ($q === true) return [];
+      if ($q === false) new DBConnectionException($this->mysqli->error);
+
+      
+      while ($r = $q->fetch_assoc()) {
+        array_push($result, $r);
+
+        $this->clearStoredProcedure();
+      }
+
+      $q->free();
+    } catch (mysqli_sql_exception $ex) {
+      throw new DBConnectionException($ex->getMessage());
     }
-
-    $q->free();
 
     return $result;
   }
 
+  /**
+   * Execute
+   */
   public function execute(string $sql, array $values = []): bool
   {
     return count($this->query($sql, $values)) === 0;
   }
 
-  public function routine(string $sql, array $values = [], $outvars = [], $outvarstypes = []): array
+  /**
+   * Routine
+   */
+  public function routine(
+    string $sql, 
+    array $values = [], 
+    array $outvars = [], 
+    array $outvarstypes = []): array
   {
     $fov = array_merge(['@err_flag', '@err_text'], $outvars);
 
@@ -86,45 +122,48 @@ class MySQLDBDriver extends DBDriverBase
     return $results[0];
   }
 
+  /**
+   * Autocommit
+   */
   public function autocommit(bool $mode = true): bool
   {
-    return $this->conn->autocommit($mode);
+    return $this->mysqli->autocommit($mode);
   }
 
   public function commit(): bool
   {
-    return $this->conn->commit();
+    return $this->mysqli->commit();
   }
 
   public function rollback(): bool
   {
-    return $this->conn->rollback();
+    return $this->mysqli->rollback();
   }
 
   public function sqlstate(): string
   {
-    return $this->conn->sqlstate;
+    return $this->mysqli->sqlstate;
   }
 
   public function affectedRows(): string
   {
-    return $this->conn->affected_rows;
+    return $this->mysqli->affected_rows;
   }
 
   public function errorCode(): string
   {
-    return $this->conn->errno;
+    return $this->mysqli->errno;
   }
 
   public function errorMessage(): string
   {
-    return $this->conn->error;
+    return $this->mysqli->error;
   }
 
   private function clearStoredProcedure(): void
   {
-    while ($this->conn->more_results() && $l_result = $this->conn->next_result()) {
-      if ($l_result = $this->conn->store_result()) $l_result->free();
+    while ($this->mysqli->more_results() && $l_result = $this->mysqli->next_result()) {
+      if ($l_result = $this->mysqli->store_result()) $l_result->free();
     }
   }
 

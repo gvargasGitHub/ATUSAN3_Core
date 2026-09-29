@@ -11,50 +11,44 @@ class Session
     PHP_SESSION_NONE => 'Session enabled, but none exists',
     PHP_SESSION_ACTIVE => 'Session enabled and one exists'
   ];
+
+  /**
+   * Start
+   */
+  public static function start(): void
+  {
+    // Reporte
+    $info = "Session Status:" . self::$status[session_status()] . "; Session ID:" . session_id() . PHP_EOL;
+    
+    $isStarted = session_start([
+        'cookie_lifetime' => 86400 // Esto envía un cookie persistente que dura un día.
+    ]);
+
+    $info .= "Session started:";
+    $info .= ($isStarted) ? 'Yes' : 'No';
+    $info .= PHP_EOL . "Session Status:" . self::$status[session_status()] . "; Session ID:" . session_id() . PHP_EOL;
+
+    if (session_status() === PHP_SESSION_NONE) {
+      self::register();
+    }
+
+    if (APP_DEBUG) Log::info($info);
+  }
+
   /**
    * 
    */
-  static public function start(): void
+  public static function isActive() : bool
   {
-    global $phpsessid, $sessfile;
-    
-    // Log::info('Session Path:' . ini_get('session.save_path'));
-    // Log::info('Session Status:' . self::$status[session_status()]);
-
-    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-
-    // Log::info('Session Status:' . self::$status[session_status()]);
-
-    if (session_status() === PHP_SESSION_NONE) {
-      if (!isset($_COOKIE['PHPSESSID']) || empty($_COOKIE['PHPSESSID'])) {
-        $phpsessid = self::base32Encode(self::randomBytes(16));
-        setcookie('PHPSESSID', $phpsessid, 
-          ini_get('session.cookie_lifetime'), 
-          ini_get('session.cookie_path'), 
-          ini_get('session.cookie_domain'), 
-          ini_get('session.cookie_secure'), 
-          ini_get('session.cookie_httponly'));
-      } else {
-        $phpsessid = substr(preg_replace('/[^a-z0-9]/', '', $_COOKIE['PHPSESSID']), 0, 26);
-      }
-
-      $sessfile = ini_get('session.save_path') . '/sess_' . $phpsessid;
-
-      if (file_exists($sessfile)) {
-        $_SESSION = unserialize(file_get_contents($sessfile));
-      } else {
-        $_SESSION = [];
-      }
-      register_shutdown_function(['Atusan\\Session\\Session', 'save']);
-    }
+    return (session_status() === PHP_SESSION_ACTIVE);
   }
 
-  static public function keepAlive(): void
+  public static function keepAlive(): void
   {
     self::start();
   }
 
-  static public function writeClose()
+  public static function writeClose()
   {
     session_write_close();
   }
@@ -62,7 +56,7 @@ class Session
   /**
    * Destroy
    */
-  static public function destroy()
+  public static function destroy()
   {
     if (session_status() !== PHP_SESSION_ACTIVE) {
       session_start();
@@ -92,7 +86,7 @@ class Session
   /**
    * 
    */
-  static public function close()
+  public static function close()
   {
     self::start();
 
@@ -102,7 +96,7 @@ class Session
   /**
    * Get Global
    */
-  static public function get(string $key): mixed
+  public static function get(string $key): mixed
   {
     return $_SESSION[$key] ?? null;
   }
@@ -110,7 +104,7 @@ class Session
   /**
    * Set Global
    */
-  static public function set(string $key, mixed $value): void
+  public static function set(string $key, mixed $value): void
   {
     $_SESSION[$key] = $value;
   }
@@ -118,7 +112,7 @@ class Session
   /**
    * Set or Get Auth State
    */
-  static public function auth(?bool $state): bool
+  public static function auth(?bool $state): bool
   {
     if (!is_null($state)) $_SESSION['auth'] = $state;
 
@@ -126,16 +120,36 @@ class Session
   }
 
   // ----------------------------------
-  // 
+  // NGINX Solution
   // ----------------------------------
-  static public function save(): void
+  public static function register(): void
+  {
+    global $phpsessid, $sessfile;
+
+    if (!isset($_COOKIE['PHPSESSID']) || empty($_COOKIE['PHPSESSID'])) {
+      $phpsessid = self::base32Encode(self::randomBytes(16));
+      setcookie('PHPSESSID', $phpsessid, ini_get('session.cookie_lifetime'), ini_get('session.cookie_path'), ini_get('session.cookie_domain'), ini_get('session.cookie_secure'), ini_get('session.cookie_httponly'));
+    } else {
+      $phpsessid = substr(preg_replace('/[^a-z0-9]/', '', $_COOKIE['PHPSESSID']), 0, 26);
+    }
+
+    $sessfile = ini_get('session.save_path') . '/sess_' . $phpsessid;
+    if (is_file($sessfile)) {
+      $_SESSION = unserialize(file_get_contents($sessfile));
+    } else {
+      $_SESSION = [];
+    }
+    register_shutdown_function(['Atusan\\Session\\Session', 'save']);
+  }
+
+  public static function save(): void
   {
     global $sessfile;
 
     file_put_contents($sessfile, serialize($_SESSION));
   }
 
-  static public function id(): string
+  public static function id(): string
   {
     global $phpsessid;
     return $phpsessid;
@@ -144,7 +158,7 @@ class Session
   /**
    * Random Bytes
    */
-  static public function randomBytes(int $length): string
+  public static function randomBytes(int $length): string
   {
     if (function_exists('random_bytes')) {
       return random_bytes($length);
@@ -156,7 +170,7 @@ class Session
     return $randomString;
   }
 
-  static public function base32Encode(string $input): string
+  public static function base32Encode(string $input): string
   {
     $BASE32_ALPHABET = 'abcdefghijklmnopqrstuvwxyz234567';
     $output = '';

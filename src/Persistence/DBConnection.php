@@ -4,7 +4,7 @@ namespace Atusan\Persistence;
 
 class DBConnection
 {
-  protected DBDriverBase $driver;
+  // protected DBDriverInterface $driver;
 
   /**
    * connect
@@ -15,84 +15,102 @@ class DBConnection
    * @param string $database
    * @param ?bool $ssl
    * 
-   * @return DBConnection
+   * @return DBDriverInterface
    */
-  static public function connect(string $driver, string $host, string  $user, string $pass, string $database, ?bool $ssl = false): DBConnection
+  public static function connect(
+    string $driver, 
+    string $host, 
+    string $user, 
+    string $pass,
+    string $database, 
+    ?bool $ssl = false): DBDriverInterface
   {
-    $conn = new DBConnection();
+    $resource = DBConnection::createDriver($driver);
 
-    $class = "Atusan\\Persistence\\{$driver}DBDriver";
+    $resource->connect($host, $user, $pass, $database, $ssl);
 
-    $conn->driver = new $class();
-
-    // Connect generará una excepción del tipo DBDriverException
-    $conn->driver->connect($host, $user, $pass, $database, $ssl);
-
-    return $conn;
-  }
-
-  /**
-   * 
-   */
-  public function close(): void
-  {
-    if (is_a($this->driver, 'Atusan\\Persistence\\DBDriverInterface')) $this->driver->close();
+    return $resource;
   }
 
   /**
-   * 
+   * Get New
    */
-  public function query(string $sql, array $params = []): array
+  public static function getNew() : static
   {
-    return $this->driver->query($sql, $params);
+    return new static();
   }
+
   /**
    * 
    */
-  public function execute(string $sql, array $params = []): bool
+  public static function createDriver(string $driverName) : DBDriverInterface
   {
-    return $this->driver->execute($sql, $params);
+    $driverClassName = "Atusan\\Persistence\\{$driverName}DBDriver";
+
+    return $driverClassName::getNew();
   }
-  /**
-   * 
-   */
-  public function routine(string $sql, array $params = [], array $outvars = [], array $outvarstypes = []): array
-  {
-    return $this->driver->routine($sql, $params, $outvars, $outvarstypes);
-  }
-  /**
-   * 
-   */
-  public function autocommit(bool $mode): void
-  {
-    $this->driver->autocommit($mode);
-  }
-  /**
-   * 
-   */
-  public function commit(): void
-  {
-    $this->driver->commit();
-  }
-  /**
-   * 
-   */
-  public function rollback(): void
-  {
-    $this->driver->rollback();
-  }
-  /**
-   * 
-   */
-  public function sqlstate(): void
-  {
-    $this->driver->sqlstate();
-  }
-  /**
-   * 
-   */
-  public function affectedRows(): void
-  {
-    $this->driver->affectedRows();
-  }
+  // /**
+  //  * 
+  //  */
+  // public function close(): void
+  // {
+  //   if (is_a($this->driver, 'Atusan\\Persistence\\DBDriverInterface')) $this->driver->close();
+  // }
+
+  // /**
+  //  * 
+  //  */
+  // public function query(string $sql, array $params = []): array
+  // {
+  //   return $this->driver->query($sql, $params);
+  // }
+  // /**
+  //  * 
+  //  */
+  // public function execute(string $sql, array $params = []): bool
+  // {
+  //   return $this->driver->execute($sql, $params);
+  // }
+  // /**
+  //  * 
+  //  */
+  // public function routine(string $sql, array $params = [], array $outvars = [], array $outvarstypes = []): array
+  // {
+  //   return $this->driver->routine($sql, $params, $outvars, $outvarstypes);
+  // }
+  // /**
+  //  * 
+  //  */
+  // public function autocommit(bool $mode): void
+  // {
+  //   $this->driver->autocommit($mode);
+  // }
+  // /**
+  //  * 
+  //  */
+  // public function commit(): void
+  // {
+  //   $this->driver->commit();
+  // }
+  // /**
+  //  * 
+  //  */
+  // public function rollback(): void
+  // {
+  //   $this->driver->rollback();
+  // }
+  // /**
+  //  * 
+  //  */
+  // public function sqlstate(): void
+  // {
+  //   $this->driver->sqlstate();
+  // }
+  // /**
+  //  * 
+  //  */
+  // public function affectedRows(): void
+  // {
+  //   $this->driver->affectedRows();
+  // }
 }

@@ -4,7 +4,10 @@ namespace Atusan\Session;
 
 class SessionNginx
 {
-  static public function start()
+  /**
+   * Start
+   */
+  public static function start()
   {
     global $phpsessid, $sessfile;
 
@@ -24,20 +27,20 @@ class SessionNginx
     register_shutdown_function(['Atusan\\Session\\Session', 'save']);
   }
 
-  static public function save()
+  public static function save()
   {
     global $sessfile;
 
     file_put_contents($sessfile, serialize($_SESSION));
   }
 
-  static public function id()
+  public static function id()
   {
     global $phpsessid;
     return $phpsessid;
   }
 
-  static public function randomBytes($length)
+  public static function randomBytes(int $length)
   {
     if (function_exists('random_bytes')) {
       return random_bytes($length);
@@ -49,7 +52,7 @@ class SessionNginx
     return $randomString;
   }
 
-  static public function base32Encode($input)
+  public static function base32Encode(string $input)
   {
     $BASE32_ALPHABET = 'abcdefghijklmnopqrstuvwxyz234567';
     $output = '';

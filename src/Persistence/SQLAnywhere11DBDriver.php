@@ -2,61 +2,70 @@
 
 namespace Atusan\Persistence;
 
+use Atusan\Exceptions\DBConnectionException;
+
 class SQLAnywhere11DBDriver extends DBDriverBase
 {
-  protected int $affectedRows = 0;
+  protected mixed $odbc;
 
-  public function connect(string $host, string  $user, string $pass, ?string $db, ?bool $ssl): void
+  public function connect(
+    string $host, 
+    string  $user, 
+    string $pass, 
+    ?string $db, 
+    ?bool $ssl): static
   {
-    $this->conn = @odbc_connect(
+    $this->odbc = @odbc_connect(
       "Driver={SQL Anywhere 11};CommLinks=tcpip(Host={$host});ServerName={$db};CharSet=UTF-8;",
       $user,
       $pass
     );
 
-    if (!$this->conn) {
+    if (!$this->odbc) {
       $errormsg = odbc_errormsg();
 
       $odbc_error = (mb_check_encoding($errormsg, 'utf-8'))
         ? $errormsg
         : mb_convert_encoding($errormsg, 'UTF-8');
 
-      # 2019-02-21: en caso de error, dispara la excepcion
+      # en caso de error, dispara la excepcion
       $error_text = "No se pudo establecer la conexión con al base de datos.\n"
         . "Revise que el servicio esté en operación y que los parámetros estén correctos.\n"
         . $odbc_error;
 
-      throw new DBDriverException($error_text);
+      throw new DBConnectionException($error_text);
     }
+
+    return $this;
   }
 
   public function close(): void
   {
-    odbc_close($this->conn);
+    odbc_close($this->odbc);
   }
 
   public function query(string $sql, array $values = []): array
   {
     if (count($values) !== preg_match_all('/\?/', $sql))
-      throw new DBDriverException('El número de valores no coincide con los parámetros de la consulta');
+      throw new DBConnectionException('El número de valores no coincide con los parámetros de la consulta');
 
-    if (count($values) > 0) {
-      for ($i = 0; $i < count($values); $i++) {
-        if (preg_match('/^[0-9]{2}(\/|\-)[0-9]{2}(\/|\-)[0-9]{4}$/', $values[$i])) {
-          $values[$i] = substr($values[$i], 6)
-            . '-' . substr($values[$i], 3, 2)
-            . '-' . substr($values[$i], 0, 2);
-        }
-      }
-    }
-    $stmt = @odbc_prepare($this->conn, $sql);
+    // if (count($values) > 0) {
+    //   for ($i = 0; $i < count($values); $i++) {
+    //     if (preg_match('/^[0-9]{2}(\/|\-)[0-9]{2}(\/|\-)[0-9]{4}$/', $values[$i])) {
+    //       $values[$i] = substr($values[$i], 6)
+    //         . '-' . substr($values[$i], 3, 2)
+    //         . '-' . substr($values[$i], 0, 2);
+    //     }
+    //   }
+    // }
+    $stmt = @odbc_prepare($this->odbc, $sql);
 
     if ($stmt === false)
-      throw new DBDriverException(odbc_errormsg($this->conn));
+      throw new DBConnectionException(odbc_errormsg($this->odbc));
 
     $res = @odbc_execute($stmt, $values);
     if (!$res)
-      throw new DBDriverException(odbc_errormsg($this->conn));
+      throw new DBConnectionException(odbc_errormsg($this->odbc));
 
     $this->affectedRows = odbc_num_rows($stmt) & 0xffffffff;
 
@@ -73,7 +82,11 @@ class SQLAnywhere11DBDriver extends DBDriverBase
     return count($this->query($sql, $values)) === 0;
   }
 
-  public function routine(string $sql, array $values = [], $outvars = [], $outtypes = []): array
+  public function routine(
+    string $sql, 
+    array $values = [], 
+    array $outvars = [], 
+    array $outtypes = []): array
   {
     $fov = array_merge(['@err_flag', '@err_text'], $outvars);
 
@@ -93,19 +106,19 @@ class SQLAnywhere11DBDriver extends DBDriverBase
     return $results[0];
   }
 
-  public function autocommit($mode = true): bool
+  public function autocommit(bool $mode = true): bool
   {
-    return odbc_autocommit($this->conn, $mode);
+    return odbc_autocommit($this->odbc, $mode);
   }
 
   public function commit(): bool
   {
-    return odbc_commit($this->conn);
+    return odbc_commit($this->odbc);
   }
 
   public function rollback(): bool
   {
-    return odbc_rollback($this->conn);
+    return odbc_rollback($this->odbc);
   }
 
   public function sqlstate(): string
@@ -120,11 +133,11 @@ class SQLAnywhere11DBDriver extends DBDriverBase
 
   public function errorCode(): string
   {
-    return odbc_error($this->conn);
+    return odbc_error($this->odbc);
   }
 
   public function errorMessage(): string
   {
-    return odbc_errormsg($this->conn);
+    return odbc_errormsg($this->odbc);
   }
 }

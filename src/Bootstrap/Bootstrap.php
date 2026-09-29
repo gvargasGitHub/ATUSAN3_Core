@@ -5,6 +5,7 @@ namespace Atusan\Bootstrap;
 use Atusan\Autoloader\Autoloader;
 use Atusan\Errors\ErrorsController as Errors;
 use Atusan\FileSystem\FileSystem;
+use Atusan\Http\Request\Request;
 use Atusan\Kernel\Kernel;
 use Atusan\Log\Log;
 
@@ -85,7 +86,7 @@ class Bootstrap
 
     // Variables de entorno de la App
     FileSystem::dotEnv(APP_DIRECTORY);
-    // 
-    Kernel::execute(Kernel::handle());
+    // v3.0.21 
+    Kernel::execute(Request::capture());
   }
 }

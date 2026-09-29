@@ -32,6 +32,9 @@ class Route
   {
     // Se obtiene "URI" de variable establecida por .htaccess
     $httpURI = (!isset($_GET['uri']) || empty($_GET['uri'])) ? '/' : $_GET['uri'];
+    
+    // v3.0.21 Implementa rutas
+    self::implement();
 
     // busca la coincidencia en Rutas
     if (($routeType = self::findRouteByUri($_SERVER['REQUEST_METHOD'], $httpURI)) === false) {
