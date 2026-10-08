@@ -51,17 +51,6 @@ trait TraitRoute
   }
 
   /**
-   * Add AJAX Route
-   */
-  static public function ajax(
-    string $uri, 
-    string $controller, 
-    string $resolve) : void
-  {
-    self::add('POST', $uri, $controller, $resolve);
-  }
-
-  /**
    * Add Nested Route
    */
   static public function nested(
