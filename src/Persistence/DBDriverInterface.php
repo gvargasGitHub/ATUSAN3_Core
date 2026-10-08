@@ -34,6 +34,14 @@ interface DBDriverInterface
     array $values = []): bool;
 
   /**
+   * Exec
+   */
+  public function exec(
+    string $sql, 
+    array $values = []
+  ):bool;
+
+  /**
    * Routine
    */
   public function routine(
@@ -41,6 +49,24 @@ interface DBDriverInterface
     array $values = [], 
     array $outvars = [], 
     array $outvarstypes = []): array;
+
+  /**
+   * Procedure Outs
+   */
+  public function procedureOuts(
+    string $procedureName, 
+    array $values = [], 
+    array $outvars = [], 
+    array $outvarstypes = []
+  ): array;
+
+  /**
+   * Procedure Result
+   */
+  public function procedureResult(
+    string $procedureName, 
+    array $values = [],
+  ): array;
 
   /**
    * Autocommit

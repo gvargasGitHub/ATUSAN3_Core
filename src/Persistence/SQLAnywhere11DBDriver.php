@@ -8,6 +8,12 @@ class SQLAnywhere11DBDriver extends DBDriverBase
 {
   protected mixed $odbc;
 
+  /**
+   * Connect
+   * @param string $host
+   * @param string $user
+   * @param string $pass
+   */
   public function connect(
     string $host, 
     string  $user, 
@@ -39,12 +45,23 @@ class SQLAnywhere11DBDriver extends DBDriverBase
     return $this;
   }
 
+  /**
+   * Close
+   */
   public function close(): void
   {
     odbc_close($this->odbc);
   }
 
-  public function query(string $sql, array $values = []): array
+  /**
+   * Query
+   * @param string $sql
+   * @param array $values
+   * @return array
+    */
+  public function query(
+    string $sql, 
+    array $values = []): array
   {
     if (count($values) !== preg_match_all('/\?/', $sql))
       throw new DBConnectionException('El número de valores no coincide con los parámetros de la consulta');
@@ -77,11 +94,36 @@ class SQLAnywhere11DBDriver extends DBDriverBase
     return $results;
   }
 
+  /**
+   * Execute
+   * @param string $sql
+   * @param array $values
+   * @return bool
+   */
   public function execute(string $sql, array $values = []): bool
   {
     return count($this->query($sql, $values)) === 0;
   }
+  
+  /**
+   * Exec
+   * @param string $sql
+   * @param array $values
+   * @return bool
+   */
+  public function exec(string $sql, array $values = []): bool
+  {
+    return count($this->query($sql, $values)) === 0;
+  }
 
+  /**
+   * Routine
+   * @param string $sql
+   * @param array $values
+   * @param array $outvars
+   * @param array $outtypes
+   * @return array
+   */
   public function routine(
     string $sql, 
     array $values = [], 
@@ -106,6 +148,65 @@ class SQLAnywhere11DBDriver extends DBDriverBase
     return $results[0];
   }
 
+  /**
+   * Procedure Outs
+   * @param string $procedureName
+   * @param array $values
+   * @param array $outvars
+   * @param array $outtypes
+   * @return array
+   */
+  public function procedureOuts(
+    string $procedureName, 
+    array $values = [], 
+    array $outvars = [], 
+    array $outtypes = []): array
+  {
+    $fov = array_merge(['@err_flag', '@err_text'], $outvars);
+
+    $typ = array_merge(['BIT', 'VARCHAR(128)'], $outtypes);
+
+    // Para crear las variables de salida, se crean al inicio de la ejecución
+    $s = '';
+    for ($i = 0; $i < count($fov); $i++) $s .= "create variable {$fov[$i]} {$typ[$i]}; ";
+
+    $this->query($s . "call {$procedureName}(" . implode(',', array_merge(array_fill(0, count($values), '?'), $fov)) . ");", $values);
+
+    $results = $this->query('SELECT ' . implode(',', $fov));
+
+    // Para limpiar las variables de salida, se eliminan al final de la ejecución
+    $s = '';
+    for ($i = 0; $i < count($fov); $i++) $s .= "drop variable {$fov[$i]}; ";
+    $this->query($s);
+
+    return $results[0];
+  }
+
+  /**
+   * Procedure Result
+   * @param string $procedureName
+   * @param array $values
+   * @return array
+   */
+
+  public function procedureResult(
+    string $procedureName, 
+    array $values = []): array
+  {
+    $results = $this->query("call {$procedureName}(" . implode(',', array_fill(0, count($values), '?')) . ");", $values);
+
+    if (!$results) {
+      throw new DBConnectionException("Error al ejecutar el procedimiento almacenado: {$procedureName}");
+    }
+
+    return $results;
+  }
+
+  /**
+   * Autocommit
+   * @param bool $mode
+   * @return bool
+   */
   public function autocommit(bool $mode = true): bool
   {
     return odbc_autocommit($this->odbc, $mode);

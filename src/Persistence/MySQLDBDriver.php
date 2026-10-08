@@ -105,6 +105,14 @@ class MySQLDBDriver extends DBDriverBase
   }
 
   /**
+   * Exec
+   */
+  public function exec(string $sql, array $values = []): bool
+  {
+    return count($this->query($sql, $values)) === 0;
+  }
+
+  /**
    * Routine
    */
   public function routine(
@@ -118,6 +126,42 @@ class MySQLDBDriver extends DBDriverBase
     $this->query("call {$sql}(" . implode(',', array_merge(array_fill(0, count($values), '?'), $fov)) . ")", $values);
 
     $results = $this->query('SELECT ' . implode(',', $fov));
+
+    return $results[0];
+  }
+
+  /**
+   * Procedure Outs
+   */
+  public function procedureOuts(
+    string $procedureName, 
+    array $values = [], 
+    array $outvars = [], 
+    array $outvarstypes = []
+  ): array
+  {
+    $fov = array_merge(['@err_flag', '@err_text'], $outvars);
+
+    $this->query("call {$procedureName}(" . implode(',', array_merge(array_fill(0, count($values), '?'), $fov)) . ")", $values);
+
+    $results = $this->query('SELECT ' . implode(',', $fov));
+
+    return $results[0];
+  }
+
+  /**
+   * Procedure Result
+   */
+  public function procedureResult(
+    string $procedureName, 
+    array $values = []
+  ): array
+  {
+    $results = $this->query("call {$procedureName}(" . implode(',', array_fill(0, count($values), '?')) . ")", $values);
+
+    if (!$results) {
+      throw new DBConnectionException("Error al ejecutar el procedimiento almacenado: {$procedureName}");
+    }
 
     return $results[0];
   }
@@ -191,7 +235,10 @@ class MySQLDBDriver extends DBDriverBase
   }
 
   /**
-   * 
+   * Check Data Type
+   * Esta función determina el tipo de dato del parámetro para completar
+   * el argumento de tipos que requiere la función mysqli_stmt_bind_param.
+   * @param mixed $value
    */
   private function checkDataType(mixed $value): string
   {
