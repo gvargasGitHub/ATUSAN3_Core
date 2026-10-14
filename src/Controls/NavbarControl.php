@@ -2,22 +2,8 @@
 
 namespace Atusan\Controls;
 
-use Atusan\Components\Component;
-use Atusan\Controller\Module;
-use Atusan\Controls\Traits\TraitNavbarControl;
-use Atusan\XML\XMLExtended;
-
-class NavbarControl extends Component
+class NavbarControl extends NavControlBase
 {
-  use TraitNavbarControl;
-
-  function __construct(Module $owner, XMLExtended $xml)
-  {
-    parent::__construct($owner, $xml);
-
-    $this->set('type', substr($this->xml->getName(), 4));
-  }
-
   // ----------------------------------
   //  ComponentInterface
   // ----------------------------------

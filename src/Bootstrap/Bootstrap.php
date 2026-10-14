@@ -57,11 +57,11 @@ class Bootstrap
         'CONTENT_TYPE_REQUESTED', $isJson ? 'JSON' : 'HTML'
     );
     // v3.0.20
-    if (APP_DEBUG) {
-      Log::info("Uri:{$_SERVER['QUERY_STRING']};Method:{$_SERVER['REQUEST_METHOD']};ContentTypeRequested:" 
-        . CONTENT_TYPE_REQUESTED 
-        . "; Accept:{$accept}; ContentType:{$contentType};RequestedWith:{$requestedWith};");
-    }
+    // if (APP_DEBUG) {
+    //   Log::info("Uri:{$_SERVER['QUERY_STRING']};Method:{$_SERVER['REQUEST_METHOD']};ContentTypeRequested:" 
+    //     . CONTENT_TYPE_REQUESTED 
+    //     . "; Accept:{$accept}; ContentType:{$contentType};RequestedWith:{$requestedWith};");
+    // }
     /*
     |--------------------------------------------------------------------------
     | Manejo de errores

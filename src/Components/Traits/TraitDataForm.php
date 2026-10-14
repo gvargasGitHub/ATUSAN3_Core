@@ -16,7 +16,7 @@ trait TraitDataForm
     $this->data = [['csrf_token' => '']];
     // Integra de manera predeterminada el control Csrf
     $csrf = $this->xml->addChild('ControlCsrf');
-    $csrf->addAttribute('name', 'csrf_token');
+    $csrf->addAttribute('id', 'csrf_token');
     // El desarrollador deberá generar, asignar y validar
     // manualmente el token a este control mediante el
     // método "setCsrf(string)"
@@ -77,7 +77,7 @@ trait TraitDataForm
     if (!($control = $this->components->getById($id)))
       trigger_error(basename(__FUNCTION__) . "El control {$id} no existe para {$this->get('id')}");
 
-    if ($control->getType() != 'Select')
+    if (strtolower($control->get('type')) != 'select')
       trigger_error(basename(__FUNCTION__) . "El control {$id} no es una lista.");
 
     $control->createList(new OptionTextValueIterator($data));
@@ -86,17 +86,19 @@ trait TraitDataForm
   /**
    * Type Control
    * Modifica el tipo del Control.
+   * @param string $id
+   * @param ?string $type
    * 
-   * @exception
+   * @return string
    */
-  public function typeControl(string $id, string $type = null)
+  public function typeControl(string $id, ?string $type): string
   {
     if (!($control = $this->components->getById($id)))
       trigger_error(basename(__FUNCTION__) . ":El control {$id} no existe para {$this->get('id')}");
 
-    $lastType = $control->getType();
+    $lastType = $control->get('type');
 
-    if ($type != null) $control->setType($type);
+    if ($type != null) $control->set('type', $type);
 
     return $lastType;
   }

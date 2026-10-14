@@ -11,16 +11,6 @@ use Atusan\XML\XMLLoader;
 
 trait TraitComponent
 {
-  // /**
-  //  * @var string $name
-  //  */
-  // public string $name;
-  
-  // /**
-  //  * @var string $id
-  //  */
-  // public string $id;
-
   /**
    * @var array $properties
    */
@@ -165,9 +155,9 @@ trait TraitComponent
         if (isset($v)) $this->properties[$k] = (string) $v;
     }
 
-    if (!empty($this->layout)) {
+    if ($this->validateProperty('layout')) {
       // Obtiene recurso XML
-      $xmlext = XMLLoader::load($this->locateResource($this->layout));
+      $xmlext = XMLLoader::load($this->locateResource($this->get('layout')));
 
       if ($xmlext === false)
         throw new InternalServerException(XMLLoader::getError());
@@ -186,16 +176,16 @@ trait TraitComponent
   /**
    * 
    */
-  public function locateResource(string $viewName): string
+  public function locateResource(string $fileName): string
   {
     $directories = [$this->owner->getDirectory(), APP_DIRECTORY];
     for ($d = 0; $d < count($directories); $d++) {
       // pasa el directorio en turno y el nombre del componente final
-      $located = FileSystem::locateFile($directories[$d], basename($viewName));
+      $located = FileSystem::locateFile($directories[$d], basename($fileName));
 
       if ($located) return $located;
     }
 
-    throw new InternalServerException("El recurso {$viewName} no existe");
+    throw new InternalServerException("El recurso {$fileName} no existe");
   }
 }

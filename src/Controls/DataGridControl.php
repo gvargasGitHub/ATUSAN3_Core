@@ -116,11 +116,11 @@ class DataGridControl extends DataViewControlBase
 
           if (!method_exists($owner, $resolve)) trigger_error("$resolve no existe en {$owner->get('id')}", E_USER_WARNING);
 
-          if (!$owner->$resolve($action->getAttribute('name'), $this->getData())) continue;
+          if (!$owner->$resolve($action->getAttribute('id'), $this->getData())) continue;
         }
         // Se re-define el ID de las acciones: viewName-actionName-viewRow
       ?>
-        <i id="<?= "{$this->parent->get('id')}-{$action->getAttribute('name')}-{$this->row}" ?>" type="action" class="action <?= $action->getAttribute('icon') ?>" title="<?= $action->getAttribute('title') ?>"
+        <i id="<?= "{$this->parent->get('id')}-{$action->getAttribute('id')}-{$this->row}" ?>" type="action" class="action <?= $action->getAttribute('icon') ?>" title="<?= $action->getAttribute('title') ?>"
           style="<?= $action->buildPairs(';', ':', '', 'css') ?>"></i>
       <?php
       }

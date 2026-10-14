@@ -7,15 +7,21 @@ class TabGroupButtonType
   /**
    * 
    */
-  function __construct(public $owner, public $parent, public $name, public $text, public $icon, public $module) {}
+  function __construct(
+    public string $ownerId, 
+    public string $parentId, 
+    public string $id,  
+    public string $text, 
+    public string $icon, 
+    public string $moduleRoute) {}
 
   public function buildPairs()
   {
     $output = [
-      'ats-owner="' . $this->owner . '"',
-      'ats-parent="' . $this->parent . '"',
-      'ats-name="' . $this->name . '"',
-      'ats-module="' . $this->module . '"'
+      'ats-owner="' . $this->ownerId . '"',
+      'ats-parent="' . $this->parentId . '"',
+      'ats-name="' . $this->id . '"',
+      'ats-module="' . $this->moduleRoute . '"'
     ];
 
     return implode(' ', $output);

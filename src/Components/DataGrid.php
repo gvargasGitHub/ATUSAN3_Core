@@ -4,38 +4,10 @@ namespace Atusan\Components;
 
 class DataGrid extends DataViewBase
 {
-  // /**
-  //  * 
-  //  */
-  // protected function setType()
-  // {
-  //   $this->type = 'DataGrid';
-  // }
-
-  // /**
-  //  * Init DataView Properties
-  //  */
-  // protected function initProperties() {}
-
-  // /**
-  //  * Build
-  //  */
-  // public function build(): string
-  // {
-  //   ob_start();
-
-  //   include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/body.view.php';
-
-  //   $html = ob_get_contents();
-
-  //   ob_clean();
-
-  //   return $html;
-  // }
-
   // ----------------------------------
   //  DataViewBase
   // ----------------------------------
+  
   /**
    * Import
    */
@@ -55,10 +27,6 @@ class DataGrid extends DataViewBase
    */
   protected function setSources(): void
   {
-    // $this->setType();
-
-    // $this->initProperties();
-
     // Recorre las secciones Thead, Tbody, Tsummary & Tfoot
     foreach ($this->xml->children() as $section) {
       $sectioName = (string) $section->getName();
@@ -73,32 +41,8 @@ class DataGrid extends DataViewBase
   protected function finalDefinitions(): void
   {
     // Recorre cada Componente para localizar Controles y asignarles el "Padre"
-    foreach ($this->components as $component) if (is_subclass_of($component, 'Atusan\\Controls\\DataViewControlBase')) $component->setParent($this);
+    foreach ($this->components as $component) 
+      if (is_subclass_of($component, 'Atusan\\Controls\\DataViewControlBase')) 
+        $component->setParent($this);
   }
-
-  // // ----------------------------------
-  // //  ComponentInterface
-  // // ----------------------------------
-
-  // /**
-  //  * make
-  //  * @return string
-  //  */
-  // public function make(): string
-  // {
-  //   if (!$this->validateProperty('title')) $this->set('title', '');
-  //   if (!$this->validateProperty('footer')) $this->set('footer', '');
-
-  //   ob_start();
-  //   include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/view.php';
-  //   return ob_get_clean();
-  // }
-  // /**
-  //  * write
-  //  * @return void
-  //  */
-  // public function write(): void
-  // {
-  //   echo $this->make();
-  // }
 }

@@ -2,7 +2,7 @@
 
 namespace Atusan\Components;
 
-use Atusan\Controls\NavbarControl;
+use Atusan\Controls\NavControlBase;
 use Atusan\XML\XMLExtended;
 
 abstract class NavBase extends ComponentNest
@@ -16,11 +16,11 @@ abstract class NavBase extends ComponentNest
   // Class
   // ----------------------------------
   /**
-   * 
+   * Get MenuItem
    */
-  private function getMenuItem(string $itemName): NavbarControl
+  private function getMenuItem(string $itemName): NavControlBase
   {
-    return $this->getMenuItem($itemName);
+    return $this->components->getById($itemName);
   }
 
   /**
@@ -95,7 +95,8 @@ abstract class NavBase extends ComponentNest
   protected function setSources(): void
   {
     // Integra las secciones Left & Right
-    foreach ($this->xml->children() as $section) $this->addSource((string) $section->getName(), $section);
+    foreach ($this->xml->children() as $section) 
+      $this->addSource((string) $section->getName(), $section);
   }
 
   /**
@@ -103,7 +104,8 @@ abstract class NavBase extends ComponentNest
    */
   protected function finalDefinitions(): void
   {
-    foreach ($this->components as $component) $component->setParent($this);
+    foreach ($this->components as $component) 
+      $component->setParent($this);
   }
 
   // ----------------------------------

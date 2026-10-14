@@ -9,15 +9,6 @@ class DataTree extends DataViewBase
   protected int $numOfLevels = 0;
   protected int $levelsBound = -1;
   protected int $numOfItems = 0;
-
-  // /**
-  //  * 
-  //  */
-  // protected function setType()
-  // {
-  //   $this->type = 'DataTree';
-  // }
-
   /**
    * 
    */
@@ -28,34 +19,22 @@ class DataTree extends DataViewBase
     $this->numOfItems = 0;
   }
 
-  // /**
-  //  * Build
-  //  */
-  // public function build(): string
-  // {
-  //   ob_start();
-
-  //   include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/body.view.php';
-
-  //   $html = ob_get_contents();
-
-  //   ob_clean();
-
-  //   return $html;
-  // }
-
   /**
-   * 
+   * Retrieve
    */
-  public function retrieve()
+  public function retrieve(): void
   {
     $this->data = $this->recursive(0, func_get_args());
   }
 
   /**
+   * Recursive
+   * @param int $level
+   * @param array $args
    * 
+   * @return array
    */
-  protected function recursive(int $level, array $args = [])
+  protected function recursive(int $level, array $args = []): array
   {
     if ($level > $this->levelsBound) return [];
 
@@ -76,9 +55,11 @@ class DataTree extends DataViewBase
   }
 
   /**
-   * 
+   * WriteBodyRecursive
+   * @param array $data
+   * @param int $level
    */
-  protected function writeBodyRecursive(array $data, int $level)
+  protected function writeBodyRecursive(array $data, int $level): void
   {
     foreach ($data as $datatype) {
 ?>
@@ -90,7 +71,9 @@ class DataTree extends DataViewBase
             echo "<tr>\n";
             foreach ($container->children() as $control) {
               $component = $this->components->getById($control->getAttribute('id'));
-              if (is_a($component, 'Atusan\\Controls\\DataTreeControl')) $component->setDataType($datatype);
+              if (is_a($component, 'Atusan\\Controls\\DataTreeControl')) 
+                $component->setDataType($datatype);
+
               echo $component->make();
             }
             echo "</tr>\n";
@@ -124,8 +107,12 @@ class DataTree extends DataViewBase
   // ----------------------------------
   //  DataViewBase
   // ----------------------------------
+
   /**
    * Import
+   * @param array $data
+   * 
+   * @return int
    */
   public function import(array $data): int
   {
@@ -143,8 +130,6 @@ class DataTree extends DataViewBase
    */
   protected function setSources(): void
   {
-    // $this->setType();
-
     $this->numOfLevels = count($this->xml->Level);
     $this->levelsBound = $this->numOfLevels - 1;
     $this->numOfItems = 0;
@@ -163,32 +148,8 @@ class DataTree extends DataViewBase
   protected function finalDefinitions(): void
   {
     // Recorre cada Componente para localizar Controles y asignarles el "Padre"
-    foreach ($this->components as $component) if (is_subclass_of($component, 'Atusan\\Controls\\DataViewControlBase')) $component->setParent($this);
+    foreach ($this->components as $component) 
+      if (is_subclass_of($component, 'Atusan\\Controls\\DataViewControlBase')) 
+        $component->setParent($this);
   }
-
-  // // ----------------------------------
-  // //  ComponentInterface
-  // // ----------------------------------
-  // /**
-  //  * make
-  //  * @return string
-  //  */
-  // public function make(): string
-  // {
-  //   if (!$this->validateProperty('title')) $this->set('title', '');
-  //   if (!$this->validateProperty('footer')) $this->set('footer', '');
-
-  //   ob_start();
-  //   include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/view.php';
-  //   return ob_get_clean();
-  // }
-
-  // /**
-  //  * write
-  //  * @return void
-  //  */
-  // public function write(): void
-  // {
-  //   echo $this->make();
-  // }
 }

@@ -2,25 +2,8 @@
 
 namespace Atusan\Controls;
 
-use Atusan\Components\Component;
-use Atusan\Controller\Module;
-use Atusan\Controls\Traits\TraitNavbarControl;
-use Atusan\Types\MenuItemType;
-use Atusan\XML\XMLExtended;
-
-class SubnavbarControl extends Component
+class SubnavbarControl extends NavControlBase
 {
-  use TraitNavbarControl;
-  
-  protected string $type;
-
-  function __construct(Module $owner, XMLExtended $xml)
-  {
-    parent::__construct($owner, $xml);
-
-    $this->type = substr($this->xml->getName(), 4);
-  }
-
   // ----------------------------------
   //  ComponentInterface
   // ----------------------------------
@@ -32,7 +15,7 @@ class SubnavbarControl extends Component
   public function make(): string
   {
     ob_start();
-    match (strtolower($this->type)) {
+    match (strtolower($this->get('type'))) {
       'item' => $this->Item(),
       'content' => $this->Content(),
       'separator' => $this->Separator(),
@@ -68,7 +51,7 @@ class SubnavbarControl extends Component
       <div class="subnav-content">
         <?php
         foreach ($this->xml->children() as $xml) {
-          $item = SubnavbarControl::fromXML($this->parent->owner, $xml);
+          $item = SubnavbarControl::fromXML($this->parent->getOwner(), $xml);
           $item->setParent($this->parent);
           echo $item->make();
         } ?>

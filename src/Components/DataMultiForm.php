@@ -3,7 +3,6 @@
 namespace Atusan\Components;
 
 use Atusan\Components\Traits\TraitDataForm;
-use Atusan\FileSystem\FileSystem;
 
 class DataMultiForm extends DataViewBase
 {
@@ -17,42 +16,15 @@ class DataMultiForm extends DataViewBase
   protected string $forward = 'Siguiente';
   protected string $finish = 'Enviar';
 
-  // Propiedades
+  /**
+   * @var int $numOfForms
+   */
   protected int $numOfForms = 0;
 
-  // /**
-  //  * 
-  //  */
-  // protected function setType()
-  // {
-  //   $this->type = 'DataMultiForm';
-  // }
-
-  // /**
-  //  * Init DataView Properties
-  //  */
-  // protected function initProperties()
-  // {
-  //   // El desarrollador deberá generar, asignar y validar
-  //   // manualmente el token a este control mediante el
-  //   // método "setCsrf(string)"
-  //   $this->addDataAndCsrf();
-  // }
-  // /**
-  //  * Build
-  //  */
-  // public function build(): string
-  // {
-  //   ob_start();
-
-  //   include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/body.view.php';
-
-  //   $html = ob_get_contents();
-
-  //   ob_clean();
-
-  //   return $html;
-  // }
+  /**
+   * @var ButtonGroupRow $buttonBroup
+   */
+  protected ButtonGroupRow $buttonGroup;
 
   /**
    * 
@@ -81,19 +53,20 @@ class DataMultiForm extends DataViewBase
   /**
    * 
    */
-  protected function buildButtons()
+  protected function attachButtonGroup()
   {
     // Integra el grupo de botones
     $buttons = $this->xml->addChild('Buttons');
+
     $bgroup = $buttons->addChild('ButtonGroupRow');
-    $bgroup->addAttribute('name', "buttons");
+    $bgroup->addAttribute('id', "buttons");
     $bgroup->addAttribute('align', 'right');
 
-    $buttons = ['finish', 'forward', 'backward'];
+    $options = ['finish', 'forward', 'backward'];
 
-    foreach ($buttons as $btn) {
+    foreach ($options as $btn) {
       $child = $bgroup->addChild('Button');
-      $child->addAttribute('name', "{$this->get('id')}_{$btn}");
+      $child->addAttribute('id', "{$this->get('id')}_{$btn}");
       $child->addAttribute('text', $this->$btn);
       $child->setAttribute('html:ats-form', $this->get('id'), 'html');
       $child->setAttribute('html:ats-command', $btn, 'html');
@@ -146,14 +119,12 @@ class DataMultiForm extends DataViewBase
    */
   protected function setSources(): void
   {
-    // $this->setType();
-
     // El desarrollador deberá generar, asignar y validar
     // manualmente el token a este control mediante el
     // método "setCsrf(string)"
     $this->addDataAndCsrf();
 
-    $this->buildButtons();
+    $this->attachButtonGroup();
 
     // Recorre las secciones Thead, Tbody, Tsummary & Tfoot
     foreach ($this->xml->children() as $section) {
@@ -168,33 +139,10 @@ class DataMultiForm extends DataViewBase
    */
   protected function finalDefinitions(): void
   {
-    foreach ($this->components as $component) if (is_subclass_of($component, 'Atusan\\Controls\\DataViewControlBase')) $component->setParent($this);
+    foreach ($this->components as $component) 
+      if (is_subclass_of($component, 'Atusan\\Controls\\DataViewControlBase')) 
+        $component->setParent($this);
+
+    $this->buttonGroup = $this->findComponentById('buttons');
   }
-
-  // // ----------------------------------
-  // //  ComponentInterface
-  // // ----------------------------------
-
-  // /**
-  //  * make
-  //  * @return string
-  //  */
-  // public function make(): string
-  // {
-  //   if (!$this->validateProperty('title')) $this->set('title', '');
-  //   if (!$this->validateProperty('footer')) $this->set('footer', '');
-
-  //   ob_start();
-  //   include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/view.php';
-  //   return ob_get_clean();
-  // }
-
-  // /**
-  //  * write
-  //  * @return void
-  //  */
-  // public function write(): void
-  // {
-  //   echo $this->make();
-  // }
 }

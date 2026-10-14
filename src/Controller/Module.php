@@ -7,7 +7,6 @@ use Atusan\Exceptions\InternalServerException;
 use Atusan\FileSystem\FileSystem;
 use Atusan\Iterators\ComponentsIterator;
 use Atusan\Iterators\ComponentSourcesIterator;
-use Atusan\Log\Log;
 use Atusan\Template\Template;
 use Atusan\XML\XMLExtended;
 use Atusan\XML\XMLLoader;
@@ -44,7 +43,8 @@ abstract class Module extends Controller
   }
 
   /**
-   * 
+   * getDirectory
+   * @return string
    */
   public function getDirectory(): string
   {
@@ -52,18 +52,22 @@ abstract class Module extends Controller
   }
 
   /**
-   * 
+   * setTemplate
+   * @param string $templateName
    */
   public function setTemplate(string $templateName): void
   {
+    // Establece el valor
     $this->set('template', $templateName);
 
+    // Inyecta el manifiesto en la clase
     $this->_injectTemplateXML();
 
+    // Crea Iterator para la nueva fuente
     $sources = new ComponentSourcesIterator;
 
     $sources->add('template', clone $this->xmlTemplate);
-
+    // Integra los Components de la nueva fuenta a la clase
     $this->attachComponents($sources);
 
   }

@@ -6,15 +6,10 @@ use Atusan\Types\TabGroupButtonType;
 
 class TabGroupContent extends ComponentNest
 {
-  /* ------------------------
-  Properties
-  ------------------------ */
-  // public string $text;
-
-  // public string $view;
-
-  // public $closeable = false;
-
+  /**
+   * MakeButton
+   * @return string
+   */
   public function makeButton(): string
   {
     ob_start();
@@ -22,21 +17,26 @@ class TabGroupContent extends ComponentNest
     return ob_get_clean();
   }
 
-  protected function itemType()
+  /**
+   * ItemType
+   * @return TabGroupButtonType
+   */
+  protected function itemType(): TabGroupButtonType
   {
-    $name = $this->xml->getAttribute('name');
-    $text = $this->xml->getAttribute('text');
-    $icon = ($this->xml->hasAttribute('icon')) ? $this->xml->getAttribute('icon') : '';
-    $module = ($this->xml->hasAttribute('module')) ? $this->xml->getAttribute('module') : '';
-
-    return new TabGroupButtonType($this->getOwner()->get('id'), $this->parent->get('id'), $name, $text, $icon, $module);
+    return new TabGroupButtonType(
+      $this->getOwner()->get('id'), 
+      $this->parent->get('id'), 
+      $this->xml->getAttribute('id'),
+      $this->xml->getAttribute('text'),
+      ($this->xml->hasAttribute('icon')) ? $this->xml->getAttribute('icon') : '', 
+      ($this->xml->hasAttribute('module')) ? $this->xml->getAttribute('module') : '');
   }
 
   // ----------------------------------
   //  TraitComponent
   // ----------------------------------
   /**
-   * 
+   * Set Sources
    */
   protected function setSources(): void
   {
@@ -46,6 +46,9 @@ class TabGroupContent extends ComponentNest
     $this->addSource('content', $this->xml);
   }
 
+  /**
+   * Final Definitions
+   */
   protected function finalDefinitions(): void {}
 
   // ----------------------------------

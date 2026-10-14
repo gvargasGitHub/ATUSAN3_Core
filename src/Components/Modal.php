@@ -4,17 +4,12 @@ namespace Atusan\Components;
 
 class Modal extends ComponentNest
 {
-  // public string $title = '';
-
-  // public string $footer = '';
-
-  // public string $view;
 
   // ----------------------------------
   //  TraitComponent
   // ----------------------------------
   /**
-   * 
+   * Set Sources
    */
   protected function setSources(): void
   {
@@ -22,7 +17,7 @@ class Modal extends ComponentNest
   }
 
   /**
-   * 
+   * Final Definitions
    */
   protected function finalDefinitions(): void {}
 

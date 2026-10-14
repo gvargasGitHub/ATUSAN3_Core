@@ -17,6 +17,6 @@ if (count($this->data) == 0) $this->data[0] = [];
   $this->writeSection('BottomForm');
 
   // Finalmente imprime grupo de botones
-  echo $this->buttons->make();
+  echo $this->buttonGroup->make();
   ?>
 </form>

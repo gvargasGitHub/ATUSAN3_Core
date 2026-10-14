@@ -7,20 +7,6 @@ use Atusan\XML\XMLExtended;
 
 abstract class DataViewBase extends ComponentNest
 {
-  // Properties
-  // public string $title;
-
-  // public string $footer;
-
-  // public string $route;
-
-  // /**
-  //  * @var string $type
-  //  */
-  // protected string $type;
-
-  // protected string $view;
-
   protected array $data = [];
 
   protected int $index = 0;
@@ -29,30 +15,20 @@ abstract class DataViewBase extends ComponentNest
   {
     parent::__construct($owner, $xml);
 
-    $this->set('type', basename(__CLASS__));
+    $this->set('type', basename(get_class($this)));
   }
 
   /**
-   * 
-   */
-  // abstract protected function setType();
-
-  /**
-   * 
-   */
-  // abstract protected function initProperties();
-
-  // /**
-  //  * Build
-  //  */
-  // abstract public function build(): string;
-
-  /**
    * Import
+   * @param array $data
+   * 
+   * @return int
    */
   abstract public function import(array $data): int;
+  
   /**
-   * 
+   * RowCount
+   * @return int
    */
   public function rowsCount(): int
   {
@@ -60,13 +36,19 @@ abstract class DataViewBase extends ComponentNest
   }
 
   /**
-   * 
+   * Get Data
+   * @return array
    */
   public function getData(): array
   {
     return $this->data;
   }
 
+  /**
+   * Get View
+   * Retorna la ruta absoluta al archivo View del Component.
+   * @return string
+   */
   protected function getView(): string
   {
     return __DIR__ . DS . 'Views' . DS . strtolower($this->get('type')) . '.view.php';
@@ -74,12 +56,15 @@ abstract class DataViewBase extends ComponentNest
 
    /**
    * Build
+   * Construye el Component dentro de un buffer controlado y lo retorna.
+   * 
+   * @return string
    */
   public function build(): string
   {
     ob_start();
 
-    include __DIR__ . DS . 'Views' . DS . strtolower($this->get('type')) . '/body.view.php';
+    include __DIR__ . DS . 'Views' . DS . strtolower($this->get('type')) . DS . 'body.view.php';
 
     $html = ob_get_contents();
 
@@ -101,7 +86,7 @@ abstract class DataViewBase extends ComponentNest
     if (!$this->validateProperty('footer')) $this->set('footer', '');
 
     ob_start();
-    include __DIR__ . DS . 'Views' . DS . strtolower($this->get('type')) . '/view.php';
+    include __DIR__ . DS . 'Views' . DS . strtolower($this->get('type')) . DS . 'view.php';
     return ob_get_clean();
   }
 

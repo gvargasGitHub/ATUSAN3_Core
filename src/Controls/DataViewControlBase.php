@@ -9,8 +9,6 @@ use Atusan\XML\XMLExtended;
 
 abstract class DataViewControlBase extends Component
 {
-  // protected string $type;
-
   protected array $data;
 
   protected int $row;
@@ -27,17 +25,7 @@ abstract class DataViewControlBase extends Component
   }
 
   abstract function getId(): string;
-
-  // public function getType(): string
-  // {
-  //   return $this->type;
-  // }
-
-  // public function setType(string $type): void
-  // {
-  //   $this->type = $type;
-  // }
-
+  
   public function getData(): array
   {
     return $this->data;

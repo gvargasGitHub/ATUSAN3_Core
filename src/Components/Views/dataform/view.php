@@ -1,5 +1,5 @@
 <script>
-  var <?= $this->get('id') ?> = new DataForm("<?= $this->get('id') ?>", "<?= $this->getOwner()->get('id') ?>");
+  var <?= $this->get('id') ?> = new <?= basename(get_class($this))?>("<?= $this->get('id') ?>", "<?= $this->getOwner()->get('id') ?>");
 </script>
 <div id="<?= $this->get('id') ?>" class="ats-dataview ats-dataform">
   <div class="header"><?= $this->get('title') ?></div>

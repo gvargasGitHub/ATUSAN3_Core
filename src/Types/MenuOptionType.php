@@ -6,7 +6,7 @@ use Atusan\XML\XMLExtended;
 
 class MenuOptionType
 {
-  public string $name;
+  public string $id;
 
   public string $text;
 
@@ -16,8 +16,8 @@ class MenuOptionType
   {
     $this->text = ($body->hasAttribute('text'))
       ? $body->getAttribute('text') : trigger_error('Se requiere el atributo "text"', E_USER_ERROR);
-    $this->name = ($body->hasAttribute('name'))
-      ? $body->getAttribute('name') : trigger_error('Se requiere el atributo "name"', E_USER_ERROR);
+    $this->id = ($body->hasAttribute('id'))
+      ? $body->getAttribute('id') : trigger_error('Se requiere el atributo "id"', E_USER_ERROR);
     $this->icon = $body->getAttribute('icon');
   }
 
@@ -25,7 +25,7 @@ class MenuOptionType
   {
     $output = [
       'ats-owner="' . $this->owner . '"',
-      'ats-name="' . $this->name . '"',
+      'ats-name="' . $this->id . '"',
       'ats-row="' . $this->row . '"'
     ];
 
