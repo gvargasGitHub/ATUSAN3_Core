@@ -7,8 +7,14 @@ use Atusan\XML\XMLExtended;
 
 abstract class ButtonGroupBase extends Component
 {
+  /**
+   * @var string $type
+   */
   protected string $type;
 
+  /**
+   * @var array $css_classes
+   */
   protected array $css_classes = [];
 
   function __construct(Module $owner, XMLExtended $xml)
@@ -17,7 +23,7 @@ abstract class ButtonGroupBase extends Component
 
     $this->type = $this->defineGroupType();
 
-    array_push($this->css_classes, 'ats-btn-group-' . $this->type);
+    $this->addCssClass('ats-btn-group-' . $this->type);
 
     $this->finalDefinitions();
   }

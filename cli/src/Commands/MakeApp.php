@@ -2,8 +2,6 @@
 
 namespace AtusanCLI\Commands;
 
-use AtusanCLI\Manifest;
-
 class MakeApp extends MakeBase
 {
   function required(): array
@@ -52,12 +50,6 @@ class MakeApp extends MakeBase
     }
     // Renombra .env.newapp a .env
     @rename($appDir . DS . '.env.newapp', $appDir . DS . '.env');
-    
-    // Registra la aplicación en atusan.json,
-    // si el manifiesto ya existe.
-    Manifest::registerApplication(
-        $this->args['--name']
-    );
 
     echo "La aplicación {$this->args['--name']} se creó exitosamente." . EOL;
   }

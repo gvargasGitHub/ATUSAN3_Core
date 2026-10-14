@@ -92,13 +92,5 @@ class SidebarControl extends Component
    * 
    */
   protected function View(){}
-  /**
-   * 
-   */
-  protected function itemType(): MenuItemType
-  {
-    $itemNumber = $this->parent->getItemNoNameCounter();
-
-    return new MenuItemType($this->parent->name, $itemNumber, $this->xml);
-  }
+  
 }

@@ -1,7 +1,7 @@
 <script>
-  var <?= $this->name ?> = new ButtonGroup("<?= $this->name ?>", "<?= $this->owner->name ?>");
+  var <?= $this->get('id') ?> = new ButtonGroup("<?= $this->get('id') ?>", "<?= $this->getOwner()->get('id') ?>");
 </script>
-<Div id="<?= $this->name ?>" class="<?= $this->printCssClass() ?>">
+<Div id="<?= $this->get('id') ?>" class="<?= $this->printCssClass() ?>">
   <?php
   foreach ($this->xml->children() as $xml) include 'button.view.php';
   ?>

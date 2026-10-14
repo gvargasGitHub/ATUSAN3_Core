@@ -94,14 +94,4 @@ class SubnavbarControl extends Component
    * 
    */
   protected function Separator(){}
-  
-  /**
-   * 
-   */
-  protected function itemType(): MenuItemType
-  {
-    $itemNumber = $this->parent->getItemNoNameCounter();
-
-    return new MenuItemType($this->parent->name, $itemNumber, $this->xml);
-  }
 }

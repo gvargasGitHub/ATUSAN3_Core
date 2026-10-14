@@ -10,15 +10,15 @@ class ButtonType
 
   function properties(): array
   {
-    $name = $this->xml->getAttribute('name');
+    $id = $this->xml->getAttribute('id');
     $text = $this->xml->getAttribute('text');
     $icon = ($this->xml->hasAttribute('icon')) ? "<i class=\"{$this->xml->getAttribute('icon')}\"></i>" : '';
 
     if (!$this->xml->hasAttribute('onclick', 'html', true) && !$this->xml->hasAttribute('type', 'html', true))
-      $this->xml->setAttribute('html:onclick', "{$name}(event)", 'html');
+      $this->xml->setAttribute('html:onclick', "{$id}(event)", 'html');
 
     return [
-      'name' => $name,
+      'id' => $id,
       'text' => $text,
       'icon' => $icon
     ];

@@ -9,7 +9,7 @@ use Atusan\XML\XMLExtended;
 
 abstract class DataViewControlBase extends Component
 {
-  protected string $type;
+  // protected string $type;
 
   protected array $data;
 
@@ -23,20 +23,20 @@ abstract class DataViewControlBase extends Component
     parent::__construct($owner, $xml);
 
     // Obtiene "type" del "Control"
-    $this->type = substr($this->xml->getName(), 7);
+    $this->set('type', substr($this->xml->getName(), 7));
   }
 
   abstract function getId(): string;
 
-  public function getType(): string
-  {
-    return $this->type;
-  }
+  // public function getType(): string
+  // {
+  //   return $this->type;
+  // }
 
-  public function setType(string $type): void
-  {
-    $this->type = $type;
-  }
+  // public function setType(string $type): void
+  // {
+  //   $this->type = $type;
+  // }
 
   public function getData(): array
   {
@@ -50,7 +50,7 @@ abstract class DataViewControlBase extends Component
 
   public function getValue(): mixed
   {
-    return $this->data[$this->name] ?? null;
+    return $this->data[$this->get('id')] ?? null;
   }
 
   public function getRow(): int

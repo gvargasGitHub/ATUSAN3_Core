@@ -20,39 +20,39 @@ class DataMultiForm extends DataViewBase
   // Propiedades
   protected int $numOfForms = 0;
 
-  /**
-   * 
-   */
-  protected function setType()
-  {
-    $this->type = 'DataMultiForm';
-  }
+  // /**
+  //  * 
+  //  */
+  // protected function setType()
+  // {
+  //   $this->type = 'DataMultiForm';
+  // }
 
-  /**
-   * Init DataView Properties
-   */
-  protected function initProperties()
-  {
-    // El desarrollador deberá generar, asignar y validar
-    // manualmente el token a este control mediante el
-    // método "setCsrf(string)"
-    $this->addDataAndCsrf();
-  }
-  /**
-   * Build
-   */
-  public function build(): string
-  {
-    ob_start();
+  // /**
+  //  * Init DataView Properties
+  //  */
+  // protected function initProperties()
+  // {
+  //   // El desarrollador deberá generar, asignar y validar
+  //   // manualmente el token a este control mediante el
+  //   // método "setCsrf(string)"
+  //   $this->addDataAndCsrf();
+  // }
+  // /**
+  //  * Build
+  //  */
+  // public function build(): string
+  // {
+  //   ob_start();
 
-    include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/body.view.php';
+  //   include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/body.view.php';
 
-    $html = ob_get_contents();
+  //   $html = ob_get_contents();
 
-    ob_clean();
+  //   ob_clean();
 
-    return $html;
-  }
+  //   return $html;
+  // }
 
   /**
    * 
@@ -93,16 +93,16 @@ class DataMultiForm extends DataViewBase
 
     foreach ($buttons as $btn) {
       $child = $bgroup->addChild('Button');
-      $child->addAttribute('name', "{$this->name}_{$btn}");
+      $child->addAttribute('name', "{$this->get('id')}_{$btn}");
       $child->addAttribute('text', $this->$btn);
-      $child->setAttribute('html:ats-form', $this->name, 'html');
+      $child->setAttribute('html:ats-form', $this->get('id'), 'html');
       $child->setAttribute('html:ats-command', $btn, 'html');
       $child->setAttribute('html:onclick', "DataMultiForm.handlerButtonEvent(event)", 'html');
     }
   }
 
   /**
-   * 
+   * Write Section
    */
   protected function writeSection(string $sectionName)
   {
@@ -112,8 +112,8 @@ class DataMultiForm extends DataViewBase
       // Escribe la vista
       if ($form->xml->hasAttribute('view')) {
         $view = $form->xml->getAttribute('view') . '.php';
-        if (file_exists($this->owner->getDirectory() . DS . $view))
-          include $this->owner->getDirectory() . DS . $view;
+        if (file_exists($this->getOwner()->getDirectory() . DS . $view))
+          include $this->getOwner()->getDirectory() . DS . $view;
         elseif (file_exists(APP_DIRECTORY . DS . 'Views' . DS . $view))
           include APP_DIRECTORY . DS . 'Views' . DS . $view;
         else
@@ -123,7 +123,7 @@ class DataMultiForm extends DataViewBase
         if (count($this->data) == 0) $this->data[0] = [];
 
         foreach ($form->xml->children() as $child) {
-          $component = $this->components->getByName($child->getAttribute('name'));
+          $component = $this->components->getById($child->getAttribute('id'));
 
           if (is_subclass_of($component, 'Atusan\\Controls\\DataViewControlBase')) $component->setData($this->data[0]);
 
@@ -146,9 +146,12 @@ class DataMultiForm extends DataViewBase
    */
   protected function setSources(): void
   {
-    $this->setType();
+    // $this->setType();
 
-    $this->initProperties();
+    // El desarrollador deberá generar, asignar y validar
+    // manualmente el token a este control mediante el
+    // método "setCsrf(string)"
+    $this->addDataAndCsrf();
 
     $this->buildButtons();
 
@@ -168,31 +171,30 @@ class DataMultiForm extends DataViewBase
     foreach ($this->components as $component) if (is_subclass_of($component, 'Atusan\\Controls\\DataViewControlBase')) $component->setParent($this);
   }
 
-  // ----------------------------------
-  //  ComponentInterface
-  // ----------------------------------
+  // // ----------------------------------
+  // //  ComponentInterface
+  // // ----------------------------------
 
-  /**
-   * make
-   * @return string
-   */
-  public function make(): string
-  {
-    if (empty($this->title)) $this->title = '';
-    if (empty($this->footer)) $this->footer = '';
-    if (empty($this->route)) $this->route = $_SERVER['REQUEST_URI'];
+  // /**
+  //  * make
+  //  * @return string
+  //  */
+  // public function make(): string
+  // {
+  //   if (!$this->validateProperty('title')) $this->set('title', '');
+  //   if (!$this->validateProperty('footer')) $this->set('footer', '');
 
-    ob_start();
-    include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/view.php';
-    return ob_get_clean();
-  }
+  //   ob_start();
+  //   include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/view.php';
+  //   return ob_get_clean();
+  // }
 
-  /**
-   * write
-   * @return void
-   */
-  public function write(): void
-  {
-    echo $this->make();
-  }
+  // /**
+  //  * write
+  //  * @return void
+  //  */
+  // public function write(): void
+  // {
+  //   echo $this->make();
+  // }
 }

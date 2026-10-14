@@ -41,15 +41,11 @@ class Route
       // v3.0.20
       throw new NotFoundException("La ruta {$httpURI} no ha sido implementada para {$_SERVER['REQUEST_METHOD']}.");
     }
-    // Si la Ruta tiene el "estado middleware" activo valida que
-    // exista en la Sesión el valor, si no, entonces, re-direcciona
-    // la petición a la ruta establecida 
+    // Si la Ruta tiene el "estado middleware" activo valida que exista en la Sesión el valor,
+    // si no, entonces, re-direcciona la petición a la ruta establecida 
     if ($routeType->middlewareState) {
-      if (Session::get($routeType->middlewareFilter)) {
+      if (!Session::get($routeType->middlewareFilter)) {
         $routeType = Route::redirect($routeType->middlewareRedirectUri);
-      } else  {
-        // v3.0.20
-        throw new NotFoundException("El filtro {$routeType->middlewareFilter} no existe.");
       }
     }
 

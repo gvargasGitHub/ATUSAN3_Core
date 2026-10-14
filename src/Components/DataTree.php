@@ -10,13 +10,13 @@ class DataTree extends DataViewBase
   protected int $levelsBound = -1;
   protected int $numOfItems = 0;
 
-  /**
-   * 
-   */
-  protected function setType()
-  {
-    $this->type = 'DataTree';
-  }
+  // /**
+  //  * 
+  //  */
+  // protected function setType()
+  // {
+  //   $this->type = 'DataTree';
+  // }
 
   /**
    * 
@@ -28,21 +28,21 @@ class DataTree extends DataViewBase
     $this->numOfItems = 0;
   }
 
-  /**
-   * Build
-   */
-  public function build(): string
-  {
-    ob_start();
+  // /**
+  //  * Build
+  //  */
+  // public function build(): string
+  // {
+  //   ob_start();
 
-    include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/body.view.php';
+  //   include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/body.view.php';
 
-    $html = ob_get_contents();
+  //   $html = ob_get_contents();
 
-    ob_clean();
+  //   ob_clean();
 
-    return $html;
-  }
+  //   return $html;
+  // }
 
   /**
    * 
@@ -82,14 +82,14 @@ class DataTree extends DataViewBase
   {
     foreach ($data as $datatype) {
 ?>
-      <li id="<?= $this->name ?>-<?= $datatype->index ?>" <?= $this->buildDataPairs($datatype->data) ?>>
-        <table id="<?= $this->name ?>-<?= $datatype->index ?>-table" class="item">
+      <li id="<?= $this->get('id') ?>-<?= $datatype->index ?>" <?= $this->buildDataPairs($datatype->data) ?>>
+        <table id="<?= $this->get('id') ?>-<?= $datatype->index ?>-table" class="item">
           <tbody>
             <?php
             $container = $this->sources->getByPosition($level);
             echo "<tr>\n";
             foreach ($container->children() as $control) {
-              $component = $this->components->getByName($control->getAttribute('name'));
+              $component = $this->components->getById($control->getAttribute('id'));
               if (is_a($component, 'Atusan\\Controls\\DataTreeControl')) $component->setDataType($datatype);
               echo $component->make();
             }
@@ -100,7 +100,7 @@ class DataTree extends DataViewBase
         <?php
         if ($datatype->hasChildren()) {
         ?>
-          <ul id="<?= $this->name ?>-<?= $datatype->index ?>-content" class="content">
+          <ul id="<?= $this->get('id') ?>-<?= $datatype->index ?>-content" class="content">
             <?php
             $this->writeBodyRecursive($datatype->children, $level + 1);
             ?>
@@ -143,9 +143,11 @@ class DataTree extends DataViewBase
    */
   protected function setSources(): void
   {
-    $this->setType();
+    // $this->setType();
 
-    $this->initProperties();
+    $this->numOfLevels = count($this->xml->Level);
+    $this->levelsBound = $this->numOfLevels - 1;
+    $this->numOfItems = 0;
 
     // Recorre las secciones Level
     foreach ($this->xml->children() as $section) {
@@ -164,29 +166,29 @@ class DataTree extends DataViewBase
     foreach ($this->components as $component) if (is_subclass_of($component, 'Atusan\\Controls\\DataViewControlBase')) $component->setParent($this);
   }
 
-  // ----------------------------------
-  //  ComponentInterface
-  // ----------------------------------
-  /**
-   * make
-   * @return string
-   */
-  public function make(): string
-  {
-    if (empty($this->title)) $this->title = '';
-    if (empty($this->footer)) $this->footer = '';
+  // // ----------------------------------
+  // //  ComponentInterface
+  // // ----------------------------------
+  // /**
+  //  * make
+  //  * @return string
+  //  */
+  // public function make(): string
+  // {
+  //   if (!$this->validateProperty('title')) $this->set('title', '');
+  //   if (!$this->validateProperty('footer')) $this->set('footer', '');
 
-    ob_start();
-    include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/view.php';
-    return ob_get_clean();
-  }
+  //   ob_start();
+  //   include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/view.php';
+  //   return ob_get_clean();
+  // }
 
-  /**
-   * write
-   * @return void
-   */
-  public function write(): void
-  {
-    echo $this->make();
-  }
+  // /**
+  //  * write
+  //  * @return void
+  //  */
+  // public function write(): void
+  // {
+  //   echo $this->make();
+  // }
 }

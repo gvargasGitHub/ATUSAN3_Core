@@ -18,18 +18,14 @@ abstract class Module extends Controller
 
   protected string $directory = '';
 
-  protected string $template = '';
-
-  protected string $title = '';
-
-  protected string $view = '';
-
   protected XMLExtended $xmlTemplate;
 
   function __construct()
   {
     // constuctor de Controller
     parent::__construct();
+
+    $this->set('id', $this->name);
 
     // Obtiene el directorio de la clase
     $this->directory = FileSystem::getClassDirectory($this);
@@ -58,9 +54,18 @@ abstract class Module extends Controller
   /**
    * 
    */
-  public function setTemplate(string $templatename): void
+  public function setTemplate(string $templateName): void
   {
-    $this->template = $templatename;
+    $this->set('template', $templateName);
+
+    $this->_injectTemplateXML();
+
+    $sources = new ComponentSourcesIterator;
+
+    $sources->add('template', clone $this->xmlTemplate);
+
+    $this->attachComponents($sources);
+
   }
 
   /**
@@ -68,7 +73,7 @@ abstract class Module extends Controller
    */
   public function getTemplate(): string | null
   {
-    return $this->template;
+    return $this->get('template');
   }
 
   /**
@@ -76,7 +81,7 @@ abstract class Module extends Controller
    */
   public function setTitle(string $title): void
   {
-    $this->title = $title;
+    $this->set('title', $title);
   }
 
   /**
@@ -84,15 +89,15 @@ abstract class Module extends Controller
    */
   public function getTitle(): string
   {
-    return $this->title;
+    return $this->get('title');
   }
 
   /**
    * 
    */
-  public function setView(string $view): void
+  public function setView(string $viewFile): void
   {
-    $this->view = $view;
+    $this->set('view', $viewFile);
   }
 
   /**
@@ -100,7 +105,7 @@ abstract class Module extends Controller
    */
   public function getView(): string
   {
-    return $this->view;
+    return $this->get('view');
   }
 
   /**
@@ -125,7 +130,7 @@ abstract class Module extends Controller
     $this->setSources();
 
     // Carga Componentes
-    $this->attachComponents();
+    $this->attachComponents($this->sources);
   }
 
   /**
@@ -138,7 +143,7 @@ abstract class Module extends Controller
     // - app-directory/Components/{module-name}.xml
     $dirs = [
       $this->directory . "/Components.xml",
-      APP_DIRECTORY . "/Components/{$this->name}.xml"
+      APP_DIRECTORY . "/Components/{$this->get('id')}.xml"
     ];
 
     foreach ($dirs as $dir) if (FileSystem::exists($dir)) return $dir;
@@ -152,13 +157,13 @@ abstract class Module extends Controller
   public function getViewFilename(): string | null
   {
     // Si la propiedad "view" está definida, se busca la vista en la ruta especificada
-    if (!empty($this->view)) {
-      $dirs = [APP_DIRECTORY . DS . "{$this->view}"];
+    if ($this->validateProperty('view')) {
+      $dirs = [APP_DIRECTORY . DS . "{$this->get('view')}"];
     } else {
       // Si la propiedad "view" no está definida, se busca la vista en las rutas predeterminadas
       $dirs = [
         $this->directory . DS . "View.php",
-        APP_DIRECTORY . DS . "/Views/{$this->name}.php"
+        APP_DIRECTORY . DS . "/Views/{$this->get('id')}.php"
       ];
     }
     
@@ -172,14 +177,18 @@ abstract class Module extends Controller
    */
   protected function _injectTemplateXML()
   {
-    // Se construye la ruta al archivo Template.xml
-    // La ruta predeterminada es: APP_DIRECTORY/Templates/[template_name]/[template_name.xml]
-    $templateDir = APP_DIRECTORY . DS
-      . implode(DS, ['Templates', $this->template]) . DS
-      . $this->template . ".xml";
+    if ($this->validateProperty('template')) {
+      // Se construye la ruta al archivo Template.xml
+      // La ruta predeterminada es: APP_DIRECTORY/Templates/[template_name]/[template_name.xml]
+      $templateDir = APP_DIRECTORY . DS
+        . implode(DS, ['Templates', $this->get('template')]) . DS
+        . $this->get('template') . ".xml";
 
-    // Se obtiene el archivo Template.xml declarado o un template vacio
-    $this->xmlTemplate = FileSystem::exists($templateDir) ? XMLLoader::load($templateDir) : XMLLoader::empty();
+      // Se obtiene el archivo Template.xml declarado o un template vacio
+      $this->xmlTemplate = FileSystem::exists($templateDir) ? XMLLoader::load($templateDir) : XMLLoader::empty();
+    } else {
+      $this->xmlTemplate = XMLLoader::empty();
+    }
 
     if ($this->xmlTemplate === false)
       throw new InternalServerException(XMLLoader::getError());
@@ -197,7 +206,7 @@ abstract class Module extends Controller
   public function make(): string
   {
     if (($ref = $this->getViewFilename()) == null)
-      throw new InternalServerException("La vista {$ref} de {$this->name} no existe");
+      throw new InternalServerException("La vista {$ref} de {$this->get('id')} no existe");
     
     ob_start();
     

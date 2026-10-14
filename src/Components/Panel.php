@@ -14,7 +14,7 @@ class Panel extends ComponentNest
       if ($source->xml->hasAttribute('view'))
         include $this->owner->getDirectory() . DS . "{$source->xml->getAttribute('view')}.php";
       else
-        foreach ($source->xml->children() as $child) echo $this->components->getByName($child->getAttribute('name'))->make();
+        foreach ($source->xml->children() as $child) echo $this->components->getById($child->getAttribute('id'))->make();
     }
   }
   // ----------------------------------

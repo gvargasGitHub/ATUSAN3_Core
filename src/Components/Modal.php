@@ -4,11 +4,11 @@ namespace Atusan\Components;
 
 class Modal extends ComponentNest
 {
-  public string $title;
+  // public string $title = '';
 
-  public string $footer;
+  // public string $footer = '';
 
-  public string $view;
+  // public string $view;
 
   // ----------------------------------
   //  TraitComponent
@@ -35,8 +35,8 @@ class Modal extends ComponentNest
    */
   public function make(): string
   {
-    if (!property_exists($this, 'title')) $this->title = '';
-    if (!property_exists($this, 'footer')) $this->footer = '';
+    if (!$this->validateProperty('title')) $this->set('title', '');
+    if (!$this->validateProperty('footer')) $this->set('footer', '');
 
     ob_start();
     include __DIR__ . DS . 'Views' . DS . 'modal/view.php';

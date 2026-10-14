@@ -2,7 +2,7 @@
 
 namespace Atusan\Components\Traits;
 
-use Atusan\Components\ComponentNest;
+use Atusan\Components\Component;
 use Atusan\Iterators\ComponentsIterator;
 use Atusan\Iterators\ComponentSourcesIterator;
 use Atusan\XML\XMLExtended;
@@ -37,10 +37,10 @@ trait TraitComponentNest
    * Permite que los "Components" sean accesibles como propiedades
    * públicas del objeto.
    */
-  function __get(string $name)
-  {
-    return $this->components->getByName($name) ?? null;
-  }
+  // function __get(string $name)
+  // {
+  //   return $this->components->getByName($name) ?? null;
+  // }
 
   /**
    * Find Component by ID
@@ -49,11 +49,16 @@ trait TraitComponentNest
    * 
    * @param string $id Nombre de declaración del "Component" a buscar.
    * 
-   * @return ComponentNest|null Retorna el "Component" si se encuentra, de lo contrario retorna null.
+   * @return Component|null Retorna el "Component" si se encuentra, de lo contrario retorna null.
    */
-  public function findViewById(string $id) : ComponentNest|null
+  public function findComponentById(string $id) : Component
   {
-    return $this->components->getByName($id) ?? null;
+    $view = $this->components->getById($id);
+
+    if ($view === null)
+      trigger_error(basename(__FUNCTION__) . ":El componente {$id} no existe para {$this->get('id')}");
+
+    return $view;
   }
 
   /**
@@ -91,11 +96,11 @@ trait TraitComponentNest
    * Integra instancias de los "Componentes" en el diccionario.
    * 
    */
-  public function attachComponents()
+  public function attachComponents(ComponentSourcesIterator $sources)
   {
     $this->noNameCounter = 0;
     // Recorre las fuentes establecidas
-    foreach ($this->sources as $source) {
+    foreach ($sources as $source) {
       // Recorre los espacios de nombres
       foreach ($this->namespaces as $url) {
         // Cada $url corresponde a un "namespace" declarado en el manifiesto.
@@ -107,27 +112,28 @@ trait TraitComponentNest
           $elementName = (string) $xml->getName();
 
           // Obtiene el nombre del elemento o genera uno
-          if (!$xml->hasAttribute('name')) $xml->addAttribute('name', "{$elementName}{$this->noNameCounter}");
+          if (!$xml->hasAttribute('id')) $xml->addAttribute('id', "{$elementName}{$this->noNameCounter}");
 
           if (empty($url)) {
             // Declaración sin nombre de espacios solo puede ser:
             // a) Component
             // b) DataViewControl
             // c) Etiquetas HTML
-            if (preg_match('/^(Control|Menu)/', $elementName))
-              $componentName = "Atusan\\Controls\\{$this->type}Control";
-            elseif (is_subclass_of("Atusan\\Components\\{$elementName}", "Atusan\\Components\\Component"))
-              $componentName = "Atusan\\Components\\{$elementName}";
+            if (preg_match('/^(Control|Menu)/', $elementName)) {
+              $type = $this->get('type');
+              $componentClass = "Atusan\\Controls\\{$type}Control";
+            } elseif (is_subclass_of("Atusan\\Components\\{$elementName}", "Atusan\\Components\\Component"))
+              $componentClass = "Atusan\\Components\\{$elementName}";
             else
-              $componentName = "Atusan\\Components\\HTML";
+              $componentClass = "Atusan\\Components\\HTML";
           } else {
             $nss = str_replace('.', '\\', str_replace('clr-namespace:', '', $url));
-            $componentName = "\\$nss\\$elementName";
+            $componentClass = "\\$nss\\$elementName";
             $xml = $this->buildXML($xml);
           }
           // Integra la instancia al diccionario de "Componentes".
           // "onwer" es heredado desde "Module.construct".
-          $this->components->add($componentName::fromXML($this->owner, $xml));
+          $this->components->add($componentClass::fromXML($this->getOwner(), $xml));
         }
       }
     }

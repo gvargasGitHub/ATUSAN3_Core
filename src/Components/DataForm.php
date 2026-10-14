@@ -8,39 +8,40 @@ class DataForm extends DataViewBase
 {
   use TraitDataForm;
 
-  /**
-   * 
-   */
-  protected function setType()
-  {
-    $this->type = 'DataForm';
-  }
+  // /**
+  //  * 
+  //  */
+  // protected function setType()
+  // {
+  //   $this->type = 'DataForm';
+  // }
 
-  /**
-   * Init DataView Properties
-   */
-  protected function initProperties()
-  {
-    // El desarrollador deberá generar, asignar y validar
-    // manualmente el token a este control mediante el
-    // método "setCsrf(string)"
-    $this->addDataAndCsrf();
-  }
-  /**
-   * Build
-   */
-  public function build(): string
-  {
-    ob_start();
+  // /**
+  //  * Init DataView Properties
+  //  */
+  // protected function initProperties()
+  // {
+  //   // El desarrollador deberá generar, asignar y validar
+  //   // manualmente el token a este control mediante el
+  //   // método "setCsrf(string)"
+  //   $this->addDataAndCsrf();
+  // }
 
-    include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/body.view.php';
+  // /**
+  //  * Build
+  //  */
+  // public function build(): string
+  // {
+  //   ob_start();
 
-    $html = ob_get_contents();
+  //   include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/body.view.php';
 
-    ob_clean();
+  //   $html = ob_get_contents();
 
-    return $html;
-  }
+  //   ob_clean();
+
+  //   return $html;
+  // }
   // ----------------------------------
   //  DataViewBase
   // ----------------------------------
@@ -53,9 +54,12 @@ class DataForm extends DataViewBase
    */
   protected function setSources(): void
   {
-    $this->setType();
+    // $this->setType();
 
-    $this->initProperties();
+    // El desarrollador deberá generar, asignar y validar
+    // manualmente el token a este control mediante el
+    // método "setCsrf(string)"
+    $this->addDataAndCsrf();
 
     $this->addSource('form', $this->xml);
   }
@@ -68,30 +72,29 @@ class DataForm extends DataViewBase
     foreach ($this->components as $component) if (is_subclass_of($component, 'Atusan\\Controls\\DataViewControlBase')) $component->setParent($this);
   }
 
-  // ----------------------------------
-  //  ComponentInterface
-  // ----------------------------------
-  /**
-   * make
-   * @return string
-   */
-  public function make(): string
-  {
-    if (empty($this->title)) $this->title = '';
-    if (empty($this->footer)) $this->footer = '';
-    if (empty($this->route)) $this->route = $_SERVER['REQUEST_URI'];
+  // // ----------------------------------
+  // //  ComponentInterface
+  // // ----------------------------------
+  // /**
+  //  * make
+  //  * @return string
+  //  */
+  // public function make(): string
+  // {
+  //   if (!$this->validateProperty('title')) $this->set('title', '');
+  //   if (!$this->validateProperty('footer')) $this->set('footer', '');
 
-    ob_start();
-    include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/view.php';
-    return ob_get_clean();
-  }
+  //   ob_start();
+  //   include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/view.php';
+  //   return ob_get_clean();
+  // }
 
-  /**
-   * write
-   * @return void
-   */
-  public function write(): void
-  {
-    echo $this->make();
-  }
+  // /**
+  //  * write
+  //  * @return void
+  //  */
+  // public function write(): void
+  // {
+  //   echo $this->make();
+  // }
 }

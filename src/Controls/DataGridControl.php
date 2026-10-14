@@ -16,7 +16,7 @@ class DataGridControl extends DataViewControlBase
   public function make(): string
   {
     ob_start();
-    match ($this->type) {
+    match ($this->get('type')) {
       'Hidden' => $this->InputHidden(),
       'Icon' => $this->IconStates(),
       'States' => $this->IconStates(),
@@ -46,13 +46,13 @@ class DataGridControl extends DataViewControlBase
 
   public function getId(): string
   {
-    return "{$this->parent->name}-{$this->name}-{$this->row}";
+    return "{$this->parent->get('id')}-{$this->get('id')}-{$this->row}";
   }
 
   protected function InputHidden()
   {
 ?>
-    <input type="hidden" id="<?= $this->getId() ?>" name="<?= $this->name ?>" value="<?= $this->getValue() ?>" />
+    <input type="hidden" id="<?= $this->getId() ?>" name="<?= $this->get('id') ?>" value="<?= $this->getValue() ?>" />
   <?php
   }
 
@@ -67,7 +67,7 @@ class DataGridControl extends DataViewControlBase
     // Evalua su el valor del control se obtiene de un método del "Controller".
     if ($this->xml->hasAttribute('resolve')) {
       $resolve = $this->xml->getAttribute('resolve');
-      if (!method_exists($owner, $resolve)) trigger_error("$resolve no existe en {$owner->name}", E_USER_WARNING);
+      if (!method_exists($owner, $resolve)) trigger_error("$resolve no existe en {$owner->get('id')}", E_USER_WARNING);
       $value = $owner->$resolve($this->getData());
     } else
       $value = $this->getValue();
@@ -103,9 +103,9 @@ class DataGridControl extends DataViewControlBase
       // Se puede definir si la "Action Bar" se mostrará o no a partir de un método en "Controller".
       if ($this->xml->hasAttribute('resolve')) {
         $resolve = $this->xml->getAttribute('resolve');
-        if (!method_exists($owner, $resolve)) trigger_error("$resolve no existe en {$owner->name}", E_USER_WARNING);
+        if (!method_exists($owner, $resolve)) trigger_error("$resolve no existe en {$owner->get('id')}", E_USER_WARNING);
 
-        if (!$owner->$resolve($this->name, $this->getData())) {
+        if (!$owner->$resolve($this->get('id'), $this->getData())) {
           echo "</td>\n";
           return;
         }
@@ -114,13 +114,13 @@ class DataGridControl extends DataViewControlBase
         if ($action->hasAttribute('resolve')) {
           $resolve = $action->getAttribute('resolve');
 
-          if (!method_exists($owner, $resolve)) trigger_error("$resolve no existe en {$owner->name}", E_USER_WARNING);
+          if (!method_exists($owner, $resolve)) trigger_error("$resolve no existe en {$owner->get('id')}", E_USER_WARNING);
 
           if (!$owner->$resolve($action->getAttribute('name'), $this->getData())) continue;
         }
         // Se re-define el ID de las acciones: viewName-actionName-viewRow
       ?>
-        <i id="<?= "{$this->parent->name}-{$action->getAttribute('name')}-{$this->row}" ?>" type="action" class="action <?= $action->getAttribute('icon') ?>" title="<?= $action->getAttribute('title') ?>"
+        <i id="<?= "{$this->parent->get('id')}-{$action->getAttribute('name')}-{$this->row}" ?>" type="action" class="action <?= $action->getAttribute('icon') ?>" title="<?= $action->getAttribute('title') ?>"
           style="<?= $action->buildPairs(';', ':', '', 'css') ?>"></i>
       <?php
       }
@@ -151,7 +151,7 @@ class DataGridControl extends DataViewControlBase
       <div class="content menu-options-content">
         <?php
         foreach ($this->xml->children() as $opt) {
-          $motype = new MenuOptionType($this->parent->name, $this->row, $opt);
+          $motype = new MenuOptionType($this->parent->get('id'), $this->row, $opt);
         ?>
           <a class="option" style="display: block;" onclick="(event) => event.preventDefault()" <?= $motype->buildPairs() ?>>
             <i class="<?= $motype->icon ?>" style="margin-right: 3px"></i><?= $motype->text ?></a>
@@ -172,7 +172,7 @@ class DataGridControl extends DataViewControlBase
     <td class="data" id="<?= $this->getId() ?>" type="basic"
       <?= $this->xml->buildPairs(' ', '=', '"', 'html') ?>
       style="<?= $this->xml->buildPairs(';', ':', '', 'css') ?>">
-      <input type="<?= strtolower($this->type) ?>" class="inputEv" id="<?= $this->getId() ?>-input" name="<?= $this->name ?>" value="<?= $this->getValue() ?>" />
+      <input type="<?= strtolower($this->get('type')) ?>" class="inputEv" id="<?= $this->getId() ?>-input" name="<?= $this->get('id') ?>" value="<?= $this->getValue() ?>" />
     </td>
   <?php
   }
@@ -186,7 +186,7 @@ class DataGridControl extends DataViewControlBase
     <td class="data" id="<?= $this->getId() ?>" type="select"
       <?= $this->xml->buildPairs(' ', '=', '"', 'html') ?>
       style="<?= $this->xml->buildPairs(';', ':', '', 'css') ?>">
-      <select id="<?= $this->getId() ?>-input" type="select" name="<?= $this->name ?>" value="<?= $this->getValue() ?>"
+      <select id="<?= $this->getId() ?>-input" type="select" name="<?= $this->get('id') ?>" value="<?= $this->getValue() ?>"
         class="changeEv" <?= $this->xml->buildPairs(' ', '=', '"', 'html') ?>
         style="<?= $this->xml->buildPairs(';', ':', '', 'css') ?>">
         <?php
@@ -212,7 +212,7 @@ class DataGridControl extends DataViewControlBase
     <td class="data" id="<?= $this->getId() ?>" type="checkbox"
       <?= $this->xml->buildPairs(' ', '=', '"', 'html') ?>
       style="<?= $this->xml->buildPairs(';', ':', '', 'css') ?>">
-      <input type="checkbox" class="changeEv" id="<?= $this->getId() ?>-input" name="<?= $this->name ?>" value="<?= $this->getValue() ?>" <?= $selected ?> />
+      <input type="checkbox" class="changeEv" id="<?= $this->getId() ?>-input" name="<?= $this->get('id') ?>" value="<?= $this->getValue() ?>" <?= $selected ?> />
     </td>
   <?php
   }
@@ -229,7 +229,7 @@ class DataGridControl extends DataViewControlBase
       style="<?= $this->xml->buildPairs(';', ':', '', 'css') ?>">
       <label class="switch" id="<?= $this->getId() ?>-switch">
         <input type="checkbox" class="changeEv" id="<?= $this->getId() ?>-input"
-          name="<?= $this->name ?>" value="<?= $this->getValue() ?>" <?= $selected ?>
+          name="<?= $this->get('id') ?>" value="<?= $this->getValue() ?>" <?= $selected ?>
           <?= $this->xml->buildPairs(' ', '=', '"', 'html') ?> />
         <Span class="slider" id="<?= $this->getId() ?>-slider"></Span>
       </label>
@@ -250,16 +250,16 @@ class DataGridControl extends DataViewControlBase
   protected function Case()
   {
     $owner = $this->parent->getOwner();
-    if (($resolve = $this->xml->getAttribute('resolve')) == null) trigger_error($this->name . ' requiere el atributo "resolve."', E_USER_WARNING);
+    if (($resolve = $this->xml->getAttribute('resolve')) == null) trigger_error($this->get('id') . ' requiere el atributo "resolve."', E_USER_WARNING);
     
-    if (!method_exists($owner, $resolve)) trigger_error("$resolve no existe en {$owner->name}", E_USER_WARNING);
+    if (!method_exists($owner, $resolve)) trigger_error("$resolve no existe en {$owner->get('id')}", E_USER_WARNING);
     
     $data = $this->getData();
     $value = $owner->$resolve($data);
 
     foreach($this->xml->children() as $case) {
       if ($case->getAttribute('match') == $value) {
-        $case->setAttribute('name', $this->name);
+        $case->setAttribute('name', $this->get('id'));
 
         $caseControl = new DataGridControl($owner, $case);
         $caseControl->setParent($this->parent);
@@ -267,7 +267,7 @@ class DataGridControl extends DataViewControlBase
         $caseControl->setData($data);
         
         if(($addon = $case->getAttribute('addon')) != null) {
-          if (!method_exists($owner, $addon)) trigger_error("$addon no existe en {$owner->name}", E_USER_WARNING);
+          if (!method_exists($owner, $addon)) trigger_error("$addon no existe en {$owner->get('id')}", E_USER_WARNING);
           
           $owner->$addon($caseControl, $data);
         }

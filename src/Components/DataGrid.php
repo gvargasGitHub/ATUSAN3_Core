@@ -4,34 +4,34 @@ namespace Atusan\Components;
 
 class DataGrid extends DataViewBase
 {
-  /**
-   * 
-   */
-  protected function setType()
-  {
-    $this->type = 'DataGrid';
-  }
+  // /**
+  //  * 
+  //  */
+  // protected function setType()
+  // {
+  //   $this->type = 'DataGrid';
+  // }
 
-  /**
-   * Init DataView Properties
-   */
-  protected function initProperties() {}
+  // /**
+  //  * Init DataView Properties
+  //  */
+  // protected function initProperties() {}
 
-  /**
-   * Build
-   */
-  public function build(): string
-  {
-    ob_start();
+  // /**
+  //  * Build
+  //  */
+  // public function build(): string
+  // {
+  //   ob_start();
 
-    include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/body.view.php';
+  //   include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/body.view.php';
 
-    $html = ob_get_contents();
+  //   $html = ob_get_contents();
 
-    ob_clean();
+  //   ob_clean();
 
-    return $html;
-  }
+  //   return $html;
+  // }
 
   // ----------------------------------
   //  DataViewBase
@@ -55,9 +55,9 @@ class DataGrid extends DataViewBase
    */
   protected function setSources(): void
   {
-    $this->setType();
+    // $this->setType();
 
-    $this->initProperties();
+    // $this->initProperties();
 
     // Recorre las secciones Thead, Tbody, Tsummary & Tfoot
     foreach ($this->xml->children() as $section) {
@@ -76,29 +76,29 @@ class DataGrid extends DataViewBase
     foreach ($this->components as $component) if (is_subclass_of($component, 'Atusan\\Controls\\DataViewControlBase')) $component->setParent($this);
   }
 
-  // ----------------------------------
-  //  ComponentInterface
-  // ----------------------------------
+  // // ----------------------------------
+  // //  ComponentInterface
+  // // ----------------------------------
 
-  /**
-   * make
-   * @return string
-   */
-  public function make(): string
-  {
-    if (empty($this->title)) $this->title = '';
-    if (empty($this->footer)) $this->footer = '';
+  // /**
+  //  * make
+  //  * @return string
+  //  */
+  // public function make(): string
+  // {
+  //   if (!$this->validateProperty('title')) $this->set('title', '');
+  //   if (!$this->validateProperty('footer')) $this->set('footer', '');
 
-    ob_start();
-    include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/view.php';
-    return ob_get_clean();
-  }
-  /**
-   * write
-   * @return void
-   */
-  public function write(): void
-  {
-    echo $this->make();
-  }
+  //   ob_start();
+  //   include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . '/view.php';
+  //   return ob_get_clean();
+  // }
+  // /**
+  //  * write
+  //  * @return void
+  //  */
+  // public function write(): void
+  // {
+  //   echo $this->make();
+  // }
 }

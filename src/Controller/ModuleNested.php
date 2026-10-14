@@ -40,8 +40,8 @@ abstract class ModuleNested extends Module
    */
   public function nestedToJson()
   {
-    $this->response->add('name', $this->name);
-    $this->response->add('title', $this->title);
+    $this->response->add('name', $this->get('id'));
+    $this->response->add('title', $this->get('title'));
     $this->response->add('content', $this->buildNested());
     $this->response->json();
   }

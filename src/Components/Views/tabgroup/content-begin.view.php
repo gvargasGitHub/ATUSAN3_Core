@@ -1,1 +1,1 @@
-<div id="<?= $this->parent->name ?>-<?= $this->name ?>" class="content <?= $this->parent->name ?>">
+<div id="<?= $this->parent->get('id') ?>-<?= $this->get('id') ?>" class="content <?= $this->parent->get('id') ?>">

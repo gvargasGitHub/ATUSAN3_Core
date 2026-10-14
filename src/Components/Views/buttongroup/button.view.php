@@ -1,11 +1,11 @@
 <?php
 /** @var Atusan\XML\XMLExtended $xml */
 [
-  'name' => $name,
+  'id' => $id,
   'text' => $text,
   'icon' => $icon
 ] = Atusan\Types\ButtonType::pairs($xml)->properties();
 ?>
-<Button id="<?= $name ?>" class="ats-btn" <?= $xml->buildAttributesPairs('html') ?>>
+<Button id="<?= $id ?>" class="ats-btn" <?= $xml->buildAttributesPairs('html') ?>>
   <?= $icon, $text ?>
 </Button>

@@ -9,11 +9,11 @@ class TabGroupContent extends ComponentNest
   /* ------------------------
   Properties
   ------------------------ */
-  public string $text;
+  // public string $text;
 
-  public string $view;
+  // public string $view;
 
-  public $closeable = false;
+  // public $closeable = false;
 
   public function makeButton(): string
   {
@@ -29,7 +29,7 @@ class TabGroupContent extends ComponentNest
     $icon = ($this->xml->hasAttribute('icon')) ? $this->xml->getAttribute('icon') : '';
     $module = ($this->xml->hasAttribute('module')) ? $this->xml->getAttribute('module') : '';
 
-    return new TabGroupButtonType($this->owner->name, $this->parent->name, $name, $text, $icon, $module);
+    return new TabGroupButtonType($this->getOwner()->get('id'), $this->parent->get('id'), $name, $text, $icon, $module);
   }
 
   // ----------------------------------
@@ -40,7 +40,8 @@ class TabGroupContent extends ComponentNest
    */
   protected function setSources(): void
   {
-    $this->closeable = property_exists($this, 'closeable');
+    // $this->closeable = property_exists($this, 'closeable');
+    if (!$this->validateProperty('closeable')) $this->set('closeable', false);
 
     $this->addSource('content', $this->xml);
   }

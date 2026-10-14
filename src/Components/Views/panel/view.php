@@ -1,15 +1,15 @@
 <script>
-  var <?= $this->name ?> = new Panel("<?= $this->name ?>", "<?= $this->owner->name ?>");
+  var <?= $this->get('id') ?> = new <?= basename(__CLASS__) ?>("<?= $this->get('id') ?>", "<?= $this->getOwner()->get('id') ?>");
 </script>
-<div id="<?= $this->name ?>" class="ats-panel">
-  <div id="<?= $this->name ?>-left" class="panel left">
+<div id="<?= $this->get('id') ?>" class="ats-panel">
+  <div id="<?= $this->get('id') ?>-left" class="panel left">
     <?= $this->writePanel('Left') ?>
   </div>
-  <div id="<?= $this->name ?>-content" class="panel content">
+  <div id="<?= $this->get('id') ?>-content" class="panel content">
     <?= $this->writePanel('Content') ?>
   </div>
-  <div id="<?= $this->name ?>-right" class="panel right">
+  <div id="<?= $this->get('id') ?>-right" class="panel right">
     <?= $this->writePanel('Right') ?>
   </div>
 </div>
-<!-- End of <?= $this->name ?> -->
+<!-- End of <?= $this->get('id') ?> -->

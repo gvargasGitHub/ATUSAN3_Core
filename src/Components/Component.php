@@ -12,8 +12,10 @@ abstract class Component implements ComponentInterface
 
   function __construct(Module $owner, XMLExtended $xml)
   {
-    $this->name = $xml->getAttribute('name');
-    $this->xml = $xml;
-    $this->owner = $owner;
+    $this->set('id', ($xml->hasAttribute('id')) ? $xml->getAttribute('id') : basename(get_class($this)));
+    $this->setXml($xml);
+    $this->setOwner($owner);
+
+    $this->set('type', basename(get_class($this)));
   }
 }

@@ -15,13 +15,17 @@ class Application extends Controller {
   }
 
   execute() {
-    if (typeof this.onOpen == "function") this.onOpen();
+    if (typeof this.onOpen === "function") this.onOpen();
 
     if (!Module.active()) throw new Error('No existe módulo.');
 
     ats.attachModule(Module.active());
 
     ats.stopLoader();
+  }
+
+  onOpen() {
+    // TODO
   }
 };
 /**

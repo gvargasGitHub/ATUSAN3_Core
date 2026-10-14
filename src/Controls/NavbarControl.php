@@ -3,24 +3,19 @@
 namespace Atusan\Controls;
 
 use Atusan\Components\Component;
-use Atusan\Components\Navbar;
 use Atusan\Controller\Module;
 use Atusan\Controls\Traits\TraitNavbarControl;
-use Atusan\Types\MenuItemType;
 use Atusan\XML\XMLExtended;
 
 class NavbarControl extends Component
 {
   use TraitNavbarControl;
-  
-  /** @var string $type */
-  protected string $type;
 
   function __construct(Module $owner, XMLExtended $xml)
   {
     parent::__construct($owner, $xml);
 
-    $this->type = substr($this->xml->getName(), 4);
+    $this->set('type', substr($this->xml->getName(), 4));
   }
 
   // ----------------------------------
@@ -34,7 +29,7 @@ class NavbarControl extends Component
   public function make(): string
   {
     ob_start();
-    match (strtolower($this->type)) {
+    match (strtolower($this->get('type'))) {
       'item' => $this->Item(),
       'content' => $this->Content(),
       'separator' => $this->Separator(),
@@ -73,7 +68,7 @@ class NavbarControl extends Component
         <ul>
           <?php
           foreach ($this->xml->children() as $xml) {
-            $item = NavbarControl::fromXML($this->parent->owner, $xml);
+            $item = NavbarControl::fromXML($this->parent->getOwner(), $xml);
             $item->setParent($this->parent);
             echo $item->make();
           } ?>
@@ -98,13 +93,4 @@ class NavbarControl extends Component
 
   protected function Separator(){}
   
-  /**
-   * 
-   */
-  protected function itemType(): MenuItemType
-  {
-    $itemNumber = $this->parent->getItemNoNameCounter();
-
-    return new MenuItemType($this->parent->name, $itemNumber, $this->xml);
-  }
 }

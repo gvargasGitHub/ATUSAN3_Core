@@ -2,57 +2,58 @@
 
 namespace Atusan\Components;
 
-use Atusan\Components\Traits\TraitNavbar;
+// use Atusan\Components\Traits\TraitNavbar;
 
-class Sidebar extends ComponentNest
+class Sidebar extends NavBase
 {
-  use TraitNavbar;
-  /* ------------------------
-  Properties
-  ------------------------ */
-  public string $type = 'Sidebar';
+  // use TraitNavbar;
+  // /* ------------------------
+  // Properties
+  // ------------------------ */
+  // public string $type = 'Sidebar';
   
-   // ----------------------------------
-  //  TraitComponent
-  // ----------------------------------
-  /**
-   * 
-   */
-  protected function setSources(): void
-  {
-    // Integra las secciones Top & Bottom
-    foreach ($this->xml->children() as $section) $this->addSource((string) $section->getName(), $section);
-  }
+  //  // ----------------------------------
+  // //  TraitComponent
+  // // ----------------------------------
+  // /**
+  //  * 
+  //  */
+  // protected function setSources(): void
+  // {
+  //   // Integra las secciones Top & Bottom
+  //   foreach ($this->xml->children() as $section) $this->addSource((string) $section->getName(), $section);
+  // }
 
-  /**
-   * 
-   */
-  protected function finalDefinitions(): void
-  {
-    foreach ($this->components as $component) $component->setParent($this);
-  }
+  // /**
+  //  * 
+  //  */
+  // protected function finalDefinitions(): void
+  // {
+  //   foreach ($this->components as $component) $component->setParent($this);
+  // }
 
-  // ----------------------------------
-  //  ComponentInterface
-  // ----------------------------------
-  /**
-   * make
-   * @return string
-   */
-  public function make(): string
-  {
-    if (!property_exists($this, 'title')) $this->title = "";
-    ob_start();
-    include __DIR__ . DS . 'Views' . DS . 'sidebar/view.php';
-    return ob_get_clean();
-  }
+  // // ----------------------------------
+  // //  ComponentInterface
+  // // ----------------------------------
+  // /**
+  //  * make
+  //  * @return string
+  //  */
+  // public function make(): string
+  // {
+  //   if (!$this->validateProperty('title')) $this->set('title', '');
 
-  /**
-   * write
-   * @return void
-   */
-  public function write(): void
-  {
-    echo $this->make();
-  }
+  //   ob_start();
+  //   include __DIR__ . DS . 'Views' . DS . strtolower($this->type) . DS . 'view.php';
+  //   return ob_get_clean();
+  // }
+
+  // /**
+  //  * write
+  //  * @return void
+  //  */
+  // public function write(): void
+  // {
+  //   echo $this->make();
+  // }
 }

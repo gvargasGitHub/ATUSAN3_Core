@@ -23,12 +23,21 @@ class ComponentsIterator implements BaseIterator
     array_push($this->data, $component);
   }
 
+  // /**
+  //  * 
+  //  */
+  // public function getByName(string $name): Component | null
+  // {
+  //   foreach ($this as $component) if ($component->name == $name) return $component;
+
+  //   return null;
+  // }
   /**
-   * 
+   * getById
    */
-  public function getByName(string $name): Component | null
+  public function getById(string $id): Component | null
   {
-    foreach ($this as $component) if ($component->name == $name) return $component;
+    foreach ($this as $component) if ($component->get('id') == $id) return $component;
 
     return null;
   }

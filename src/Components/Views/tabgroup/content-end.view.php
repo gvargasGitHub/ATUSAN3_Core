@@ -1,2 +1,2 @@
 </div>
-<!-- End of <?= $this->name ?> -->
+<!-- End of <?= $this->get('id') ?> -->
