@@ -18,7 +18,7 @@ class Component {
     this.name = name;
     this.element;
 
-    ats.info(`Constuyendo ${name} de ${owner}`);
+    // ats.notify(`Constuyendo ${name} de ${owner}`);
 
     if (typeof window[owner] == "undefined") console.error(`${owner} no existe.`);
 
@@ -31,7 +31,7 @@ class Component {
   }
 
   init() {
-    ats.info(`Init ${this.name}`);
+    // ats.notify(`Init ${this.name}`);
     this.element = document.getElementById(this.name);
 
     if (!this.element) throw new Error(`${this.name} no existe.`);
@@ -45,7 +45,7 @@ class Component {
     // offset parent es the nearest ancestor, if not exists, then offset parent is
     // document body. The nearest ancestor of all Components is "content" block.
     // w3schools.com/jsref
-    ats.info(`${this.name} ajustándose a  ${this.element.offsetParent.tagName}`);
+    // ats.notify(`${this.name} ajustándose a  ${this.element.offsetParent.tagName}`);
     let h = this.element.offsetParent.offsetHeight - (this.element.offsetTop + margin);
 
     this.element.style.height = `${h}px`;
@@ -61,7 +61,7 @@ class Component {
     // w3schools.com/jsref
 
     let w = this.element.offsetParent.offsetWidth - (this.element.offsetLeft + 10);
-    ats.info(`width fitting ${this.name}:${w}px`);
+    // ats.notify(`width fitting ${this.name}:${w}px`);
     this.element.style.width = `${w}px`;
   }
 
@@ -128,21 +128,25 @@ class Navbar extends Component {
 
     if (!window[menu]) return;
 
-    window[menu].onMenuItemClick({ name, route });
+    window[menu].onMenuItemClick({id:name, name, route });
 
-    // Cierra la vista responseive
+    // Cierra la vista responsive
     window[menu].closeResponsiveView();
+
+    // Finalmente oculta la lista desplegable
+    ats.hideNavDropdown();
   }
 
   /**
    * 
    */
   static handlerDropdownEvent(ev) {
+    ats.hideNavDropdown();
     const elm = (ev.target.classList.contains('caret'))
       ? ev.target.parentElement : ev.target;
 
     elm.classList.toggle('show');
-
+    // Detiene la propagación de Click
     ev.stopPropagation();
   }
 
@@ -156,6 +160,10 @@ class Navbar extends Component {
     elm.classList.toggle("transform");
   }
 
+  /**
+   * OnMenuItemClick
+   * @param {Object} item 
+   */
   onMenuItemClick(item) {
     // TODO
   }
@@ -199,7 +207,7 @@ class Subnavbar extends Component {
 
     if (!window[menu]) return;
 
-    window[menu].onMenuItemClick({ name, route });
+    window[menu].onMenuItemClick({id:name, name, route });
 
     // Cierra la vista responseive
     window[menu].closeResponsiveView();
@@ -259,14 +267,14 @@ class Sidebar extends Component {
   }
 
   static handlerMenuItemEvent(ev) {
-    ats.hideNavDropdown();
+    // ats.hideNavDropdown();
     let route = ev.target.getAttribute("ats-route"),
       name = ev.target.getAttribute("ats-itemname"),
       menu = ev.target.getAttribute("ats-menuname");
 
     if (!window[menu]) return;
 
-    window[menu].onMenuItemClick({ name, route });
+    window[menu].onMenuItemClick({ id:name, name, route });
 
     // Cierra la vista responseive
     window[menu].closeResponsiveView();
@@ -305,7 +313,7 @@ class Sidebar extends Component {
     // w3schools.com/jsref
 
     let h = this.element.offsetParent.offsetHeight - ((this.element.offsetTop + 10) - margin);
-    ats.info(`height fitting ${this.name}:${h}px`);
+    // ats.notify(`height fitting ${this.name}:${h}px`);
     this.element.style.height = `${h}px`;
   }
 
@@ -319,7 +327,7 @@ class Sidebar extends Component {
     // w3schools.com/jsref
 
     let w = this.element.offsetParent.offsetWidth - (this.element.offsetLeft + 10);
-    ats.info(`width fitting ${this.name}:${w}px`);
+    // ats.notify(`width fitting ${this.name}:${w}px`);
     this.element.style.width = `${w}px`;
   }
 };
@@ -602,7 +610,7 @@ class DataForm extends DataViewBase {
   }
 
   static handlerFormSubmitEvent(ev) {
-    ats.info(`Deteniendo a ${ev.type}`);
+    // ats.notify(`Deteniendo a ${ev.type}`);
     ev.preventDefault();
 
     let { view } = DataViewBase.getControlId(ev.target);
@@ -616,10 +624,8 @@ class DataForm extends DataViewBase {
 
     var headers = (fd.has('csrf_token')) ? { 'X-CSRF-TOKEN': fd.get('csrf_token') } : {};
     
-    ats.startLoader();
-    // Note: Se reemplaza $.ajax por ats.post para unificar la forma de enviar solicitudes al servidor.
-    // v3.0.20: Se remplaza onDone -> done y onFail -> fail.
-    ats.post({
+    // Se envia la petición mediante SmartAjax que previene soporte para entornos modernos y antiguos.
+    ats.smartAjax({
       url: BASE_URL + route,
       headers,
       data: fd}, {
@@ -633,7 +639,7 @@ class DataForm extends DataViewBase {
   }
 
   static handlerFormResetEvent(ev) {
-    ats.info(`${ev.type} ha reestablecido el formulario`);
+    // ats.notify(`${ev.type} ha reestablecido el formulario`);
   }
 
   onInput(ar) {
@@ -1275,7 +1281,7 @@ class TabGroup extends Component {
 
       let name = btn.getAttribute('ats-name');
 
-      ats.info(`${name} de ${this.name} de ${this.owner.name}`);
+      // ats.notify(`${name} de ${this.name} de ${this.owner.name}`);
       this[name] = new TabGroupContent(name, this.owner, this, btn);
 
       this.contents.push(name);
@@ -1445,7 +1451,7 @@ class TabGroup extends Component {
 
     let current = window[view].current;
     // onClick Event
-    if (typeof window[view].onClick == "function") window[view].onClick({ name });
+    if (typeof window[view].onClick == "function") window[view].onClick({id:name, name });
 
     // onChange Event
     if (prior != current && typeof window[view].onChange == "function") window[view].onChange({ prior, current });

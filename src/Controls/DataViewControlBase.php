@@ -2,12 +2,11 @@
 
 namespace Atusan\Controls;
 
-use Atusan\Components\Component;
 use Atusan\Controller\Module;
 use Atusan\Iterators\OptionTextValueIterator;
 use Atusan\XML\XMLExtended;
 
-abstract class DataViewControlBase extends Component
+abstract class DataViewControlBase extends ControlBase
 {
   protected array $data;
 

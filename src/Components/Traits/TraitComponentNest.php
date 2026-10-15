@@ -3,7 +3,6 @@
 namespace Atusan\Components\Traits;
 
 use Atusan\Components\Component;
-use Atusan\Exceptions\InternalServerException;
 use Atusan\Iterators\ComponentsIterator;
 use Atusan\Iterators\ComponentSourcesIterator;
 use Atusan\XML\XMLExtended;

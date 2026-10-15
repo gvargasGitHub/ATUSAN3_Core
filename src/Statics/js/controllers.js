@@ -20,8 +20,6 @@ class Application extends Controller {
     if (!Module.active()) throw new Error('No existe módulo.');
 
     ats.attachModule(Module.active());
-
-    ats.stopLoader();
   }
 
   onOpen() {
@@ -38,7 +36,7 @@ class ModuleBase extends Controller {
    */
   constructor(name) {
     super(name);
-    ats.info(`Creando módulo ${name}`);
+    // ats.notify(`Creando módulo ${name}`);
     this.components = [];
     // v3.0.20: Se remplaza el código personalizado por el centralizado.
     this.send = ats.send;
@@ -75,7 +73,7 @@ class ModuleBase extends Controller {
   }
 
   initComponents() {
-    ats.info(`initComponents de ${this.name}:${this.components.length}`);
+    // ats.notify(`initComponents de ${this.name}:${this.components.length}`);
     this.components.forEach(componentName => window[componentName].init());
   }
 };

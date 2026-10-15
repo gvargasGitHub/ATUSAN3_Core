@@ -2,12 +2,11 @@
 
 namespace Atusan\Controls;
 
-use Atusan\Components\Component;
 use Atusan\Controller\Module;
 use Atusan\Controls\Traits\TraitNavbarControl;
 use Atusan\XML\XMLExtended;
 
-abstract class NavControlBase extends Component
+abstract class NavControlBase extends ControlBase
 {
   use TraitNavbarControl;
 
