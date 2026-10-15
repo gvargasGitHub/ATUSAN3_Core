@@ -4,17 +4,12 @@ namespace Atusan\Components;
 
 class Modal extends ComponentNest
 {
-  public string $title;
-
-  public string $footer;
-
-  public string $view;
 
   // ----------------------------------
   //  TraitComponent
   // ----------------------------------
   /**
-   * 
+   * Set Sources
    */
   protected function setSources(): void
   {
@@ -22,7 +17,7 @@ class Modal extends ComponentNest
   }
 
   /**
-   * 
+   * Final Definitions
    */
   protected function finalDefinitions(): void {}
 
@@ -35,8 +30,8 @@ class Modal extends ComponentNest
    */
   public function make(): string
   {
-    if (!property_exists($this, 'title')) $this->title = '';
-    if (!property_exists($this, 'footer')) $this->footer = '';
+    if (!$this->validateProperty('title')) $this->set('title', '');
+    if (!$this->validateProperty('footer')) $this->set('footer', '');
 
     ob_start();
     include __DIR__ . DS . 'Views' . DS . 'modal/view.php';

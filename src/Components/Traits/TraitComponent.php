@@ -12,9 +12,9 @@ use Atusan\XML\XMLLoader;
 trait TraitComponent
 {
   /**
-   * @var string $name
+   * @var array $properties
    */
-  public string $name;
+  protected array $properties = [];
 
   /**
    * @var Module $owner
@@ -64,20 +64,74 @@ trait TraitComponent
   }
 
   /**
+   * get
+   * Obtiene el valor de la propiedad.
+   * @param string $propertyName
    * 
+   * @return mixed
+   */
+  public function get(string $propertyName): mixed
+  {
+    return $this->properties[$propertyName] ?? null;
+  }
+
+  /**
+   * set
+   * Establee un valor para la propiedad.
+   * @param string $propertyName
+   * @param mixed $propertyValue
+   * 
+   * @return void
+   */
+  public function set(string $propertyName, mixed $propertyValue): void
+  {
+    $this->properties[$propertyName] = $propertyValue;
+  }
+
+  /**
+   * validateProperty
+   * Valida si la propiedad existe y tiene un valor.
+   * @param string $propertyName
+   * @return bool
+   */
+  public function validateProperty(string $propertyName): bool
+  {
+    return array_key_exists($propertyName, $this->properties) && $this->get($propertyName) !== null;
+  }
+
+  /**
+   * getOwner
+   * Retorna el Module propietario del Component.
+   * @return Module
    */
   public function getOwner(): Module
   {
     return $this->owner;
   }
+
   /**
-   * 
+   * setOwner
+   * Establece el Module propietario del Component.
    */
   public function setOwner(Module $owner)
   {
     $this->owner = $owner;
   }
 
+  /**
+   * getParent
+   * Obtiene el Component padre del Component.
+   * @return Component
+   */
+  public function getParent(): Component
+  {
+    return $this->parent;
+  }
+
+  /**
+   * setParent
+   * Establece el Component padre del Component.
+   */
   public function setParent(Component $parent)
   {
     $this->parent = $parent;
@@ -98,19 +152,19 @@ trait TraitComponent
     // integra los atributos de "root" a la clase
     foreach ($this->namespaces as $url) {
       foreach ($this->xml->attributes($url) as $k => $v)
-        if (isset($v)) $this->$k = (string) $v;
+        if (isset($v)) $this->properties[$k] = (string) $v;
     }
 
-    if (!empty($this->layout)) {
+    if ($this->validateProperty('layout')) {
       // Obtiene recurso XML
-      $xmlext = XMLLoader::load($this->locateResource($this->layout));
+      $xmlext = XMLLoader::load($this->locateResource($this->get('layout')));
 
       if ($xmlext === false)
         throw new InternalServerException(XMLLoader::getError());
 
       // integra atributos de la raiz de la extension al controlador
       foreach ($xmlext->attributes() as $k => $v)
-        if (isset($v)) $this->$k = (string) $v;
+        if (isset($v)) $this->properties[$k] = (string) $v;
 
       // integra la extensión al controlador
       foreach($xmlext->children() as $ext) $this->xml->extend($ext);
@@ -122,16 +176,16 @@ trait TraitComponent
   /**
    * 
    */
-  public function locateResource(string $viewname): string
+  public function locateResource(string $fileName): string
   {
     $directories = [$this->owner->getDirectory(), APP_DIRECTORY];
     for ($d = 0; $d < count($directories); $d++) {
       // pasa el directorio en turno y el nombre del componente final
-      $located = FileSystem::locateFile($directories[$d], basename($viewname));
+      $located = FileSystem::locateFile($directories[$d], basename($fileName));
 
       if ($located) return $located;
     }
 
-    trigger_error("El recurso {$viewname} no existe", E_USER_ERROR);
+    throw new InternalServerException("El recurso {$fileName} no existe");
   }
 }

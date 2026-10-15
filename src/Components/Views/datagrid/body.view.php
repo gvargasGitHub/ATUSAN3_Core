@@ -1,11 +1,12 @@
-<table id="<?= $this->name ?>-table">
+<table id="<?= $this->get('id') ?>-table">
   <thead>
     <?php
     foreach ($this->sources->getAllByName('Thead') as $source) {
     ?>
       <tr>
         <?php
-        foreach ($source->xml->children() as $child) echo $this->components->getByName($child->getAttribute('name'))->make();
+        foreach ($source->xml->children() as $child) 
+          echo $this->components->getById($child->getAttribute('id'))->make();
         ?>
       </tr>
     <?php
@@ -22,7 +23,8 @@
     ?>
       <tr>
         <?php
-        foreach ($source->xml->children() as $child) echo $this->components->getByName($child->getAttribute('name'))->make();
+        foreach ($source->xml->children() as $child) 
+          echo $this->components->getById($child->getAttribute('id'))->make();
         ?>
       </tr>
     <?php

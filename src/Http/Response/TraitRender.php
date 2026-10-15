@@ -14,7 +14,7 @@ trait TraitRender {
     Controller $module): string
   {
     // Establece el nombre del módulo para ser usado en la plantilla (template)
-    $moduleName = $module->name;
+    $moduleName = $module->get('id');
 
     $templateFile = FileSystem::locateFile(APP_DIRECTORY . DS
       . implode(DS, ['Templates', $module->getTemplate()]), 

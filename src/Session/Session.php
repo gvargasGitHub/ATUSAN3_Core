@@ -32,7 +32,7 @@ class Session
       self::register();
     }
 
-    if (APP_DEBUG) Log::info($info);
+    // if (APP_DEBUG) Log::info($info);
   }
 
   /**

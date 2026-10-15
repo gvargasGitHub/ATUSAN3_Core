@@ -7,14 +7,14 @@ trait TraitDataFormControl
   protected function Csrf()
   {
 ?>
-    <Input type="hidden" id="<?= $this->getId() ?>" name="csrf_token" value="<?= $this->getValue() ?>" />
+    <input type="hidden" id="<?= $this->getId() ?>" name="csrf_token" value="<?= $this->getValue() ?>" />
   <?php
   }
 
-  protected function InputHidden()
+  protected function inputHidden()
   {
   ?>
-    <Input type="hidden" id="<?= $this->getId() ?>" name="<?= $this->name ?>" value="<?= $this->getValue() ?>" />
+    <input type="hidden" id="<?= $this->getId() ?>" name="<?= $this->get('id') ?>" value="<?= $this->getValue() ?>" />
     <?php
   }
 
@@ -22,11 +22,11 @@ trait TraitDataFormControl
   {
     if ($this->xml->hasAttribute('label')) {
     ?>
-      <Label for="<?= $this->getId() ?>" class="form-label"><?= $this->xml->getAttribute('label') ?></Label>
+      <label for="<?= $this->getId() ?>" class="form-label"><?= $this->xml->getAttribute('label') ?></label>
     <?php
     }
     ?>
-    <Input type="text" id="<?= $this->getId() ?>" name="<?= $this->name ?>" value="<?= $this->getValue() ?>"
+    <input type="text" id="<?= $this->getId() ?>" name="<?= $this->get('id') ?>" value="<?= $this->getValue() ?>"
       class="form-control" readonly="readonly" <?= $this->xml->buildPairs(' ', '=', '"', 'html') ?>
       style="<?= $this->xml->buildPairs(';', ':', '', 'css') ?>" />
     <?php
@@ -36,63 +36,63 @@ trait TraitDataFormControl
   {
     if ($this->xml->hasAttribute('label')) {
     ?>
-      <Label for="<?= $this->getId() ?>" class="form-label"><?= $this->xml->getAttribute('label') ?></Label>
+      <label for="<?= $this->getId() ?>" class="form-label"><?= $this->xml->getAttribute('label') ?></label>
     <?php
     }
     ?>
-    <Div class="autocomplete">
-      <Input type="text" id="<?= $this->getId() ?>" name="<?= $this->name ?>" value="<?= $this->getValue() ?>"
+    <div class="autocomplete">
+      <input type="text" id="<?= $this->getId() ?>" name="<?= $this->get('id') ?>" value="<?= $this->getValue() ?>"
         class="form-control inputEv completeEv" <?= $this->xml->buildPairs(' ', '=', '"', 'html') ?>
         style="<?= $this->xml->buildPairs(';', ':', '', 'css') ?>" autocomplete="off" />
-      <Div class="autocomplete-list"></Div>
-    </Div>
+      <div class="autocomplete-list"></div>
+    </div>
     <?php
   }
 
-  protected function InputCheck()
+  protected function inputCheck()
   {
     if ($this->xml->hasAttribute('label')) {
     ?>
-      <Label for="<?= $this->getId() ?>" class="form-label"><?= $this->xml->getAttribute('label') ?></Label><br />
+      <label for="<?= $this->getId() ?>" class="form-label"><?= $this->xml->getAttribute('label') ?></label><br />
     <?php
     }
     $selected = ($this->getValue() == 1) ? 'checked' : '';
     ?>
-    <Input type="checkbox" id="<?= $this->getId() ?>" name="<?= $this->name ?>" value="<?= $this->getValue() ?>"
+    <input type="checkbox" id="<?= $this->getId() ?>" name="<?= $this->get('id') ?>" value="<?= $this->getValue() ?>"
       class="changeEv" <?= $selected ?> <?= $this->xml->buildPairs(' ', '=', '"', 'html') ?>
       style="<?= $this->xml->buildPairs(';', ':', '', 'css') ?>" /><br />
     <?php
   }
 
-  protected function InputTextArea()
+  protected function inputTextArea()
   {
     if ($this->xml->hasAttribute('label')) {
     ?>
-      <Label for="<?= $this->getId() ?>" class="form-label"><?= $this->xml->getAttribute('label') ?></Label>
+      <label for="<?= $this->getId() ?>" class="form-label"><?= $this->xml->getAttribute('label') ?></label>
     <?php
     }
     ?>
-    <TextArea type="text" id="<?= $this->getId() ?>" name="<?= $this->name ?>"
+    <textarea type="text" id="<?= $this->getId() ?>" name="<?= $this->get('id') ?>"
       class="form-control inputEv" <?= $this->xml->buildPairs(' ', '=', '"', 'html') ?>
-      style="<?= $this->xml->buildPairs(';', ':', '', 'css') ?>"><?= $this->getValue() ?></TextArea>
+      style="<?= $this->xml->buildPairs(';', ':', '', 'css') ?>"><?= $this->getValue() ?></textarea>
     <?php
   }
 
-  protected function InputBasic()
+  protected function inputBasic()
   {
     if ($this->xml->hasAttribute('label')) {
     ?>
-      <Label for="<?= $this->getId() ?>" class="form-label"><?= $this->xml->getAttribute('label') ?></Label>
+      <label for="<?= $this->getId() ?>" class="form-label"><?= $this->xml->getAttribute('label') ?></label>
     <?php
     }
     ?>
-    <Input type="<?= strtolower($this->type) ?>" id="<?= $this->getId() ?>" name="<?= $this->name ?>" value="<?= $this->getValue() ?>"
+    <input type="<?= strtolower($this->get('type')) ?>" id="<?= $this->getId() ?>" name="<?= $this->get('id') ?>" value="<?= $this->getValue() ?>"
       class="form-control inputEv" <?= $this->xml->buildPairs(' ', '=', '"', 'html') ?>
       style="<?= $this->xml->buildPairs(';', ':', '', 'css') ?>" />
     <?php
   }
 
-  protected function InputFile()
+  protected function inputFile()
   {
     $text = ($this->xml->hasAttribute('text')) ? $this->xml->getAttribute('text') : 'Elige un archivo';
 
@@ -100,13 +100,13 @@ trait TraitDataFormControl
 
     if ($this->xml->hasAttribute('label')) {
     ?>
-      <Label for="<?= $this->getId() ?>" class="form-label"><?= $this->xml->getAttribute('label') ?></Label>
+      <label for="<?= $this->getId() ?>" class="form-label"><?= $this->xml->getAttribute('label') ?></label>
     <?php
     }
-    $name = ($this->xml->hasAttribute('multiple', 'html', 1)) ? $this->name . '[]' : $this->name;
+    $name = ($this->xml->hasAttribute('multiple', 'html', 1)) ? $this->get('id') . '[]' : $this->get('id');
     ?>
-    <Input type="file" class="file changeEv" id="<?= $this->getId() ?>" name="<?= $name ?>" value="<?= $this->getValue() ?>" <?= $this->xml->buildPairs(' ', '=', '"', 'html') ?> />
-    <Label id="<?= $this->getId() ?>-label" class="form-control" for="<?= $this->getId() ?>"><i class="<?= $icon ?>"></i><?= $text ?></Label>
+    <input type="file" class="file changeEv" id="<?= $this->getId() ?>" name="<?= $name ?>" value="<?= $this->getValue() ?>" <?= $this->xml->buildPairs(' ', '=', '"', 'html') ?> />
+    <label id="<?= $this->getId() ?>-label" class="form-control" for="<?= $this->getId() ?>"><i class="<?= $icon ?>"></i><?= $text ?></label>
     <label class="file-foot">Tamaño máximo permitido: <?= ini_get('upload_max_filesize') ?></label><br />
     <?php
   }
@@ -116,7 +116,7 @@ trait TraitDataFormControl
     $display = ($this->xml->hasAttribute('display')) ? $this->xml->getAttribute('display') : 'block';
     if ($this->xml->hasAttribute('label')) {
     ?>
-      <Label for="<?= $this->name ?>" class="form-label"><?= $this->xml->getAttribute('label') ?></Label><br />
+      <label for="<?= $this->get('id') ?>" class="form-label"><?= $this->xml->getAttribute('label') ?></label><br />
     <?php
     }
     $index = 0;
@@ -125,7 +125,7 @@ trait TraitDataFormControl
       $selected = ($this->getValue() == $opt->getAttribute('value')) ? 'checked' : '';
     ?>
       <div class="radiobox <?= $display ?>">
-        <Input type="radio" class="radio changeEv" id="<?= $this->getId() ?>-<?= $index ?>" name="<?= $this->name ?>" value="<?= $opt->getAttribute('value') ?>" <?= $selected ?> />
+        <input type="radio" class="radio changeEv" id="<?= $this->getId() ?>-<?= $index ?>" name="<?= $this->get('id') ?>" value="<?= $opt->getAttribute('value') ?>" <?= $selected ?> />
         <label class="label" for="<?= $this->getId() ?>-<?= $index ?>"><?= $opt->getAttribute('text') ?></label>
       </div>
     <?php
@@ -139,11 +139,11 @@ trait TraitDataFormControl
   {
     if ($this->xml->hasAttribute('label')) {
     ?>
-      <Label for="<?= $this->getId() ?>" class="form-label"><?= $this->xml->getAttribute('label') ?></Label>
+      <label for="<?= $this->getId() ?>" class="form-label"><?= $this->xml->getAttribute('label') ?></label>
     <?php
     }
     ?>
-    <Select id="<?= $this->getId() ?>" type="select" name="<?= $this->name ?>" value="<?= $this->getValue() ?>"
+    <select id="<?= $this->getId() ?>" type="select" name="<?= $this->get('id') ?>" value="<?= $this->getValue() ?>"
       class="form-control changeEv" <?= $this->xml->buildPairs(' ', '=', '"', 'html') ?>
       style="<?= $this->xml->buildPairs(';', ':', '', 'css') ?>">
       <?php
@@ -160,22 +160,22 @@ trait TraitDataFormControl
       <?php
       }
       ?>
-    </Select>
+    </select>
     <?php
   }
 
-  protected function InputSwitch()
+  protected function inputSwitch()
   {
     if ($this->xml->hasAttribute('label')) {
     ?>
-      <Label for="<?= $this->getId() ?>" class="form-label"><?= $this->xml->getAttribute('label') ?></Label><br />
+      <label for="<?= $this->getId() ?>" class="form-label"><?= $this->xml->getAttribute('label') ?></label><br />
     <?php
     }
     $selected = ($this->getValue() == 1) ? 'checked' : '';
     ?>
     <label class="switch">
-      <Input type="checkbox" class="changeEv" <?= $selected ?> id="<?= $this->getId() ?>" name="<?= $this->name ?>" value="<?= $this->getValue() ?>" />
-      <Span class="slider"></Span>
+      <input type="checkbox" class="changeEv" <?= $selected ?> id="<?= $this->getId() ?>" name="<?= $this->get('id') ?>" value="<?= $this->getValue() ?>" />
+      <span class="slider"></span>
     </label><br />
 <?php
   }
@@ -192,22 +192,22 @@ trait TraitDataFormControl
    */
   protected function Case()
   {
-    if (($resolve = $this->xml->getAttribute('resolve')) == null) trigger_error($this->name . ' requiere el atributo "resolve."', E_USER_ERROR);
+    if (($resolve = $this->xml->getAttribute('resolve')) == null) trigger_error($this->get('id') . ' requiere el atributo "resolve."', E_USER_ERROR);
     
-    if (!method_exists($this->parent->getOwner(), $resolve)) trigger_error("$resolve no existe en {$this->parent->getOwner()->name}", E_USER_ERROR);
+    if (!method_exists($this->parent->getOwner(), $resolve)) trigger_error("$resolve no existe en {$this->parent->getOwner()->get('id')}", E_USER_ERROR);
     
     $value = $this->parent->getOwner()->$resolve($this->getData());
 
     foreach($this->xml->children() as $case) {
       if ($case->getAttribute('match') == $value) {
-        $case->setAttribute('name', $this->name);
+        $case->setAttribute('name', $this->get('id'));
 
         // $caseControl = DataFormControl::fromXML($this->parent->getOwner(), $case);
         // $caseControl->setParent($this->parent);
         // $caseControl->setData($this->getData());
         
         // return $caseControl->write();
-        echo "<strong>{$this->name}</strong>";
+        echo "<strong>{$this->get('id')}</strong>";
       }
     }
   }

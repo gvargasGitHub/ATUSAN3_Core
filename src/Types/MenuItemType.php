@@ -15,7 +15,7 @@ class MenuItemType
 
   function __construct(public string $menuname, protected int $number, protected XMLExtended $xml)
   {
-    $this->itemname = ($xml->hasAttribute('name')) ? $xml->getAttribute('name') : "item{$itemNumber}";
+    $this->itemname = ($xml->hasAttribute('id')) ? $xml->getAttribute('id') : "item{$number}";
     $this->text = ($xml->hasAttribute('text')) ? $xml->getAttribute('text') : '';
     $this->icon = ($xml->hasAttribute('icon')) ? $xml->getAttribute('icon') : '';
     $this->route = ($xml->hasAttribute('route')) ? $xml->getAttribute('route') : '';

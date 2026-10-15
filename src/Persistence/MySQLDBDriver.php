@@ -54,8 +54,86 @@ class MySQLDBDriver extends DBDriverBase
 
   /**
    * Query
+   * Se encarga de ejecutar la consulta SQL y devolver el resultado en un arreglo asociativo.
+   * @param string $sql La consulta SQL a ejecutar.
+   * @param array $values Los valores a utilizar en la consulta.
+   * @return array Un arreglo asociativo con los resultados de la consulta.
+   * 
+   * Nota: Esta función utiliza consultas preparadas para prevenir SQL Injection.
+   * Nota: Propuesta por ChatGPT.
    */
   public function query(
+    string $sql, 
+    array $values = []): array
+  {
+      if (count($values) !== substr_count($sql, '?')) {
+          throw new DBConnectionException(
+              'El número de valores no coincide con los parámetros.'
+          );
+      }
+
+      $stmt = null;
+      $result = null;
+
+      try {
+          if ($values !== []) {
+              $stmt = $this->mysqli->prepare($sql);
+
+              // Enviar los valores sin modificar su contenido.
+              $params = array_values($values);
+              $types = str_repeat('s', count($params));
+
+              $stmt->bind_param($types, ...$params);
+              $stmt->execute();
+
+              $result = $stmt->get_result();
+          } else {
+              $result = $this->mysqli->query(
+                  $sql,
+                  MYSQLI_STORE_RESULT
+              );
+          }
+
+          $rows = $result instanceof \mysqli_result
+              ? $result->fetch_all(MYSQLI_ASSOC)
+              : [];
+
+          if ($result instanceof \mysqli_result) {
+              $result->free();
+              $result = null;
+          }
+
+          if ($stmt !== null) {
+              // Consumir resultados adicionales de CALL,
+              // incluso cuando el primer resultado esté vacío.
+              while ($stmt->more_results()) {
+                  $stmt->next_result();
+
+                  $extra = $stmt->get_result();
+
+                  if ($extra instanceof \mysqli_result) {
+                      $extra->free();
+                  }
+              }
+          } else {
+              $this->clearStoredProcedure();
+          }
+
+          return $rows;
+      } catch (mysqli_sql_exception $ex) {
+          throw new DBConnectionException($ex->getMessage());
+      } finally {
+          if ($result instanceof \mysqli_result) {
+              $result->free();
+          }
+
+          if ($stmt !== null) {
+              $stmt->close();
+          }
+      }
+  }
+
+  public function queryObsoleto(
     string $sql, 
     array $values = []): array
   {

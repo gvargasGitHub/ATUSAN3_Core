@@ -1,7 +1,9 @@
 <?php
-if (empty($this->route)) $this->route = $_SERVER['REQUEST_URI']; ?>
+if (!$this->validateProperty('route')) $this->set('route', $_SERVER['REQUEST_URI']);
 
-<form id="<?= $this->name ?>-form" ats-route="<?= $this->route ?>">
+if (count($this->data) == 0) $this->data[0] = [];
+?>
+<form id="<?= $this->get('id') ?>-form" ats-route="<?= $this->get('route') ?>">
   <?php
   foreach ($this->components as $component)
     if (is_subclass_of($component, 'Atusan\\Controls\\DataViewControlBase'))
@@ -15,6 +17,6 @@ if (empty($this->route)) $this->route = $_SERVER['REQUEST_URI']; ?>
   $this->writeSection('BottomForm');
 
   // Finalmente imprime grupo de botones
-  echo $this->buttons->make();
+  echo $this->buttonGroup->make();
   ?>
 </form>

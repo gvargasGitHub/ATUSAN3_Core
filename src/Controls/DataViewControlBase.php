@@ -2,15 +2,12 @@
 
 namespace Atusan\Controls;
 
-use Atusan\Components\Component;
 use Atusan\Controller\Module;
 use Atusan\Iterators\OptionTextValueIterator;
 use Atusan\XML\XMLExtended;
 
-abstract class DataViewControlBase extends Component
+abstract class DataViewControlBase extends ControlBase
 {
-  protected string $type;
-
   protected array $data;
 
   protected int $row;
@@ -23,21 +20,11 @@ abstract class DataViewControlBase extends Component
     parent::__construct($owner, $xml);
 
     // Obtiene "type" del "Control"
-    $this->type = substr($this->xml->getName(), 7);
+    $this->set('type', substr($this->xml->getName(), 7));
   }
 
   abstract function getId(): string;
-
-  public function getType(): string
-  {
-    return $this->type;
-  }
-
-  public function setType(string $type): void
-  {
-    $this->type = $type;
-  }
-
+  
   public function getData(): array
   {
     return $this->data;
@@ -50,7 +37,7 @@ abstract class DataViewControlBase extends Component
 
   public function getValue(): mixed
   {
-    return $this->data[$this->name] ?? null;
+    return $this->data[$this->get('id')] ?? null;
   }
 
   public function getRow(): int

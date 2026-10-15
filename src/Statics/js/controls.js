@@ -1,5 +1,5 @@
 /**
- * 
+ * Control Base
  */
 class ControlBase {
   constructor(view, name, input) {
@@ -31,7 +31,7 @@ class ControlBase {
 };
 
 /**
- * 
+ * Control AutoComplete
  */
 class ControlAutoComplete extends ControlBase {
   constructor(view, name, input) {
@@ -164,6 +164,9 @@ class ControlAutoComplete extends ControlBase {
   }
 };
 
+/**
+ * Control File
+ */
 class ControlFile extends ControlBase {
   constructor(view, name, input) {
     super(view, name, input);
@@ -192,6 +195,9 @@ class ControlFile extends ControlBase {
   }
 };
 
+/**
+ * Control Select
+ */
 class ControlSelect extends ControlBase {
   constructor(view, name, input) {
     super(view, name, input);

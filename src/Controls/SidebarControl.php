@@ -2,25 +2,8 @@
 
 namespace Atusan\Controls;
 
-use Atusan\Components\Component;
-use Atusan\Controller\Module;
-use Atusan\Controls\Traits\TraitNavbarControl;
-use Atusan\Types\MenuItemType;
-use Atusan\XML\XMLExtended;
-
-class SidebarControl extends Component
+class SidebarControl extends NavControlBase
 {
-  use TraitNavbarControl;
-  
-  protected string $type;
-
-  function __construct(Module $owner, XMLExtended $xml)
-  {
-    parent::__construct($owner, $xml);
-
-    $this->type = substr($this->xml->getName(), 4);
-  }
-
   // ----------------------------------
   //  ComponentInterface
   // ----------------------------------
@@ -31,7 +14,7 @@ class SidebarControl extends Component
   public function make(): string
   {
     ob_start();
-    match (strtolower($this->type)) {
+    match (strtolower($this->get('type'))) {
       'item' => $this->Item(),
       'content' => $this->Content(),
       'separator' => $this->Separator(),
@@ -73,7 +56,7 @@ class SidebarControl extends Component
         <ul>
           <?php
           foreach ($this->xml->children() as $xml) {
-            $item = SidebarControl::fromXML($this->parent->owner, $xml);
+            $item = SidebarControl::fromXML($this->parent->getOwner(), $xml);
             $item->setParent($this->parent);
             echo $item->make();
           } ?>
@@ -92,13 +75,5 @@ class SidebarControl extends Component
    * 
    */
   protected function View(){}
-  /**
-   * 
-   */
-  protected function itemType(): MenuItemType
-  {
-    $itemNumber = $this->parent->getItemNoNameCounter();
-
-    return new MenuItemType($this->parent->name, $itemNumber, $this->xml);
-  }
+  
 }

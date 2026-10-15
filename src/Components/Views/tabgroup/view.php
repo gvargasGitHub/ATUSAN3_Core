@@ -1,7 +1,7 @@
 <script>
-  var <?= $this->name ?> = new TabGroup("<?= $this->name ?>", "<?= $this->owner->name ?>");
+  var <?= $this->get('id') ?> = new <?= basename(get_class($this)) ?>("<?= $this->get('id') ?>", "<?= $this->getOwner()->get('id') ?>");
 </script>
-<div id="<?= $this->name ?>" class="ats-tabgroup">
+<div id="<?= $this->get('id') ?>" class="ats-tabgroup">
   <div class="buttons">
     <?php
     foreach ($this->components as $content) echo $content->makeButton();
@@ -13,4 +13,4 @@
     ?>
   </div>
 </div>
-<!-- End of <?= $this->name ?> -->
+<!-- End of <?= $this->get('id') ?> -->

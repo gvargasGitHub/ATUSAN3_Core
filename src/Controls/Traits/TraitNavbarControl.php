@@ -2,8 +2,21 @@
 
 namespace Atusan\Controls\Traits;
 
+use Atusan\Components\NavBase;
+use Atusan\Types\MenuItemType;
+
 trait TraitNavbarControl 
 {
+  /**
+   * getNavParent
+   * 
+   * @return NavBase
+   */
+  protected function getNavParent() : NavBase
+  {
+    return $this->parent;
+  }
+  
   /**
    * setAttribute
    */
@@ -39,5 +52,15 @@ trait TraitNavbarControl
   public function setView(string $newValue)
   {
     $this->setAttribute('view', $newValue);
+  }
+
+  /**
+   * 
+   */
+  protected function itemType(): MenuItemType
+  {
+    $itemNumber = $this->getNavParent()->getItemCounter();
+
+    return new MenuItemType($this->parent->get('id'), $itemNumber, $this->xml);
   }
 }

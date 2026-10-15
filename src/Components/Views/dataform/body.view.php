@@ -1,9 +1,9 @@
 <?php
-if (empty($this->route)) $this->route = $_SERVER['REQUEST_URI'];
+if (!$this->validateProperty('route')) $this->set('route', $_SERVER['REQUEST_URI']);
 
 if (count($this->data) == 0) $this->data[0] = [];
 ?>
-<form id="<?= $this->name ?>-form" ats-route="<?= $this->route ?>">
+<form id="<?= $this->get('id') ?>-form" ats-route="<?= $this->get('route') ?>">
   <?php
   foreach ($this->components as $component)
     if (is_subclass_of($component, 'Atusan\\Controls\\DataViewControlBase'))
@@ -15,7 +15,7 @@ if (count($this->data) == 0) $this->data[0] = [];
     echo $this->writeControl('csrf_token');
 
     // integra la vista personalizada
-    include $this->locateResource($this->view);
+    include $this->locateResource($this->get('view'));
   } else
     foreach ($this->components as $component) echo $component->make();
   ?>

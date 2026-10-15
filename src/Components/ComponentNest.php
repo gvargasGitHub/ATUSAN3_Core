@@ -24,7 +24,7 @@ abstract class ComponentNest extends Component
 
     $this->setSources();
 
-    $this->attachComponents();
+    $this->attachComponents($this->sources);
 
     $this->finalDefinitions();
   }

@@ -19,7 +19,7 @@ class DataMultiFormControl extends DataViewControlBase
   public function make(): string
   {
     ob_start(); 
-    match (strtolower($this->type)) {
+    match (strtolower($this->get('type'))) {
       'autocomplete' => $this->AutoComplete(),
       'csrf' => $this->Csrf(),
       'data' => $this->Data(),
@@ -49,6 +49,6 @@ class DataMultiFormControl extends DataViewControlBase
   
   public function getId(): string
   {
-    return "{$this->parent->name}-{$this->name}";
+    return "{$this->parent->get('id')}-{$this->get('id')}";
   }
 }

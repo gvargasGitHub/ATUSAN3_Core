@@ -1,5 +1,5 @@
 <?php
 $type = $this->itemType();
 ?>
-<Button id="<?= "{$this->parent->name}-{$type->name}-button" ?>" <?= $type->buildPairs() ?>>
-  <?= $type->text ?></Button>
+<button id="<?= "{$this->parent->get('id')}-{$type->id}-button" ?>" <?= $type->buildPairs() ?>>
+  <?= $type->text ?></button>

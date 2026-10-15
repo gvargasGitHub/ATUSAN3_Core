@@ -26,7 +26,7 @@ class DataTreeControl extends DataViewControlBase
   public function make(): string
   {
     ob_start();
-    $this->{$this->type}();
+    $this->{$this->get('type')}();
     return ob_get_clean();
   }
 
@@ -41,7 +41,7 @@ class DataTreeControl extends DataViewControlBase
 
   public function getId(): string
   {
-    return "{$this->parent->name}-{$this->index}-{$this->name}";
+    return "{$this->parent->get('id')}-{$this->index}-{$this->get('id')}";
   }
 
   /**
@@ -50,7 +50,7 @@ class DataTreeControl extends DataViewControlBase
   protected function Caret()
   {
 ?>
-    <td id="<?= $this->getId() ?>" class="caret" type="<?= strtolower($this->type) ?>"></td>
+    <td id="<?= $this->getId() ?>" class="caret" type="<?= strtolower($this->get('type')) ?>"></td>
   <?php
   }
   /**
@@ -59,7 +59,7 @@ class DataTreeControl extends DataViewControlBase
   protected function NoCaret()
   {
   ?>
-    <td id="<?= $this->getId() ?>" class="nocaret" type="<?= strtolower($this->type) ?>"></td>
+    <td id="<?= $this->getId() ?>" class="nocaret" type="<?= strtolower($this->get('type')) ?>"></td>
   <?php
   }
   /**
@@ -77,7 +77,7 @@ class DataTreeControl extends DataViewControlBase
   protected function Data()
   {
   ?>
-    <td id="<?= $this->getId() ?>" class="clickEv" type="<?= strtolower($this->type) ?>" level="<?= $this->level ?>"><?= $this->getValue() ?></td>
+    <td id="<?= $this->getId() ?>" class="clickEv" type="<?= strtolower($this->get('type')) ?>" level="<?= $this->level ?>"><?= $this->getValue() ?></td>
   <?php
   }
 
@@ -87,7 +87,7 @@ class DataTreeControl extends DataViewControlBase
   protected function Check()
   {
   ?>
-    <td id="<?= $this->getId() ?>" type="<?= strtolower($this->type) ?>">
+    <td id="<?= $this->getId() ?>" type="<?= strtolower($this->get('type')) ?>">
       <input type="checkbox" class="changeEv" value="0" id="<?= $this->getId() ?>-input" name="<?= $this->getId() ?>-input" level="<?= $this->level ?>" />
     </td>
   <?php
@@ -100,7 +100,7 @@ class DataTreeControl extends DataViewControlBase
   {
     $w = $this->xml->count() * 20;
   ?>
-    <td id="<?= $this->getId() ?>" class="clickEv" type="<?= strtolower($this->type) ?>" style="width:<?= $w ?>px;">
+    <td id="<?= $this->getId() ?>" class="clickEv" type="<?= strtolower($this->get('type')) ?>" style="width:<?= $w ?>px;">
       <?php
       foreach ($this->xml->children() as $action) {
       ?>

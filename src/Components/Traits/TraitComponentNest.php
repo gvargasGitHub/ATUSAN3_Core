@@ -2,7 +2,7 @@
 
 namespace Atusan\Components\Traits;
 
-use Atusan\Components\ComponentNest;
+use Atusan\Components\Component;
 use Atusan\Iterators\ComponentsIterator;
 use Atusan\Iterators\ComponentSourcesIterator;
 use Atusan\XML\XMLExtended;
@@ -33,27 +33,36 @@ trait TraitComponentNest
   protected int $noNameCounter = 0;
 
   /**
-   * Get
-   * Permite que los "Components" sean accesibles como propiedades
-   * públicas del objeto.
-   */
-  function __get(string $name)
-  {
-    return $this->components->getByName($name) ?? null;
-  }
-
-  /**
    * Find Component by ID
    * Este método permite obtener un "Component" integrado a la clase por su nombre de declaración.
    * Esto evita disparar la advertencia de "Cannot access to undefined property" vigente desde PHP 8.0.
    * 
    * @param string $id Nombre de declaración del "Component" a buscar.
    * 
-   * @return ComponentNest|null Retorna el "Component" si se encuentra, de lo contrario retorna null.
+   * @return Component | null Retorna el "Component" si se encuentra, de lo contrario retorna null.
    */
-  public function findViewById(string $id) : ComponentNest|null
+  public function findComponentById(string $id) : Component | null
   {
-    return $this->components->getByName($id) ?? null;
+    foreach($this->components as $component) {
+      if ($component->get('id') == $id) return $component;
+
+      if (is_subclass_of($component, '\\Atusan\\Components\\ComponentNest')) {
+        $found = $component->findComponentById($id);
+
+        if ($found !== null) return $found;
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Get Components
+   * @return ComponentsIterator
+   */
+  public function getComponents(): ComponentsIterator
+  {
+    return $this->components;
   }
 
   /**
@@ -89,15 +98,16 @@ trait TraitComponentNest
   /**
    * Attach Components
    * Integra instancias de los "Componentes" en el diccionario.
+   * @param ComponentSourcesIterator $sources
    * 
    */
-  public function attachComponents()
+  public function attachComponents(ComponentSourcesIterator $sources): void
   {
     $this->noNameCounter = 0;
     // Recorre las fuentes establecidas
-    foreach ($this->sources as $source) {
+    foreach ($sources as $source) {
       // Recorre los espacios de nombres
-      foreach ($this->namespaces as $url) {
+      foreach ($this->namespaces as $namespace=>$url) {
         // Cada $url corresponde a un "namespace" declarado en el manifiesto.
         // Recorre la fuente filtrando las declaraciones del "namespace".
         foreach ($source->xml->children($url) as $xml) {
@@ -107,27 +117,34 @@ trait TraitComponentNest
           $elementName = (string) $xml->getName();
 
           // Obtiene el nombre del elemento o genera uno
-          if (!$xml->hasAttribute('name')) $xml->addAttribute('name', "{$elementName}{$this->noNameCounter}");
+          if (!$xml->hasAttribute('id')) $xml->addAttribute('id', "{$elementName}{$this->noNameCounter}");
 
-          if (empty($url)) {
+          if (empty($url) || $namespace == 'atusan') {
             // Declaración sin nombre de espacios solo puede ser:
-            // a) Component
-            // b) DataViewControl
+            // a) DataViewControl o MenuControl
+            // b) Component | ComponentNest
             // c) Etiquetas HTML
-            if (preg_match('/^(Control|Menu)/', $elementName))
-              $componentName = "Atusan\\Controls\\{$this->type}Control";
-            elseif (is_subclass_of("Atusan\\Components\\{$elementName}", "Atusan\\Components\\Component"))
-              $componentName = "Atusan\\Components\\{$elementName}";
-            else
-              $componentName = "Atusan\\Components\\HTML";
+            if (preg_match('/^(Control|Menu)/', $elementName)) {
+              // Declaración de DataViewControl o NavControl ATUSAN
+              $componentClass = "Atusan\\Controls\\{$this->get('type')}Control";
+            } elseif (is_subclass_of("Atusan\\Components\\{$elementName}", "Atusan\\Components\\Component")) {
+              // Declaración de un Component ATUSAN
+              $componentClass = "Atusan\\Components\\{$elementName}";
+            } else {
+              // Si la declaración no se reconoce entonces se considera elemento HTML
+              $componentClass = "Atusan\\Components\\HTML";
+            }
+          } elseif ($namespace === 'html') {
+            $componentClass = "Atusan\\Components\\HTML";
           } else {
+            // Corresponde a declaraciones de Clases personalizadas.
             $nss = str_replace('.', '\\', str_replace('clr-namespace:', '', $url));
-            $componentName = "\\$nss\\$elementName";
+            $componentClass = "\\$nss\\$elementName";
             $xml = $this->buildXML($xml);
           }
           // Integra la instancia al diccionario de "Componentes".
           // "onwer" es heredado desde "Module.construct".
-          $this->components->add($componentName::fromXML($this->owner, $xml));
+          $this->components->add($componentClass::fromXML($this->getOwner(), $xml));
         }
       }
     }

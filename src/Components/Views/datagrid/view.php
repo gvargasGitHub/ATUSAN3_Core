@@ -1,10 +1,10 @@
 <script>
-  var <?= $this->name ?> = new DataGrid("<?= $this->name ?>", "<?= $this->owner->name ?>");
+  var <?= $this->get('id') ?> = new <?= basename(get_class($this))?>("<?= $this->get('id') ?>", "<?= $this->getOwner()->get('id') ?>");
 </script>
-<div id="<?= $this->name ?>" class="ats-dataview ats-datagrid">
-  <div class="header"><?= $this->title ?></div>
+<div id="<?= $this->get('id') ?>" class="ats-dataview ats-datagrid">
+  <div class="header"><?= $this->get('title') ?></div>
   <div class="body">
     <?php include('body.view.php') ?>
   </div>
-  <div class="footer"><?= $this->footer ?></div>
+  <div class="footer"><?= $this->get('footer') ?></div>
 </div>

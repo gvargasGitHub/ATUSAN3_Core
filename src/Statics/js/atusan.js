@@ -1,8 +1,11 @@
 /**
- * 
+ * Patrón IIFE (Immediately Invoked Function Expression): Gemini
+ * Garantiza la compatibilidad total con navegadores antiguos.
+ * Mantiene tus funciones organizadas y aisladas del ámbito global.
+ * Permite seguir escribiendo código limpio y modular a nivel interno.
  */
 (function (window) {
-  var
+  const
     /**
      * Parse Route
      * @param {string} route
@@ -16,31 +19,33 @@
     /**
      * openModule
      * @param {string} route
-     * @param {object} params
+     * @param {object} params (Options Object)
      * @returns {void}
      */
     openModule = function (route, params) {
       route = parseRoute(route);
 
-      if (!params) window.location.replace(BASE_URL + route);
+      if (typeof params === 'undefined') {
+        window.location.replace(BASE_URL + route);
+        return;
+      };
+      
+      const form = buildForm(BASE_URL + route);
 
-      if (params) {
-        // Obtiene el formulario de app
-        const form = document.getElementById("appForm");
-        if (!form) throw new Error('El formulario de app no existe.');
-        form.setAttribute("action", BASE_URL + route);
-
-        // integra parametros
-        for (let prm in params) {
-          let input = document.createElement("INPUT");
-          input.setAttribute("type", "hidden");
-          input.setAttribute("name", prm);
-          input.setAttribute("value", params[prm]);
-          form.appendChild(input);
-        }
-        // envia formulario
-        form.requestSubmit();
+      // integra parametros
+      for (let prm in params) {
+        let input = document.createElement("INPUT");
+        input.setAttribute("type", "hidden");
+        input.setAttribute("name", prm);
+        input.setAttribute("value", params[prm]);
+        form.appendChild(input);
       }
+      // El formulario debe estar integrado al body para poder ejecutar "submit".
+      document.getElementsByTagName("body")[0].appendChild(form);
+
+      // envia formulario (soporte para navegadores antiguos)
+      return (typeof form.requestSubmit === 'function')
+        ? form.requestSubmit() : form.submit();
     },
     /**
      * attachModule
@@ -55,7 +60,10 @@
       if (modals && body)
         modals.forEach(modal => {
           // valida que el modal no esté ya en body
-          if (!body.contains(modal)) body.appendChild(modal)
+          const existingModal = body.querySelector(`#${modal.id}`);
+          if (existingModal) existingModal.remove();
+
+          body.appendChild(modal);
         });
 
       // Inicializa los componentes de Module
@@ -64,26 +72,17 @@
       module.onOpen();
     },
     /**
-     * Attaches the application form to the body.
+     * Build Form to send parámeters in POST request.
+     * @param {String} url
      * @returns {void}
      */
-    attachForm = function () {
-      const body = document.getElementsByTagName("body");
-
+    buildForm = function (url) {
       const form = document.createElement("FORM");
-      form.setAttribute("action", "/root");
+      form.setAttribute("action", url);
       form.setAttribute("method", "POST");
       form.setAttribute("id", "appForm");
-      form.addEventListener("submit", onSubmit);
-      body[0].appendChild(form);
-    },
-    /**
-     * Handles the submission of the application form.
-     * @param {Event} event
-     * @returns {void}
-     */
-    onSubmit = function (event) {
-      console.log('Enviando appForm');
+
+      return form;
     },
     /**
      * Adds an event listener to the window.
@@ -144,30 +143,32 @@
      * Starts the loader.
      * @returns {void}
      */
-    startLoader = function () {
-      document.getElementById("ats-loader").style.display = "block";
-    },
+    startLoader = () => document.getElementById("ats-loader").style.display = "block",
     /**
      * Stops the loader.
      * @returns {void}
      */
-    stopLoader = function () {
-      document.getElementById("ats-loader").style.display = "none";
-    },
-    info = (message) => { },
+    stopLoader = () => document.getElementById("ats-loader").style.display = "none",
+    /**
+     * Notify
+     */
+    notify = message => console.info(message),
     
     /**
      * Send
      * Sends a request to the server.
      * @param {string} route
-     * @param {object} options
+     * @param {object} options {data, done, fail, csrf}
      * 
      * @returns {void}
+     * 
+     * @invokedBy controllers.ModuleBase.send
      */
     send = function (route, options) {
 
       var fd = new FormData();
-      if (typeof options.data == "object") {
+      // Carga los valores de "data" en el FormData
+      if (typeof options.data === "object") {
         for (const key in options.data) {
           if (!Object.hasOwn(options.data, key)) continue;
 
@@ -189,7 +190,7 @@
         console.warn('El uso de onFail es obsoleto, use fail.');
         options.fail = options.onFail;
       }
-      // Si el Usuario no define una acción para onFail, se establece
+      // Si el Usuario no define una acción para fail, se establece
       // esta acción predeterminada
       if (typeof options.fail === "undefined") {
         options.fail = rs => {
@@ -197,16 +198,17 @@
           console.warn(rs.detail);
         };
       }
-      // Si se ha agregado un token CSRF, entonces integra el encabezado.
-      var headers = (fd.has('csrf_token')) ? { 'X-CSRF-TOKEN': fd.get('csrf_token') } : {};
-      
+      // Gemini: Si se ha agregado un token CSRF, entonces integra el encabezado.
+      const csrfToken = options?.csrf ?? (fd.has('csrf_token') ? fd.get('csrf_token') : null);
+
+      const headers = {
+        ...(csrfToken && { 'X-CSRF-TOKEN': csrfToken })
+      };
       // manda analizar la ruta para quitar separador "/" al inicio
       route = parseRoute(route);
-
-      startLoader();
       
-      // Note: Se reemplaza $.ajax por ats.post para unificar la forma de enviar solicitudes al servidor.
-      post({
+      // Gemini: 
+      smartAjax({
         url: BASE_URL + route,
         headers,
         data: fd
@@ -214,12 +216,25 @@
         done: options.done,
         fail: options.fail
       });
-    },
+    };
     /**
-     * Posts data to the server.
+     * Smart Ajax (Gemini)
+     * 
+     * @param {Object} options 
+     * @param {Object} callbacks 
+     * @returns 
+     */
+    const smartAjax = (options, callbacks) => {
+      const supportFetch = typeof window.fetch !== 'undefined';
+      
+      startLoader();
+      
+      return supportFetch ? postFetch(options, callbacks) : legacyAjax(options, callbacks);
+    };
+    /**
+     * postFetch
      * @invokedBy atusan.send
      * @invokedBy components.DataForm.handlerFormSubmitEvent
-     * @invokedBy controllers.ModuleBase.send
      * 
      * @param {object} options
      * @param {object} callbacks
@@ -231,60 +246,127 @@
      * Object callbacks:
      * - done: function
      * - fail: function
-     * 
-     * @returns {void}
+     * Producida por: Gemini
      */
-    post = function (options, callbacks) {
-      options.method = 'POST';
-      options.contentType = false;
-      options.processData = false;
-      options.dataType = 'json'; // ChatGPT / Atusan 3/AJAX - JSON
+    const postFetch = async (options, callbacks) => {
+      try {
+        const headers = { 
+          'Accept': 'application/json', 
+          'X-Requested-With': 'XMLHttpRequest',
+          ...options.header // Opcional, por si pasas headers como el token CSRF
+        };
 
-      $.ajax(options)
-        .done(rs => {
-          stopLoader();
-          // La respuesta obtenida tendrá la estructura:
-          // {status, data, message, detail}
-          // Se agregó al método json de la clase "Response" la línea
-          // `header('Content-Type: application/json');` para que el navegador
-          // reconozca la respuesta como JSON y no como texto plano.
-          // ChatGPT / Atusan 3/AJAX - JSON
-          if (rs.status == 'ok') {
-            callbacks.done(rs);
-          } else {
-            callbacks.fail(rs);
-          }
-        })
-        // Si el Servidor responde con códigos 400s o 500s, se envia a
-        // la consola de Errores
-        .fail((xhr, status, error) => {
-          stopLoader();
-          console.error(`AJAX: ${status} - ${error}`);
-          console.error(xhr.responseText);
+        // Con fetch, si envías un FormData en el 'body', el navegador calcula 
+        // automáticamente el Content-Type con su respectivo 'boundary'.
+        const response = await fetch(options.url, {
+          method: 'POST',
+          body: options.data,
+          headers
         });
+
+        // Parseamos la respuesta a JSON
+        const rs = await response.json();
+        
+        stopLoader();
+
+        // Si el servidor responde con códigos 400s o 500s
+        if (!response.ok) {
+          console.error(`Fetch: ${response.status} ${response.statusText}`);
+          console.error(rs); // O response.text() dependiendo de lo que devuelva el servidor
+          return;
+        }
+
+        // Validación lógica del negocio (status 'ok')
+        if (rs.status === 'ok') {
+          callbacks.done(rs);
+        } else {
+          callbacks.fail(rs);
+        }
+
+      } catch (error) {
+        stopLoader();
+        console.error('Fetch Error:', error);
+      }
+    };
+    /**
+     * Legacy AJAX (Gemini).
+     * @param {Object} options 
+     * @param {Object} callbacks 
+     */
+    const legacyAjax = (options, callbacks) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', options.url, true);
+
+      // Headers necesarios
+      xhr.setRequestHeader('Accept', 'application/json');
+      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+      
+      if (options.header) {
+        for (const key in options.header) {
+          if (options.header.hasOwnProperty(key)) {
+            xhr.setRequestHeader(key, options.header[key]);
+          }
+        }
+      }
+
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          stopLoader();
+          try {
+            const rs = JSON.parse(xhr.responseText);
+            if (xhr.status >= 200 && xhr.status < 300) {
+              if (rs.status === 'ok') {
+                callbacks.done(rs);
+              } else {
+                callbacks.fail(rs);
+              }
+            } else {
+              console.error(`AJAX Error: ${xhr.status}`);
+              if (callbacks.fail) callbacks.fail(rs);
+            }
+          } catch (e) {
+            stopLoader();
+            console.error('Error parsing JSON:', xhr.responseText);
+          }
+        }
+      };
+
+      // El navegador maneja automáticamente el FormData y su boundary
+      xhr.send(options.data);
     };
 
   addEvent("click", hideNavDropdown);
   addEvent("click", hideMenuOptionsDropDown);
   addEvent("unload", stopLoader);
-
-  window.ats = {
-    parseRoute,
+  
+  // Librería pública
+  window.Atusan = {
     openModule,
-    attachModule,
-    attachForm,
-    hideNavDropdown,
-    hideMenuOptionsDropDown,
-    startLoader,
-    stopLoader,
-    info,
-    send,
-    post
+    send
+  };
+  // Librearía interna
+  window.ats = {
+    parseRoute, // DataForm
+    // openModule,
+    attachModule, // Application | Panel | TabGroup
+    // attachForm,
+    hideNavDropdown, // Navbar
+    // hideMenuOptionsDropDown,
+    // startLoader,
+    // stopLoader,
+    notify,
+    send, // Module
+    smartAjax // send | DataForm
   };
 
-  $("document").ready(() => {
-    ats.info('Atusan listo!');
 
-    ats.attachForm();
+  // Gemini: Estandar, moderna y compatible con todos los navegadores
+  // (incluyendo Internet Explorer en Windows 7), 100% nativa.
+  document.addEventListener('DOMContentLoaded', () => {
+    notify('Atusan listo!');
+
+    const app = new Application('app');
+
+    app.execute();
   });
 })(window);

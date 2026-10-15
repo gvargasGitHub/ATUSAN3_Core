@@ -8,7 +8,7 @@ use Atusan\Http\Response\Response;
 
 abstract class Controller implements ControllerInterface
 {
-  public string $name;
+  protected string $name;
   protected Request $request;
   protected Response $response;
 

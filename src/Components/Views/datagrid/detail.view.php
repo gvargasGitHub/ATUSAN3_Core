@@ -7,7 +7,7 @@ for ($row = 0; $row < $nofRows; $row++) {
     <tr class="row">
       <?php
       foreach ($source->xml->children() as $child) {
-        $component = $this->components->getByName($child->getAttribute('name'));
+        $component = $this->components->getById($child->getAttribute('id'));
 
         if (is_subclass_of($component, 'Atusan\\Controls\\DataViewControlBase')) {
           $component->setData($this->data[$row]);

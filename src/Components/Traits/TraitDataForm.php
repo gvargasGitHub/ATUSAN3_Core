@@ -16,7 +16,7 @@ trait TraitDataForm
     $this->data = [['csrf_token' => '']];
     // Integra de manera predeterminada el control Csrf
     $csrf = $this->xml->addChild('ControlCsrf');
-    $csrf->addAttribute('name', 'csrf_token');
+    $csrf->addAttribute('id', 'csrf_token');
     // El desarrollador deberá generar, asignar y validar
     // manualmente el token a este control mediante el
     // método "setCsrf(string)"
@@ -26,10 +26,10 @@ trait TraitDataForm
    * 
    * @return void
    */
-  public function writeControl(string $name): void
+  public function writeControl(string $id): void
   {
-    if (!($control = $this->components->getByName($name)))
-      trigger_error(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
+    if (!($control = $this->components->getById($id)))
+      trigger_error(basename(__FUNCTION__) . ":El control {$id} no existe para {$this->get('id')}");
 
     if (count($this->data) == 0) $this->data[0] = [];
 
@@ -41,23 +41,23 @@ trait TraitDataForm
   /**
    * 
    */
-  public function getItem(string $name)
+  public function getItem(string $id)
   {
-    if (!$this->components->getByName($name))
-      trigger_error(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
+    if (!$this->components->getById($id))
+      trigger_error(basename(__FUNCTION__) . ":El control {$id} no existe para {$this->get('id')}");
 
-    return array_key_exists($name, $this->data[0]) ? $this->data[0][$name] : null;
+    return array_key_exists($id, $this->data[0]) ? $this->data[0][$id] : null;
   }
 
   /**
    * 
    */
-  public function setItem(string $name, mixed $value)
+  public function setItem(string $id, mixed $value)
   {
-    if (!$this->components->getByName($name))
-      trigger_error(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
+    if (!$this->components->getById($id))
+      trigger_error(basename(__FUNCTION__) . ":El control {$id} no existe para {$this->get('id')}");
 
-    $this->data[0][$name] = $value;
+    $this->data[0][$id] = $value;
   }
 
   /**
@@ -72,13 +72,13 @@ trait TraitDataForm
    * 
    * @exception
    */
-  public function feedList(string $name, array $data)
+  public function feedList(string $id, array $data)
   {
-    if (!($control = $this->components->getByName($name)))
-      trigger_error(basename(__FUNCTION__) . "El control {$name} no existe para {$this->name}");
+    if (!($control = $this->components->getById($id)))
+      trigger_error(basename(__FUNCTION__) . "El control {$id} no existe para {$this->get('id')}");
 
-    if ($control->getType() != 'Select')
-      trigger_error(basename(__FUNCTION__) . "El control {$name} no es una lista.");
+    if (strtolower($control->get('type')) != 'select')
+      trigger_error(basename(__FUNCTION__) . "El control {$id} no es una lista.");
 
     $control->createList(new OptionTextValueIterator($data));
   }
@@ -86,17 +86,19 @@ trait TraitDataForm
   /**
    * Type Control
    * Modifica el tipo del Control.
+   * @param string $id
+   * @param ?string $type
    * 
-   * @exception
+   * @return string
    */
-  public function typeControl(string $name, string $type = null)
+  public function typeControl(string $id, ?string $type): string
   {
-    if (!($control = $this->components->getByName($name)))
-      trigger_error(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
+    if (!($control = $this->components->getById($id)))
+      trigger_error(basename(__FUNCTION__) . ":El control {$id} no existe para {$this->get('id')}");
 
-    $lastType = $control->getType();
+    $lastType = $control->get('type');
 
-    if ($type != null) $control->setType($type);
+    if ($type != null) $control->set('type', $type);
 
     return $lastType;
   }
@@ -106,10 +108,10 @@ trait TraitDataForm
    * 
    * @exception
    */
-  public function enableControl(string $name, bool $enable)
+  public function enableControl(string $id, bool $enable)
   {
-    if (!($control = $this->components->getByName($name)))
-      trigger_error(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
+    if (!($control = $this->components->getById($id)))
+      trigger_error(basename(__FUNCTION__) . ":El control {$id} no existe para {$this->get('id')}");
 
     $control->setEnable($enable);
   }
@@ -117,12 +119,12 @@ trait TraitDataForm
   /**
    * Files Of
    */
-  public function filesOf(string $name): InputFileIterator | null
+  public function filesOf(string $id): InputFileIterator | null
   {
-    if (!($this->components->getByName($name)))
-      trigger_error(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
+    if (!($this->components->getById($id)))
+      trigger_error(basename(__FUNCTION__) . ":El control {$id} no existe para {$this->get('id')}");
 
-    return Request::instance()->files()->$name;
+    return Request::instance()->files()->$id;
   }
 
   // ----------------------------------
@@ -133,11 +135,11 @@ trait TraitDataForm
    */
   public function import(array $data): int
   {
-    foreach($data as $name=>$value) {
-      if (!$this->components->getByName($name))
-        trigger_error(basename(__FUNCTION__) . ":El control {$name} no existe para {$this->name}");
+    foreach($data as $id=>$value) {
+      if (!$this->components->getById($id))
+        trigger_error(basename(__FUNCTION__) . ":El control {$id} no existe para {$this->get('id')}");
 
-      $this->data[0][$name] = $value;
+      $this->data[0][$id] = $value;
     }
 
     return count($this->data);

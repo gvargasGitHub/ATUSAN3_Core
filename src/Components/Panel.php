@@ -7,30 +7,34 @@ class Panel extends ComponentNest
   /**
    * Write Panel
    * Incluye la vista establecida o recorre el "diccionario" de secciones/componentes.
+   * @param string $position
    */
   protected function writePanel(string $position): void
   {
     foreach ($this->sources->getAllByName($position) as $source) {
-      if ($source->xml->hasAttribute('view'))
+      if ($source->xml->hasAttribute('view')) {
         include $this->owner->getDirectory() . DS . "{$source->xml->getAttribute('view')}.php";
-      else
-        foreach ($source->xml->children() as $child) echo $this->components->getByName($child->getAttribute('name'))->make();
+      } else {
+        foreach ($source->xml->children() as $child) 
+          echo $this->components->getById($child->getAttribute('id'))->make();
+      }
     }
   }
   // ----------------------------------
   //  TraitComponent
   // ----------------------------------
   /**
-   * 
+   * Set Sources
    */
   protected function setSources(): void
   {
     // Integra las secciones Left, Content & Right
-    foreach ($this->xml->children() as $section) $this->addSource((string) $section->getName(), $section);
+    foreach ($this->xml->children() as $section) 
+      $this->addSource((string) $section->getName(), $section);
   }
 
   /**
-   * 
+   * Final Definitions
    */
   protected function finalDefinitions(): void {}
 
