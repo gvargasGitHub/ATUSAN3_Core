@@ -17,7 +17,7 @@ class AgentsSync extends MakeBase
 
   protected function checkIfAgentsExists() : bool
   {
-    return @is_dir(implode(DS, [APP_ROOT, 'temp', 'gvargas', 'atusan-agents']));
+    return @is_dir(implode(DS, [APP_ROOT, 'vendor', 'gvargas', 'atusan-agents']));
   }
 
   function resolver()
