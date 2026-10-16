@@ -24,7 +24,7 @@ abstract class MakeBase
     // Establece predeterminados
     $this->setDefaults();
 
-    echo "Creando ..." . EOL;
+    // echo "Creando ..." . EOL;
 
     $this->resolver();
   }
@@ -55,6 +55,13 @@ abstract class MakeBase
     }
   }
 
+  /**
+   * Check If App Exists
+   * Valida si existe la carpeta de la app.
+   * @param string $appName
+   * 
+   * @return bool
+   */
   protected function checkIfAppExists(string $appName): bool
   {
     return @is_dir(APP_ROOT . DS . $this->appDir . DS . $appName);
@@ -66,7 +73,9 @@ abstract class MakeBase
   public static function copyR(string $path, string $dest)
   {
     if (is_dir($path)) {
-      mkdir($dest, '0777', true);
+      
+      if (!is_dir($dest)) @mkdir($dest, '0777', true);
+
       $objects = scandir($path);
       if (sizeof($objects) > 0) {
         foreach ($objects as $file) {
@@ -91,7 +100,7 @@ abstract class MakeBase
   public static function copy(string $path, string $dest)
   {
     if (!is_dir(dirname($dest)))
-      mkdir(dirname($dest), '0777', true);
+      @mkdir(dirname($dest), '0777', true);
 
     if (is_file($path))
       return copy($path, $dest);

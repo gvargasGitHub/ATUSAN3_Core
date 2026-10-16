@@ -2,6 +2,8 @@
 
 namespace AtusanCLI;
 
+use AtusanCLI\Commands\AgentsSync;
+use AtusanCLI\Commands\Help;
 use AtusanCLI\Commands\MakeApp;
 use AtusanCLI\Commands\MakeModel;
 use AtusanCLI\Commands\MakeModule;
@@ -9,26 +11,20 @@ use AtusanCLI\Commands\MakeNested;
 use AtusanCLI\Commands\MakeService;
 use AtusanCLI\Commands\Publish;
 
-use AtusanCLI\Commands\Info;
-use AtusanCLI\Commands\Init;
-use AtusanCLI\Commands\Validate;
-
 class Application
 {
   protected $commands = [];
 
   public function __construct()
   {
-    $this->register('info', Info::class);
-    $this->register('init', Init::class);
-    $this->register('validate', Validate::class);
-
     $this->register('make:app', MakeApp::class);
     $this->register('make:module', MakeModule::class);
     $this->register('make:nested', MakeNested::class);
     $this->register('make:model', MakeModel::class);
     $this->register('make:service', MakeService::class);
     $this->register('publish', Publish::class);
+    $this->register('agents:sync', AgentsSync::class);
+    $this->register('help', Help::class);
   }
 
   protected function register(string $name, string $class)
@@ -40,10 +36,11 @@ class Application
   {
     $command = $argv[1] ?? null;
 
-    if (!$command) {
-      $this->showHelp();
-      return;
-    }
+    // if (!$command) {
+    //   $this->showHelp();
+    //   return;
+    // }
+    if (!$command) $command = 'help';
 
     try {
       if (!isset($this->commands[$command])) {
@@ -70,7 +67,7 @@ class Application
     // Salta cada 2 posiciones porque evalua argumento valor
     for ($p = 0; $p < $nof; $p += 2) {
       // valida sintaxis --argumento
-      if (!preg_match('/^--[a-z]+$/', $argv[$p])) {
+      if (!preg_match('/^--[a-z|\?]+$/', $argv[$p])) {
         throw new \Exception("El argumento {$argv[$p]} no es válido.");
       }
       $v = $p + 1;
@@ -80,7 +77,7 @@ class Application
       }
       // valida sintaxis valor o "valor con espacios"
       if (!preg_match('/(?:[^\s"]+|"[^"]*")/', $argv[$v])) {
-        throw new \Exception("{$argv[$v]} no es válido");
+        throw new \Exception("{$argv[$v]} no debe tener espacios.");
       }
 
       $pairs[$argv[$p]] = $argv[$v];
@@ -94,10 +91,6 @@ class Application
     echo "ATUSAN CLI" . EOL . EOL;
     echo "Comandos disponibles:" . EOL;
 
-    echo "init       Inicializa atusan.json" . EOL;
-    echo "info       Muestra información del proyecto" . EOL;
-    echo "validate   Valida el manifiesto del proyecto" . EOL;
-
     echo EOL;
 
     foreach (
@@ -107,11 +100,12 @@ class Application
             'module',
             'nested',
             'model',
-            'service'
+            'service',
+            'agents'
         ]
         as $w
     ) {
-        $this->how(['--what' => $w]);
+        $this->how(['--help' => $w]);
     }
 }
 
@@ -120,7 +114,7 @@ class Application
    */
   protected function how(array $pairs)
   {
-    switch ($pairs['--what']) {
+    switch ($pairs['--help']) {
       case 'app':
         echo "New Application.\n";
         echo "make:app --name ? --title ? --start ?\n";
@@ -149,6 +143,11 @@ class Application
       case 'publish':
         echo "Publish asset.\n";
         echo "publish\n";
+        break;
+      case 'agents':
+        echo "Agents.\n";
+        echo "agents:sync --force-stack yes|no\n";
+        echo "\t--force-stack default = no";
         break;
       default:
         echo "comando {$pairs['--what']} desconocido." . EOL;
