@@ -1,5 +1,5 @@
 <?php
-include 'content-begin.view.php';
+include 'content-open.view.php';
 
 if ($this->validateProperty('view')) 
   include $this->locateResource($this->get('view'));
@@ -12,4 +12,4 @@ else {
   }
 }
 
-include 'content-end.view.php';
+include 'content-close.view.php';
