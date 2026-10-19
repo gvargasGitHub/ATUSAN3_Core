@@ -4,6 +4,51 @@ namespace Atusan\Components;
 
 class Panel extends ComponentNest
 {
+  // ----------------------------------
+  // Manejo de vista por Open/Close
+  // ----------------------------------
+  /**
+   * Open Panel
+   * @return string
+   */
+  public function open(): string
+  {
+    ob_start();
+    include __DIR__ . DS . 'Views' . DS . 'panel/panel-open.view.php';
+    return ob_get_clean();
+  }
+  /**
+   * Close Panel
+   * @return string
+   */
+  public function close(): string
+  {
+    ob_start();
+    include __DIR__ . DS . 'Views' . DS . 'panel/panel-close.view.php';
+    return ob_get_clean();
+  }
+  /**
+   * Open PanelContent
+   * @param string $panelName
+   * @return string
+   */
+  public function openContent(string $panelName): string
+  {
+    ob_start();
+    include __DIR__ . DS . 'Views' . DS . 'panel/content-open.view.php';
+    return ob_get_clean();
+  }
+  /**
+   * Close Panel
+   * @return string
+   */
+  public function closeContent(string $panelName): string
+  {
+     ob_start();
+    include __DIR__ . DS . 'Views' . DS . 'panel/content-close.view.php';
+    return ob_get_clean();
+  }
+
   /**
    * Write Panel
    * Incluye la vista establecida o recorre el "diccionario" de secciones/componentes.

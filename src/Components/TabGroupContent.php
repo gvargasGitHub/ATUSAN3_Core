@@ -6,6 +6,30 @@ use Atusan\Types\TabGroupButtonType;
 
 class TabGroupContent extends ComponentNest
 {
+  // ----------------------------------
+  // Manejo de vista por Open/Close
+  // ----------------------------------
+  /**
+   * Open TabGroup
+   * @return string
+   */
+  public function open(): string
+  {
+    ob_start();
+    include __DIR__ . DS . 'Views' . DS . 'tabgroup/content-open.view.php';
+    return ob_get_clean();
+  }
+  /**
+   * Close TabGroup
+   * @return string
+   */
+  public function close(): string
+  {
+    ob_start();
+    include __DIR__ . DS . 'Views' . DS . 'tabgroup/content-close.view.php';
+    return ob_get_clean();
+  }
+
   /**
    * MakeButton
    * @return string

@@ -10,7 +10,7 @@ if (count($this->data) == 0) $this->data[0] = [];
       $component->setData($this->data[0]);
 
   // Escribe la vista
-  if (!empty($this->view)) {
+  if ($this->validateProperty('view')) {
     // escribe el control Csrf
     echo $this->writeControl('csrf_token');
 
