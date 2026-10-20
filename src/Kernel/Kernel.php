@@ -32,7 +32,7 @@ class Kernel
     // v3.0.20 Kernel valida si tanto el controlador como el método existen
     if (!method_exists($controller, $routeType->resolve)) {
       throw new NotFoundException(
-        "El método {$routeType->resolve} no existe para {$controller->name}");
+        "El método {$routeType->resolve} no existe para " . get_class($controller));
     }
     
     // Una vez que se ha resuelto la ruta, Kernel solicitará a Request que
