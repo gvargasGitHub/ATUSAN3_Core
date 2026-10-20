@@ -21,12 +21,13 @@ trait TraitDataForm
     // manualmente el token a este control mediante el
     // método "setCsrf(string)"
   }
+
   /**
-   * Write Control
-   * 
-   * @return void
+   * Make Control
+   * @param string $id
+   * @return string
    */
-  public function writeControl(string $id): void
+  public function makeControl(string $id): string
   {
     if (!($control = $this->components->getById($id)))
       trigger_error(basename(__FUNCTION__) . ":El control {$id} no existe para {$this->get('id')}");
@@ -35,7 +36,17 @@ trait TraitDataForm
 
     $control->setData($this->data[0]);
 
-    echo $control->make();
+    return $control->make();
+  }
+
+  /**
+   * Write Control
+   * 
+   * @return void
+   */
+  public function writeControl(string $id): void
+  {
+    echo $this->makeControl($id);
   }
 
   /**
