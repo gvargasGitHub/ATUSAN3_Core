@@ -13,7 +13,7 @@ class ButtonGroupBar extends ButtonGroupBase
 
   protected function finalDefinitions(): void
   {
-    $percent = 100 / $this->xml->count();
+    $percent = 100 / count($this->xml->children());
 
     foreach ($this->xml->children() as $xml) $xml->setAttribute('html:style', "width:{$percent}%", 'html');
   }

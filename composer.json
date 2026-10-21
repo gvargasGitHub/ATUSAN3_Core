@@ -8,9 +8,6 @@
             "Atusan\\": "src/"
         }
     },
-    "bin": [
-        "cli/bin/atusan-cli"
-    ],
     "extra": {
         "atusan": {
             "public": "public/"
