@@ -48,7 +48,8 @@
         ? form.requestSubmit() : form.submit();
     },
     /**
-     * attachModule
+     * Attach Module
+     * Invocado por Application::execute.
      * @param {Module} module
      * @returns {void}
      */
@@ -70,6 +71,11 @@
       module.initComponents();
 
       module.onOpen();
+
+      // Inicializa anidados 
+      if (module instanceof Module && module === Module.active()) {
+        module.initNesteds();
+      }
     },
     /**
      * Build Form to send parámeters in POST request.
@@ -253,7 +259,7 @@
         const headers = { 
           'Accept': 'application/json', 
           'X-Requested-With': 'XMLHttpRequest',
-          ...options.header // Opcional, por si pasas headers como el token CSRF
+          ...options.headers // Opcional, por si pasas headers como el token CSRF
         };
 
         // Con fetch, si envías un FormData en el 'body', el navegador calcula 
@@ -301,10 +307,10 @@
       xhr.setRequestHeader('Accept', 'application/json');
       xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
       
-      if (options.header) {
-        for (const key in options.header) {
-          if (options.header.hasOwnProperty(key)) {
-            xhr.setRequestHeader(key, options.header[key]);
+      if (options.headers) {
+        for (const key in options.headers) {
+          if (options.headers.hasOwnProperty(key)) {
+            xhr.setRequestHeader(key, options.headers[key]);
           }
         }
       }

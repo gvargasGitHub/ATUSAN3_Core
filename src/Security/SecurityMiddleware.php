@@ -27,12 +27,25 @@ class SecurityMiddleware
     }
   }
 
+  /**
+   * Security Headers
+   */
   private static function securityHeaders(): void
   {
     header('X-Frame-Options: DENY');
     header('X-Content-Type-Options: nosniff');
     header('Referrer-Policy: strict-origin');
     // header("Content-Security-Policy: default-src 'self';");
+
+    // Gemini: Permite el encabezado X-CSRF-TOKEN
+    header("Access-Control-Allow-Origin: *"); // O el dominio de tu frontend
+    header("Access-Control-Allow-Headers: X-CSRF-TOKEN, Content-Type, Authorization");
+    header("Access-Control-Allow-Methods: POST, GET, PUT, PATCH, DELETE, OPTIONS");
+
+    // Si es una petición OPTIONS, puedes terminar la ejecución aquí para el preflight
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        exit(0);
+    }
   }
 
   /**
