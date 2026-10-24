@@ -10,10 +10,18 @@ class Controller {
  * Application
  */
 class Application extends Controller {
+  /**
+   * Invocado por evento DOMContentLoaded.
+   * @param {string} name 
+   */
   constructor(name) {
     super(name);
   }
 
+  /**
+   * Execute
+   * Invocado por evento DOMContentLoaded.
+   */
   execute() {
     if (typeof this.onOpen === "function") this.onOpen();
 
@@ -68,12 +76,23 @@ class ModuleBase extends Controller {
     // TODO
   }
 
+  /**
+   * Add Component.
+   * @param {string} name 
+   * 
+   * Invocado por Component.constructor.
+   */
   addComponent(name) {
     this.components.push(name);
   }
 
+  /**
+   * Init Components
+   * Ejecuta Component::init de los Components cargados al módulo.
+   * 
+   * Invocado por Atusan.attachModule.
+   */
   initComponents() {
-    // ats.notify(`initComponents de ${this.name}:${this.components.length}`);
     this.components.forEach(componentName => window[componentName].init());
   }
 };
@@ -96,8 +115,38 @@ class Module extends ModuleBase {
   constructor(name) {
     super(name);
     __ModuleActive__ = this.name;
+
+    this.nested = [];
+  }
+
+  /**
+   * Add Nested
+   * @param {ModuleNested} nested
+   */
+  addNested(nested) {
+    this.nested.push(nested);
+  }
+  /**
+   * Init Nested
+   */
+  initNesteds() {
+    this.nested.forEach(nested => ats.attachModule(nested));
   }
 };
 
-class ModuleNested extends ModuleBase { };
+class ModuleNested extends ModuleBase {
+  /**
+   * 
+   * @param {String} name 
+   */
+  constructor(name) {
+    super(name);
+    
+    let mdparent = Module.active();
+
+    if (mdparent && mdparent instanceof Module) {
+      mdparent.addNested(this);
+    }
+  }
+};
 

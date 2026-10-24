@@ -120,16 +120,22 @@ trait TraitDataFormControl
     <?php
     }
     $index = 0;
-    foreach ($this->xml->children() as $opt) {
-      $index += 1;
-      $selected = ($this->getValue() == $opt->getAttribute('value')) ? 'checked' : '';
-    ?>
-      <div class="radiobox <?= $display ?>">
-        <input type="radio" class="radio changeEv" id="<?= $this->getId() ?>-<?= $index ?>" name="<?= $this->get('id') ?>" value="<?= $opt->getAttribute('value') ?>" <?= $selected ?> />
-        <label class="label" for="<?= $this->getId() ?>-<?= $index ?>"><?= $opt->getAttribute('text') ?></label>
-      </div>
-    <?php
-    }
+    $ns = array_merge(
+        ['' => ''],
+        $this->xml->getDocNamespaces(true, true)
+      );
+      foreach($ns as $n=>$t) {
+        foreach ($this->xml->children($n, true) as $opt) {
+          $index += 1;
+          $selected = ($this->getValue() == $opt->getAttribute('value')) ? 'checked' : '';
+        ?>
+          <div class="radiobox <?= $display ?>">
+            <input type="radio" class="radio changeEv" id="<?= $this->getId() ?>-<?= $index ?>" name="<?= $this->get('id') ?>" value="<?= $opt->getAttribute('value') ?>" <?= $selected ?> />
+            <label class="label" for="<?= $this->getId() ?>-<?= $index ?>"><?= $opt->getAttribute('text') ?></label>
+          </div>
+        <?php
+        }
+      }
     ?>
     <br />
     <?php
@@ -147,17 +153,23 @@ trait TraitDataFormControl
       class="form-control changeEv" <?= $this->xml->buildPairs(' ', '=', '"', 'html') ?>
       style="<?= $this->xml->buildPairs(';', ':', '', 'css') ?>">
       <?php
-      foreach ($this->xml->children() as $opt) {
-        $optText =  $opt->getAttribute('text');
+      $ns = array_merge(
+        ['' => ''],
+        $this->xml->getDocNamespaces(true, true)
+      );
+      foreach($ns as $n=>$t) {
+        foreach ($this->xml->children($n, true) as $opt) {
+          $optText =  $opt->getAttribute('text');
 
-        if(!$opt->hasAttribute('value')) $opt->setAttribute('value', $optText);
+          if(!$opt->hasAttribute('value')) $opt->setAttribute('value', $optText);
 
-        $optValue = $opt->getAttribute('value');
+          $optValue = $opt->getAttribute('value');
 
-        $selected = ($this->getValue() == $optValue) ? 'selected' : '';
-      ?>
-        <option value="<?= $optValue ?>" <?= $selected ?>><?= $optText ?></option>
-      <?php
+          $selected = ($this->getValue() == $optValue) ? 'selected' : '';
+        ?>
+          <option value="<?= $optValue ?>" <?= $selected ?>><?= $optText ?></option>
+        <?php
+        }
       }
       ?>
     </select>
@@ -198,17 +210,23 @@ trait TraitDataFormControl
     
     $value = $this->parent->getOwner()->$resolve($this->getData());
 
-    foreach($this->xml->children() as $case) {
-      if ($case->getAttribute('match') == $value) {
-        $case->setAttribute('name', $this->get('id'));
+    $ns = array_merge(
+        ['' => ''],
+        $this->xml->getDocNamespaces(true, true)
+      );
+      foreach($ns as $n=>$t) {
+        foreach ($this->xml->children($n, true) as $case) {
+          if ($case->getAttribute('match') == $value) {
+            $case->setAttribute('name', $this->get('id'));
 
-        // $caseControl = DataFormControl::fromXML($this->parent->getOwner(), $case);
-        // $caseControl->setParent($this->parent);
-        // $caseControl->setData($this->getData());
-        
-        // return $caseControl->write();
-        echo "<strong>{$this->get('id')}</strong>";
+            // $caseControl = DataFormControl::fromXML($this->parent->getOwner(), $case);
+            // $caseControl->setParent($this->parent);
+            // $caseControl->setData($this->getData());
+            
+            // return $caseControl->write();
+            echo "<strong>{$this->get('id')}</strong>";
+          }
+        }
       }
-    }
   }
 }

@@ -305,8 +305,8 @@ class Request implements RequestInterface
       if (str_starts_with($key, 'HTTP_')) {
         $name = strtolower(str_replace('_', '-', substr($key, 5)));
         $headers[$name] = $value;
-      } elseif (strtoupper($key) === 'CONTENT_TYPE') {
-        $headers['content-type'] = $value;
+      } elseif (in_array($key, ['CONTENT_TYPE', 'X-CSRF-TOKEN'])) {
+        $headers[$key] = $value;
       }
     }
 

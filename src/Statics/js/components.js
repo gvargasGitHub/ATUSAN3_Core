@@ -30,6 +30,10 @@ class Component {
     }
   }
 
+  /**
+   * Init
+   * Invocado por ModuleBase::initComponents.
+   */
   init() {
     // ats.notify(`Init ${this.name}`);
     this.element = document.getElementById(this.name);
