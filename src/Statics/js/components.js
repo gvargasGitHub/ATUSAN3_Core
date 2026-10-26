@@ -441,45 +441,45 @@ class DataForm extends DataViewBase {
 
   /**
    * disableItem
-   * @param {string} control
+   * @param {string} controlName
    * @returns {void}
    */
-  disableItem(control) {
-    const elms = this.findByName(control);
+  disableItem(controlName) {
+    const controles = this.findControlByName(controlName);
 
-    if (elms.length == 0) throw new Error(`${control} no existe en ${this.name}`);
+    if (controles.length == 0) throw new Error(`${controlName} no existe en ${this.name}`);
 
-    elms.forEach(el => el.disabled = true);
+    controles.forEach(el => el.disabled = true);
   }
   
   /**
    * enableItem
-   * @param {string} control
+   * @param {string} controlName
    * @returns {void}
    */
-  enableItem(control) {
-    const elms = this.findByName(control);
+  enableItem(controlName) {
+    const controles = this.findControlByName(controlName);
 
-    if (elms.length == 0) throw new Error(`${control} no existe en ${this.name}`);
+    if (controles.length == 0) throw new Error(`${controlName} no existe en ${this.name}`);
 
-    elms.forEach(el => el.disabled = false);
+    controles.forEach(el => el.disabled = false);
   }
 
   /**
    * feedList
-   * @param {string} control
+   * @param {string} controlName
    * @param {Array} list
    * @returns {void}
    */
-  feedList(control, list) {
-    const elms = this.findByName(control);
+  feedList(controlName, list) {
+    const controles = this.findControlByName(controlName);
 
-    if (elms.length == 0) throw new Error(`${control} no existe en ${this.name}`);
+    if (controles.length == 0) throw new Error(`${controlName} no existe en ${this.name}`);
 
-    if (this.maplists.has(control)) {
-      this.maplists.get(control).feedList(list);
+    if (this.maplists.has(controlName)) {
+      this.maplists.get(controlName).feedList(list);
     } else
-      throw new Error(`${control} no es una lista desplegable`);
+      throw new Error(`${controlName} no es una lista desplegable`);
   }
 
   /**
@@ -512,82 +512,74 @@ class DataForm extends DataViewBase {
 
   /**
    * getItem
-   * @param {string} control
-   * @returns {void}
+   * @param {string} controlName
+   * @returns {any}
    */
-  getItem(control) {
-    const elms = this.findByName(control);
+  getItem(controlName) {
+    // obtiene colección de coincidencias
+    const controles = this.findControlByName(controlName);
 
-    if (elms.length == 0) throw new Error(`${control} no existe en ${this.name}`);
+    if (controles.length == 0) throw new Error(`${controlName} no existe en ${this.name}`);
 
-    let type = elms[0].getAttribute("type");
-
-    let resolver = {
-      file: el => {
+    switch(controles[0].getAttribute('type')){
+      case 'file':
+        // recorre la cantidad de archivos seleccionados y concatena los nombre
         let files = [];
-        for (let i = 0; i < el[0].files.length; i++) files.push(el[0].files[i].name);
+        for(const file of controles[0].files) files.push(file.name);
 
         return files.join(", ");
-      },
-      radio: el => {
-        let value;
-        el.forEach(r => {
-          if (r.checked) value = r.value
-        });
-        return value;
-      }
-    };
-
-    switch (type) {
-      case 'file':
       case 'radio':
-        return resolver[type](elms);
+        // recorre las opciones hasta obtener la seleccionada
+        let value;
+        controles.forEach(option => {if(option.checked) value=option.value});
+        return value;
       default:
-        return elms[0].value;
+        return controles[0].value;
     }
   }
 
   /**
    * setItem
-   * @param {string} control 
+   * @param {string} controlName 
    * @param {string} value 
    * @returns {void}
    */
-  setItem(control, value) {
-    const elms = this.findByName(control);
+  setItem(controlName, value) {
+    const controles = this.findControlByName(controlName);
 
-    if (elms.length == 0) throw new Error(`${control} no existe en ${this.name}`);
+    if (controles.length == 0) throw new Error(`${controlName} no existe en ${this.name}`);
 
-    let type = elms[0].getAttribute("type");
-
-    switch (type) {
+    switch (controles[0].getAttribute("type")) {
       case 'radio':
-        elms.forEach(r => r.checked = (r.value == value));
-        break;
-      case 'file':
+        controles.forEach(r => r.checked = (r.value == value));
         break;
       case 'checkbox':
-        elms[0].checked = (Number(value) == 1);
+        controles[0].checked = (Number(value) == 1);
       default:
-        elms[0].value = value;
+        controles[0].value = value;
     }
   }
 
   /**
    * setFocus
-   * @param {string} control
+   * @param {string} controlName
    * @returns {void}
    */
-  setFocus(control) {
-    const elms = this.findByName(control);
+  setFocus(controlName) {
+    const controles = this.findControlByName(controlName);
 
-    if (elms.length == 0) throw new Error(`${control} no existe en ${this.name}`);
+    if (controles.length == 0) throw new Error(`${controlName} no existe en ${this.name}`);
 
-    elms[0].focus();
+    controles[0].focus();
   }
 
-  findByName(control) {
-    return this.element.querySelectorAll(`[name^="${control}"]`);
+  /**
+   * Find Control By Name
+   * @param {String} controlName 
+   * @returns NodeListOf<Element>
+   */
+  findControlByName(controlName) {
+    return this.element.querySelectorAll(`[name="${controlName}"], [name="${controlName}[]"]`);
   }
 
   reset() {
