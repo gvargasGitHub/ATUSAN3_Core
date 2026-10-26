@@ -661,7 +661,7 @@ class DataForm extends DataViewBase {
   onSubmitFail(err) {
     // TO DO
     alert(err.message);
-    console.error(err.detail);
+    console.error(err);
   }
 };
 
