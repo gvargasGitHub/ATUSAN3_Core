@@ -138,7 +138,7 @@ trait TraitComponentNest
             $componentClass = "Atusan\\Components\\HTML";
           } else {
             // Corresponde a declaraciones de Clases personalizadas.
-            $nss = str_replace('.', '\\', str_replace('clr-namespace:', '', $url));
+            $nss = substr($url, strlen('clr-namespace:'));
             $componentClass = "\\$nss\\$elementName";
             $xml = $this->buildXML($xml);
           }

@@ -49,22 +49,6 @@ class Panel extends ComponentNest
     return ob_get_clean();
   }
 
-  /**
-   * Write Panel
-   * Incluye la vista establecida o recorre el "diccionario" de secciones/componentes.
-   * @param string $position
-   */
-  protected function writePanel(string $position): void
-  {
-    foreach ($this->sources->getAllByName($position) as $source) {
-      if ($source->xml->hasAttribute('view')) {
-        include $this->owner->getDirectory() . DS . "{$source->xml->getAttribute('view')}.php";
-      } else {
-        foreach ($source->xml->children() as $child) 
-          echo $this->components->getById($child->getAttribute('id'))->make();
-      }
-    }
-  }
   // ----------------------------------
   //  TraitComponent
   // ----------------------------------
@@ -75,7 +59,7 @@ class Panel extends ComponentNest
   {
     // Integra las secciones Left, Content & Right
     foreach ($this->xml->children() as $section) 
-      $this->addSource((string) $section->getName(), $section);
+      $this->addSource(strtolower((string) $section->getName()), $section);
   }
 
   /**

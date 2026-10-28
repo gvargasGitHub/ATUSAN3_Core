@@ -18,14 +18,14 @@ class ComponentsIterator implements BaseIterator
   /**
    * 
    */
-  public function add(Component|ModuleNested $component)
+  public function add(Component | ModuleNested $component)
   {
     array_push($this->data, $component);
   }
   /**
    * getById
    */
-  public function getById(string $id): Component | null
+  public function getById(string $id): Component | ModuleNested | null
   {
     foreach ($this as $component) if ($component->get('id') == $id) return $component;
 
@@ -49,7 +49,7 @@ class ComponentsIterator implements BaseIterator
   }
 
   // #[\ReturnTypeWillChange]
-  public function current(): Component|ModuleNested
+  public function current(): Component | ModuleNested
   {
     return $this->data[$this->position];
   }
