@@ -357,7 +357,7 @@
     attachModule, // Application | Panel | TabGroup
     // attachForm,
     hideNavDropdown, // Navbar
-    // hideMenuOptionsDropDown,
+    hideMenuOptionsDropDown, // DataGrid
     // startLoader,
     // stopLoader,
     notify,

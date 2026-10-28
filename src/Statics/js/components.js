@@ -1399,7 +1399,10 @@ class TabGroup extends Component {
         // onChange Event
         if (prior != this.current && typeof this.onChange == "function") this.onChange({ prior, current: this.current });
       },
-      fail: rs => console.error(rs)
+      fail: rs => {
+        console.error(rs);
+        alert(rs.message ?? 'Lo sentimos, algo salió mal.');
+      }
     });
   }
 
@@ -1602,7 +1605,10 @@ class Panel extends Component {
         if (window[module.data.name] == null) console.error(`${module.data.name} no fue creado.`);
         ats.attachModule(window[module.data.name]);
       },
-      fail: rs => console.error(rs)
+      fail: rs => {
+        console.error(rs);
+        alert(rs.message ?? 'Lo sentimos, algo salió mal.');
+      }
     });
   }
 
