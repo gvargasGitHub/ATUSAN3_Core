@@ -4,8 +4,8 @@
   'id' => $id,
   'text' => $text,
   'icon' => $icon
-] = Atusan\Types\ButtonType::pairs($xml)->properties();
+] = Atusan\Types\ButtonType::getNew($this->getOwner()->get('id'), $xml)->properties();
 ?>
-<Button id="<?= $id ?>" class="ats-btn" <?= $xml->buildAttributesPairs('html') ?>>
+<button id="<?= $id ?>" class="ats-btn" ats-owner="<?= $this->getOwner()->get('id') ?>" <?= $xml->buildAttributesPairs('html') ?>>
   <?= $icon, $text ?>
-</Button>
+</button>

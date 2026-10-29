@@ -6,7 +6,7 @@ use Atusan\XML\XMLExtended;
 
 class ButtonType
 {
-  function __construct(protected XMLExtended $xml) {}
+  function __construct(protected string $ownerId, protected XMLExtended $xml) {}
 
   function properties(): array
   {
@@ -25,7 +25,11 @@ class ButtonType
     ) {
       $this->xml->setAttribute(
         'html:onclick',
-        "window.{$id}(event)",
+        "ats.invokeButton(
+          '{$this->ownerId}',
+          '{$id}',
+          event
+          )",
         'html'
       );
     }
@@ -37,8 +41,8 @@ class ButtonType
     ];
   }
 
-  static function pairs(XMLExtended $xml): static
+  static function getNew(string $ownerId, XMLExtended $xml): static
   {
-    return new static($xml);
+    return new static($ownerId, $xml);
   }
 }

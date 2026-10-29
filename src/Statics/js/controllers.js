@@ -48,6 +48,12 @@ class ModuleBase extends Controller {
     this.components = [];
     // v3.0.20: Se remplaza el código personalizado por el centralizado.
     this.send = ats.send;
+
+    // Atusan.attachModule establece ready = true al terminar la inicialización.
+    this.ready = false;
+
+    // scriptReady se establece true en el bloque script de la vista del módulo.
+    this.scriptReady = false;
   }
 
   static active() {
