@@ -14,8 +14,21 @@ class ButtonType
     $text = $this->xml->getAttribute('text');
     $icon = ($this->xml->hasAttribute('icon')) ? "<i class=\"{$this->xml->getAttribute('icon')}\"></i>" : '';
 
-    if (!$this->xml->hasAttribute('onclick', 'html', true) && !$this->xml->hasAttribute('type', 'html', true))
-      $this->xml->setAttribute('html:onclick', "{$id}(event)", 'html');
+    // ChatGPT: ajuste
+    $type = $this->xml->hasAttribute('type', 'html', true)
+      ? strtolower(trim($this->xml->getAttribute('type', 'html', true)))
+      : 'button';
+
+    if (
+      !$this->xml->hasAttribute('onclick', 'html', true)
+      && $type === 'button'
+    ) {
+      $this->xml->setAttribute(
+        'html:onclick',
+        "window.{$id}(event)",
+        'html'
+      );
+    }
 
     return [
       'id' => $id,

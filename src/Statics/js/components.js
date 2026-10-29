@@ -1591,7 +1591,21 @@ class Panel extends Component {
       done: module => {
         // Limpia el contenido
         const panel = this.panels.get('content');
-        while (panel.hasChildNodes()) panel.removeChild(panel.firstChild);
+        
+        // ChatGpt: Permitir que el módulo actual libere sus recursos o impida salir.
+        if (
+          this.currentModule
+          && typeof this.currentModule.onClose === 'function'
+          && this.currentModule.onClose() === false
+        ) {
+          return;
+        }
+
+        this.currentModule = null;
+
+        while (panel.hasChildNodes()) {
+          panel.removeChild(panel.firstChild);
+        }
 
         // No existe
         var content = document.createElement("DIV");
@@ -1603,7 +1617,10 @@ class Panel extends Component {
 
         // Module onOpen Event
         if (window[module.data.name] == null) console.error(`${module.data.name} no fue creado.`);
-        ats.attachModule(window[module.data.name]);
+        
+        // ChatGPT
+        this.currentModule = window[module.data.name];
+        ats.attachModule(this.currentModule);
       },
       fail: rs => {
         console.error(rs);
