@@ -67,14 +67,30 @@
           body.appendChild(modal);
         });
 
-      // Inicializa los componentes de Module
-      module.initComponents();
+      module.ready = false;
 
-      module.onOpen();
+      try {
+        if (module.scriptReady === false) {
+          throw new Error(
+            `El script de "${module.name}" no terminó de registrarse.`
+          );
+        }
 
-      // Inicializa anidados 
-      if (module instanceof Module && module === Module.active()) {
-        module.initNesteds();
+        module.initComponents();
+        module.onOpen();
+
+        if (module instanceof Module && module === Module.active()) {
+          module.initNesteds();
+        }
+
+        module.ready = true;
+      } catch (error) {
+        console.error(
+          `No se pudo inicializar el módulo "${module.name}".`,
+          error
+        );
+
+        throw error;
       }
     },
     /**
@@ -367,6 +383,36 @@
       // El navegador maneja automáticamente el FormData y su boundary
       xhr.send(options.data);
     };
+  /**
+   * Invoke Button
+   * Invokado desde el evento onClick de elementos Button.
+   * Generado por ChatGPT.
+   * @param {String} nombreModulo 
+   * @param {String} nombreFuncion 
+   * @param {Event} event 
+   * @returns void
+   */
+  const invokeButton = function (nombreModulo, nombreFuncion, event) {
+    const modulo = window[nombreModulo];
+
+    if (!modulo || modulo.ready !== true) {
+      console.error(
+        `El módulo "${nombreModulo}" no está listo.`
+      );
+      return;
+    }
+
+    const manejador = window[nombreFuncion];
+
+    if (typeof manejador !== 'function') {
+      console.error(
+        `El manejador "${nombreFuncion}" no está registrado.`
+      );
+      return;
+    }
+
+    return manejador(event);
+  };
 
   addEvent("click", hideNavDropdown);
   addEvent("click", hideMenuOptionsDropDown);
@@ -389,7 +435,8 @@
     // stopLoader,
     notify,
     send, // Module
-    smartAjax // send | DataForm
+    smartAjax, // send | DataForm
+    invokeButton // Button.onClick
   };
 
 
