@@ -172,15 +172,42 @@
      */
     send = function (route, options) {
 
-      var fd = new FormData();
-      // Carga los valores de "data" en el FormData
-      if (typeof options.data === "object") {
-        for (const key in options.data) {
-          if (!Object.hasOwn(options.data, key)) continue;
-
-          fd.append(key, options.data[key]);
+      const fd = new FormData();
+      // ChatGPT
+      function appendData(campo, valor) {
+        if (Array.isArray(valor)) {
+          valor.forEach((item, indice) => {
+            appendData(`${campo}[${indice}]`, item);
+          });
+          return;
         }
+
+        const esObjetoSimple = (
+          valor !== null
+          && typeof valor === 'object'
+          && (
+            Object.getPrototypeOf(valor) === Object.prototype
+            || Object.getPrototypeOf(valor) === null
+          )
+        );
+
+        if (esObjetoSimple) {
+          Object.entries(valor).forEach(([clave, item]) => {
+            appendData(`${campo}[${clave}]`, item);
+          });
+          return;
+        }
+
+        // Conserva el tratamiento anterior de valores simples y archivos.
+        fd.append(campo, valor);
       }
+      
+      if (options.data !== null && typeof options.data === 'object') {
+        Object.entries(options.data).forEach(([campo, valor]) => {
+          appendData(campo, valor);
+        });
+      }
+      
       // v3.0.20
       if (typeof options.onDone === "function") {
         console.warn('El uso de onDone es obsoleto, use done.');
