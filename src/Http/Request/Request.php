@@ -303,11 +303,20 @@ class Request implements RequestInterface
 
     foreach ($this->server as $key => $value) {
       if (str_starts_with($key, 'HTTP_')) {
-        $name = strtolower(str_replace('_', '-', substr($key, 5)));
-        $headers[$name] = $value;
-      } elseif (in_array($key, ['CONTENT_TYPE', 'X-CSRF-TOKEN'])) {
-        $headers[$key] = $value;
+        $name = substr($key, 5);
+      } elseif (in_array(
+        $key,
+        ['CONTENT_TYPE', 'CONTENT_LENGTH', 'X-CSRF-TOKEN'],
+        true
+      )) {
+        $name = $key;
+      } else {
+        continue;
       }
+
+      $name = strtolower(str_replace('_', '-', $name));
+
+      $headers[$name] = (string) $value;
     }
 
     return $headers;

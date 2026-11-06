@@ -74,7 +74,10 @@ trait TraitRender {
 
     if (APP_DEBUG && $detail !== null) $body['detail'] = $detail;
 
-    $res = json_encode($body, JSON_NUMERIC_CHECK);
+    $res = json_encode(
+      $body,
+      JSON_UNESCAPED_UNICODE
+    );
 
     if (json_last_error() !== JSON_ERROR_NONE)
       throw new InternalServerException(json_last_error_msg());
